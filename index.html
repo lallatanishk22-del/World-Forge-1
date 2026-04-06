@@ -416,7 +416,7 @@
       <p class="error-msg" id="errorMsg"></p>
     </div>
 
-    <div class="status" id="status">Building your world…</div>
+    <div class="status" id="status"></div>
   </section>
 
   <!-- WORLD OUTPUT -->
@@ -440,7 +440,7 @@
   <script>
     // ── CONFIG ──────────────────────────────────────────────────────────────
     const GROQ_API_KEY = localStorage.getItem('groq_api_key') || promptForGroqKey();
-    const UNSPLASH_ACCESS_KEY = 'z2_9UCj20l9fm5lE8znTVJp-Qd4qt399NEke3YHx6gk'; // ← Replace this in GitHub
+    const UNSPLASH_ACCESS_KEY = 'YOUR_UNSPLASH_ACCESS_KEY'; // ← Replace this in GitHub
 
     function promptForGroqKey() {
       const key = prompt('Enter your Groq API key:');
@@ -509,12 +509,20 @@ Return ONLY valid JSON. No markdown. No explanation. This exact structure:
           })
         });
 
-        if (!groqRes.ok) throw new Error('Groq API failed');
+        if (!groqRes.ok) {
+          const errBody = await groqRes.text();
+          throw new Error(`Groq failed (${groqRes.status}): ${errBody}`);
+        }
 
         const groqData = await groqRes.json();
         const raw = groqData.choices[0].message.content;
         const clean = raw.replace(/```json|```/g, '').trim();
-        const world = JSON.parse(clean);
+        let world;
+        try {
+          world = JSON.parse(clean);
+        } catch(parseErr) {
+          throw new Error('Could not parse Groq response as JSON. Raw: ' + clean.slice(0, 200));
+        }
 
         setStatus('Curating images from the world…');
 
@@ -557,7 +565,7 @@ Return ONLY valid JSON. No markdown. No explanation. This exact structure:
       } catch (err) {
         console.error(err);
         setStatus('');
-        errorMsg.textContent = 'Something went wrong. Check your API key and try again.';
+        errorMsg.textContent = 'Error: ' + err.message;
         errorMsg.style.display = 'block';
       }
 
@@ -580,62 +588,44 @@ Return ONLY valid JSON. No markdown. No explanation. This exact structure:
       return card;
     }
 
-    // ── FETCH UNSPLASH IMAGE ────────────────────────────────────────────────
-    async function fetchUnsplashImage(query, card, el) {
-      try {
-        const res = await fetch(
-          `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=3&orientation=portrait`,
-          {
-            headers: { 'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}` }
-          }
-        );
-        const data = await res.json();
+    // ── LOAD UNSPLASH IMAGE via source URL (no API key, no CORS) ────────────
+    function fetchUnsplashImage(query, card, el) {
+      const skeleton = card.querySelector('[id^="skeleton"]');
+      const img = document.createElement('img');
+      img.className = 'card-image';
 
+      // Use Unsplash API with access key
+      fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=5&orientation=portrait`, {
+        headers: { 'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}` }
+      })
+      .then(r => r.json())
+      .then(data => {
         if (data.results && data.results.length > 0) {
           const photo = data.results[0];
-          const imgUrl = photo.urls.regular;
-          const photographer = photo.user.name;
-          const photoLink = photo.links.html;
-
-          // Replace skeleton with real image
-          const skeleton = card.querySelector('[id^="skeleton"]');
-          const img = document.createElement('img');
-          img.className = 'card-image';
-          img.src = imgUrl;
+          img.src = photo.urls.regular;
           img.alt = el.element_name;
-          img.loading = 'lazy';
-
           img.onload = () => {
             skeleton.replaceWith(img);
-
-            // Add photographer credit
             const credit = document.createElement('a');
             credit.className = 'card-credit';
-            credit.href = `${photoLink}?utm_source=worldforge&utm_medium=referral`;
+            credit.href = photo.links.html + '?utm_source=worldforge&utm_medium=referral';
             credit.target = '_blank';
             credit.rel = 'noopener';
-            credit.textContent = `📷 ${photographer} / Unsplash`;
+            credit.textContent = '📷 ' + photo.user.name;
             card.appendChild(credit);
-
-            // Trigger download tracking (Unsplash requirement)
-            triggerDownload(photo.links.download_location);
           };
-
-          img.onerror = () => {
-            skeleton.style.background = '#1a1a1a';
-          };
+          img.onerror = () => { skeleton.style.background = '#1a1a1a'; };
+        } else {
+          skeleton.style.background = '#1a1a1a';
         }
-      } catch (err) {
-        console.error('Unsplash fetch failed for:', query, err);
-      }
+      })
+      .catch(err => {
+        console.error('Unsplash error:', err);
+        skeleton.style.background = '#1a1a1a';
+      });
     }
 
-    // ── TRIGGER DOWNLOAD (Unsplash ToS requirement) ─────────────────────────
-    async function triggerDownload(downloadLocation) {
-      try {
-        await fetch(`${downloadLocation}?client_id=${UNSPLASH_ACCESS_KEY}`);
-      } catch(e) {}
-    }
+
 
     // ── HELPERS ─────────────────────────────────────────────────────────────
     function setStatus(msg) {
