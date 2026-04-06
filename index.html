@@ -396,9 +396,158 @@
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--border); }
+
+    /* SETTINGS PANEL */
+    .settings-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .settings-btn:hover { border-color: var(--accent-dim); color: var(--accent); }
+
+    .settings-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .settings-overlay.open { display: flex; }
+
+    .settings-modal {
+      background: #111;
+      border: 1px solid var(--border);
+      padding: 40px;
+      width: 100%;
+      max-width: 500px;
+      margin: 24px;
+    }
+
+    .settings-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 300;
+      margin-bottom: 8px;
+    }
+
+    .settings-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      margin-bottom: 32px;
+    }
+
+    .settings-field {
+      margin-bottom: 24px;
+    }
+
+    .settings-label {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent-dim);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .settings-input {
+      width: 100%;
+      background: #0a0a0a;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .settings-input:focus { border-color: var(--accent-dim); }
+    .settings-input::placeholder { color: var(--text-muted); font-size: 11px; }
+
+    .settings-save {
+      width: 100%;
+      background: var(--accent);
+      color: #0a0a0a;
+      border: none;
+      padding: 14px;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    .settings-save:hover { background: #d4b47a; }
+
+    .settings-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 16px;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    .key-status {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-right: 6px;
+      background: #c0392b;
+      vertical-align: middle;
+    }
+    .key-status.set { background: #27ae60; }
   </style>
 </head>
 <body>
+
+  <!-- SETTINGS BUTTON -->
+  <button class="settings-btn" onclick="openSettings()">⚙ API Keys</button>
+
+  <!-- SETTINGS MODAL -->
+  <div class="settings-overlay" id="settingsOverlay" onclick="closeSettingsOnBg(event)">
+    <div class="settings-modal">
+      <div class="settings-title">API Keys</div>
+      <div class="settings-subtitle">Stored locally in your browser. Never sent anywhere else.</div>
+
+      <div class="settings-field">
+        <label class="settings-label">
+          <span class="key-status" id="groqStatus"></span>
+          Groq API Key
+        </label>
+        <input class="settings-input" id="groqKeyInput" type="password" placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxx"/>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Get free key at console.groq.com</div>
+      </div>
+
+      <div class="settings-field">
+        <label class="settings-label">
+          <span class="key-status" id="unsplashStatus"></span>
+          Unsplash Access Key
+        </label>
+        <input class="settings-input" id="unsplashKeyInput" type="password" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"/>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Get free key at unsplash.com/developers</div>
+      </div>
+
+      <button class="settings-save" onclick="saveKeys()">Save Keys</button>
+      <p class="settings-note">Keys are saved in your browser's localStorage and never shared. Clear your browser data to remove them.</p>
+    </div>
+  </div>
 
   <!-- HERO -->
   <section class="hero">
@@ -439,13 +588,48 @@
 
   <script>
     // ── CONFIG ──────────────────────────────────────────────────────────────
-    const GROQ_API_KEY = localStorage.getItem('groq_api_key') || promptForGroqKey();
-    const UNSPLASH_ACCESS_KEY = 'YOUR_UNSPLASH_ACCESS_KEY'; // ← Replace this in GitHub
+    let GROQ_API_KEY = localStorage.getItem('groq_api_key') || '';
+    let UNSPLASH_ACCESS_KEY = localStorage.getItem('unsplash_access_key') || '';
+
+    // Show settings on first load if keys missing
+    window.addEventListener('load', () => {
+      updateKeyStatuses();
+      if (!GROQ_API_KEY || !UNSPLASH_ACCESS_KEY) {
+        openSettings();
+      }
+    });
+
+    function openSettings() {
+      document.getElementById('groqKeyInput').value = GROQ_API_KEY;
+      document.getElementById('unsplashKeyInput').value = UNSPLASH_ACCESS_KEY;
+      document.getElementById('settingsOverlay').classList.add('open');
+    }
+
+    function closeSettings() {
+      document.getElementById('settingsOverlay').classList.remove('open');
+    }
+
+    function closeSettingsOnBg(e) {
+      if (e.target === document.getElementById('settingsOverlay')) closeSettings();
+    }
+
+    function saveKeys() {
+      const groq = document.getElementById('groqKeyInput').value.trim();
+      const unsplash = document.getElementById('unsplashKeyInput').value.trim();
+      if (groq) { GROQ_API_KEY = groq; localStorage.setItem('groq_api_key', groq); }
+      if (unsplash) { UNSPLASH_ACCESS_KEY = unsplash; localStorage.setItem('unsplash_access_key', unsplash); }
+      updateKeyStatuses();
+      closeSettings();
+    }
+
+    function updateKeyStatuses() {
+      document.getElementById('groqStatus').className = 'key-status' + (GROQ_API_KEY ? ' set' : '');
+      document.getElementById('unsplashStatus').className = 'key-status' + (UNSPLASH_ACCESS_KEY ? ' set' : '');
+    }
 
     function promptForGroqKey() {
-      const key = prompt('Enter your Groq API key:');
-      if (key) localStorage.setItem('groq_api_key', key);
-      return key;
+      openSettings();
+      return '';
     }
 
     // ── GROQ SYSTEM PROMPT ──────────────────────────────────────────────────
@@ -485,6 +669,11 @@ Return ONLY valid JSON. No markdown. No explanation. This exact structure:
       const btn = document.getElementById('generateBtn');
       const status = document.getElementById('status');
       const errorMsg = document.getElementById('errorMsg');
+
+      if (!GROQ_API_KEY || !UNSPLASH_ACCESS_KEY) {
+        openSettings();
+        return;
+      }
 
       btn.disabled = true;
       errorMsg.style.display = 'none';
