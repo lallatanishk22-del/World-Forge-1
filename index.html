@@ -4,163 +4,244 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Worldforge</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+:root {
+  --bg: #080808;
+  --surface: #111111;
+  --border: rgba(255,255,255,0.07);
+  --gold: #b8a882;
+  --gold-dim: #7a6e58;
+  --text: #f0ece4;
+  --text-dim: #6a6460;
+  --text-mid: #9a9490;
+}
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: #0a0a0a; color: #f0ece4; font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
 
-#setup { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 40px 20px; text-align: center; }
-#setup .logo { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 6px; text-transform: uppercase; color: #b8a882; margin-bottom: 40px; }
-#setup h2 { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300; margin-bottom: 12px; }
-#setup p { font-size: 13px; color: #7a7060; margin-bottom: 32px; }
-#setup input { width: 100%; max-width: 500px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 16px 20px; color: #f0ece4; font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none; margin-bottom: 12px; }
-#setup input:focus { border-color: rgba(184,168,130,0.4); }
-#setup button { background: #b8a882; border: none; border-radius: 4px; padding: 16px 40px; color: #0a0a0a; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; }
-#setup button:hover { background: #cfc0a0; }
+/* ── SETUP ── */
+#setup {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 40px 20px; text-align: center;
+}
+#setup .wf-logo { font-family: 'Cormorant Garamond', serif; font-size: 11px; letter-spacing: 8px; text-transform: uppercase; color: var(--gold); margin-bottom: 48px; }
+#setup h2 { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; margin-bottom: 10px; color: var(--text); }
+#setup p { font-size: 13px; color: var(--text-dim); margin-bottom: 36px; letter-spacing: 0.3px; }
+#setup-key { width: 100%; max-width: 480px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 6px; padding: 15px 20px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color 0.3s; margin-bottom: 12px; display: block; }
+#setup-key:focus { border-color: rgba(184,168,130,0.35); }
+#setup-key::placeholder { color: #3a3630; }
+.btn-primary { background: var(--gold); border: none; border-radius: 6px; padding: 15px 36px; color: #080808; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 2.5px; text-transform: uppercase; cursor: pointer; transition: background 0.25s, transform 0.15s; }
+.btn-primary:hover { background: #cfc0a0; transform: translateY(-1px); }
+.btn-primary:disabled { background: #2a2620; color: #5a5450; cursor: not-allowed; transform: none; }
 
-.hero { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 40px 20px; text-align: center; }
-.logo { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 6px; text-transform: uppercase; color: #b8a882; margin-bottom: 60px; }
-.headline { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 6vw, 72px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; }
-.subline { font-size: 14px; font-weight: 300; color: #7a7060; letter-spacing: 1px; margin-bottom: 52px; }
-.brief-row { display: flex; gap: 12px; width: 100%; max-width: 640px; }
-.brief-row input { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 16px 20px; color: #f0ece4; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 300; outline: none; transition: border-color 0.3s; }
-.brief-row input::placeholder { color: #4a4640; }
-.brief-row input:focus { border-color: rgba(184,168,130,0.4); }
-.brief-row button { background: #b8a882; border: none; border-radius: 4px; padding: 16px 28px; color: #0a0a0a; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; white-space: nowrap; }
-.brief-row button:hover { background: #cfc0a0; }
-.brief-row button:disabled { background: #3a3530; color: #6a6560; cursor: not-allowed; }
-.status { margin-top: 24px; font-size: 13px; color: #7a7060; letter-spacing: 1px; min-height: 20px; }
-.reset-key { margin-top: 16px; font-size: 11px; color: #3a3530; cursor: pointer; letter-spacing: 1px; }
-.reset-key:hover { color: #7a7060; }
+/* ── HERO ── */
+#hero {
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 40px 20px; text-align: center; position: relative;
+}
+#hero::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 60% 50% at 20% 10%, rgba(184,168,130,0.04) 0%, transparent 70%),
+              radial-gradient(ellipse 50% 40% at 80% 90%, rgba(100,120,160,0.03) 0%, transparent 70%);
+}
+.wf-logo { font-family: 'Cormorant Garamond', serif; font-size: 11px; letter-spacing: 8px; text-transform: uppercase; color: var(--gold); margin-bottom: 64px; }
+.headline { font-family: 'Cormorant Garamond', serif; font-size: clamp(48px, 8vw, 88px); font-weight: 300; line-height: 1.0; color: var(--text); margin-bottom: 20px; }
+.headline em { font-style: italic; color: var(--gold); }
+.subline { font-size: 13px; font-weight: 300; color: var(--text-dim); letter-spacing: 1.5px; margin-bottom: 56px; text-transform: uppercase; }
+.input-wrap { display: flex; gap: 10px; width: 100%; max-width: 600px; position: relative; }
+.input-wrap input { flex: 1; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 6px; padding: 16px 20px; color: var(--text); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 300; outline: none; transition: border-color 0.3s; }
+.input-wrap input::placeholder { color: #2a2620; font-style: italic; }
+.input-wrap input:focus { border-color: rgba(184,168,130,0.3); }
+.status-line { margin-top: 20px; font-size: 12px; color: var(--text-dim); letter-spacing: 1px; min-height: 18px; }
+.change-key { margin-top: 40px; font-size: 11px; color: #2a2620; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; }
+.change-key:hover { color: var(--text-dim); }
 
-#board { display: none; padding: 80px 40px; max-width: 1400px; margin: 0 auto; }
-.board-header { text-align: center; margin-bottom: 60px; }
-.board-label { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 4px; text-transform: uppercase; color: #b8a882; margin-bottom: 12px; }
-.board-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 4vw, 48px); font-weight: 300; color: #f0ece4; }
+/* ── BOARD ── */
+#board { display: none; padding: 100px 48px 80px; max-width: 1440px; margin: 0 auto; }
 
-.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+.board-eyebrow { text-align: center; font-size: 11px; letter-spacing: 5px; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 16px; }
+.board-headline { text-align: center; font-family: 'Cormorant Garamond', serif; font-size: clamp(24px, 3.5vw, 44px); font-weight: 300; color: var(--text); margin-bottom: 72px; font-style: italic; }
 
-.card { background: #111111; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; overflow: hidden; opacity: 0; animation: cardIn 0.6s ease forwards; transition: border-color 0.3s, transform 0.3s; }
-.card:hover { border-color: rgba(184,168,130,0.25); transform: translateY(-4px); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
 
-.card-img { width: 100%; height: 200px; object-fit: cover; display: block; background: #1a1a1a; }
+/* ── CARD ── */
+.card {
+  border-radius: 14px; overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  opacity: 0; animation: riseIn 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), border-color 0.3s, box-shadow 0.35s;
+  cursor: default;
+}
+.card:hover { transform: translateY(-6px); border-color: rgba(184,168,130,0.2); box-shadow: 0 24px 48px rgba(0,0,0,0.4); }
 
-.card-body { padding: 20px 24px 24px; }
+/* Gradient visual area */
+.card-canvas {
+  height: 180px; position: relative; overflow: hidden;
+}
+.card-canvas-inner {
+  position: absolute; inset: 0;
+  transition: transform 0.6s cubic-bezier(0.22,1,0.36,1);
+}
+.card:hover .card-canvas-inner { transform: scale(1.04); }
 
-.card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+/* Noise texture overlay */
+.card-canvas::after {
+  content: ''; position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  opacity: 0.4; mix-blend-mode: overlay; pointer-events: none;
+}
 
-.card-name { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: #f0ece4; line-height: 1.2; flex: 1; padding-right: 12px; }
+/* Card number */
+.card-num {
+  position: absolute; top: 18px; left: 22px; z-index: 2;
+  font-family: 'Cormorant Garamond', serif; font-size: 13px; font-weight: 300;
+  color: rgba(255,255,255,0.35); letter-spacing: 2px;
+}
 
-/* COLOR SWATCHES */
-.swatches { display: flex; gap: 6px; align-items: center; flex-shrink: 0; margin-top: 4px; }
-.swatch { width: 18px; height: 18px; border-radius: 5px; cursor: pointer; position: relative; transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.1); }
-.swatch:hover { transform: scale(1.3); }
-.swatch:hover::after { content: attr(data-hex); position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: #f0ece4; font-size: 10px; letter-spacing: 1px; padding: 4px 8px; border-radius: 4px; white-space: nowrap; border: 1px solid rgba(255,255,255,0.1); font-family: 'DM Sans', sans-serif; pointer-events: none; }
+/* Card body */
+.card-body { padding: 22px 24px 24px; }
 
-.card-insight { font-size: 13px; font-weight: 300; color: #7a7060; line-height: 1.8; margin-bottom: 16px; }
+.card-name {
+  font-family: 'Cormorant Garamond', serif; font-size: 21px; font-weight: 600;
+  color: var(--text); line-height: 1.15; margin-bottom: 10px;
+}
 
-.card-tag { font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: #4a4640; }
+.card-insight {
+  font-size: 12.5px; font-weight: 300; color: var(--text-mid);
+  line-height: 1.75; margin-bottom: 18px;
+}
 
-.new-btn { display: block; margin: 60px auto 0; background: transparent; border: 1px solid rgba(184,168,130,0.3); color: #b8a882; padding: 14px 32px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; border-radius: 4px; }
-.new-btn:hover { background: rgba(184,168,130,0.08); }
+/* Footer row: tag + swatches */
+.card-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 
-@keyframes cardIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+.card-tag {
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-dim); flex: 1; min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.swatches { display: flex; gap: 5px; flex-shrink: 0; }
+
+.swatch {
+  width: 16px; height: 16px; border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.12);
+  position: relative; cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.swatch:hover { transform: scale(1.4); box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 10; }
+.swatch:hover::after {
+  content: attr(data-hex);
+  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: #1a1a1a; color: var(--text); font-size: 10px;
+  padding: 3px 7px; border-radius: 4px; white-space: nowrap;
+  border: 1px solid rgba(255,255,255,0.1); font-family: 'DM Sans', sans-serif;
+  pointer-events: none; letter-spacing: 0.5px;
+}
+
+/* New brief button */
+.new-brief-btn {
+  display: block; margin: 64px auto 0;
+  background: transparent; border: 1px solid rgba(184,168,130,0.2);
+  color: var(--gold-dim); padding: 13px 32px;
+  font-family: 'DM Sans', sans-serif; font-size: 11px;
+  font-weight: 500; letter-spacing: 2.5px; text-transform: uppercase;
+  cursor: pointer; border-radius: 6px; transition: all 0.25s;
+}
+.new-brief-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(184,168,130,0.05); }
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 </style>
 </head>
 <body>
 
+<!-- SETUP -->
 <div id="setup">
-  <div class="logo">Worldforge</div>
+  <div class="wf-logo">Worldforge</div>
   <h2>Connect your Groq API Key</h2>
-  <p>One-time setup. Your key will be saved in your browser.</p>
-  <input type="password" id="setup-key" placeholder="Paste your Groq API key (gsk_...)" />
-  <button onclick="saveKey()">Save & Enter Worldforge</button>
+  <p>One-time setup — saved securely in your browser.</p>
+  <input type="password" id="setup-key" placeholder="gsk_..." />
+  <button class="btn-primary" onclick="saveKey()">Enter Worldforge</button>
 </div>
 
-<div class="hero" id="hero">
-  <div class="logo">Worldforge</div>
-  <h1 class="headline">One brief.<br>One world.</h1>
-  <p class="subline">Type a creative brief. Get an immersive world.</p>
-  <div class="brief-row">
-    <input type="text" id="brief" placeholder="Japanese matcha brand, premium and calm..." />
-    <button id="btn" onclick="generate()">Generate</button>
+<!-- HERO -->
+<div id="hero">
+  <div class="wf-logo">Worldforge</div>
+  <h1 class="headline">One brief.<br><em>One world.</em></h1>
+  <p class="subline">Creative intelligence for every brief</p>
+  <div class="input-wrap">
+    <input type="text" id="brief" placeholder="Japanese matcha brand, premium and calm…" />
+    <button class="btn-primary" id="gen-btn" onclick="generate()">Generate</button>
   </div>
-  <p class="status" id="status"></p>
-  <p class="reset-key" onclick="resetKey()">Change API key</p>
+  <p class="status-line" id="status"></p>
+  <p class="change-key" onclick="resetKey()">Change API key</p>
 </div>
 
+<!-- BOARD -->
 <div id="board">
-  <div class="board-header">
-    <div class="board-label">Creative World for</div>
-    <div class="board-title" id="board-title"></div>
-  </div>
-  <div class="cards-grid" id="grid"></div>
-  <button class="new-btn" onclick="newBrief()">← New Brief</button>
+  <p class="board-eyebrow">Creative World for</p>
+  <h2 class="board-headline" id="board-title"></h2>
+  <div class="grid" id="grid"></div>
+  <button class="new-brief-btn" onclick="newBrief()">← New Brief</button>
 </div>
 
 <script>
-var SYSTEM_PROMPT = "You are a creative intelligence engine for Worldforge. Given a one-line creative brief, identify exactly 8 emotionally and culturally significant elements. For each element return: element_name (2-4 evocative words), emotional_significance (3-5 words describing core emotion), insight_line (one powerful sentence about cultural or emotional significance), color_palette (array of exactly 3 hex color codes representing the emotional mood - be bold, specific, and varied. Example: ['#2C4A2E', '#8B6914', '#1C2B3A']). Think like a world-class creative director. Find rituals, tensions, textures, specific moments - not generic objects. Return ONLY a valid JSON array. No markdown. No code blocks. No explanation. Raw JSON array only.";
+var SYSTEM_PROMPT = "You are the creative intelligence engine for Worldforge — a tool that aligns creative teams around a shared world. Given a one-line brief, identify exactly 8 emotionally and culturally significant elements. For each element return EXACTLY these fields as a JSON object: element_name (2-4 bold evocative words — avoid generic nouns), emotional_significance (3-6 words capturing the core emotion), insight_line (one precise, poetic sentence about why this element matters culturally or emotionally — make it feel like a creative director wrote it), color_palette (an array of EXACTLY 3 hex color codes that embody the mood and feeling of this element — be bold, specific, and intentional. Example for 'golden savannah at dusk': ['#C17A2A', '#8B3A1A', '#1A1208']). Think like the best creative director in the world. Find the ritual, the tension, the texture — not the obvious. Return ONLY a raw JSON array. Zero markdown. Zero explanation. Zero code fences.";
 
 window.onload = function() {
-  var saved = localStorage.getItem('wf_api_key');
-  if (saved) {
+  if (localStorage.getItem('wf_key')) {
     document.getElementById('setup').style.display = 'none';
     document.getElementById('hero').style.display = 'flex';
   }
 };
 
 function saveKey() {
-  var key = document.getElementById('setup-key').value.trim();
-  if (!key) { alert('Please enter your Groq API key.'); return; }
-  localStorage.setItem('wf_api_key', key);
+  var k = document.getElementById('setup-key').value.trim();
+  if (!k) return;
+  localStorage.setItem('wf_key', k);
   document.getElementById('setup').style.display = 'none';
   document.getElementById('hero').style.display = 'flex';
 }
 
 function resetKey() {
-  localStorage.removeItem('wf_api_key');
+  localStorage.removeItem('wf_key');
   document.getElementById('hero').style.display = 'none';
   document.getElementById('board').style.display = 'none';
   document.getElementById('setup').style.display = 'flex';
 }
 
 async function generate() {
-  var apiKey = localStorage.getItem('wf_api_key');
+  var key = localStorage.getItem('wf_key');
   var brief = document.getElementById('brief').value.trim();
+  var btn = document.getElementById('gen-btn');
   var status = document.getElementById('status');
-  var btn = document.getElementById('btn');
+  if (!brief) { status.textContent = 'Please enter a brief.'; return; }
 
-  if (!brief) { status.textContent = 'Please enter a creative brief.'; return; }
-
-  btn.disabled = true;
-  btn.textContent = 'Generating...';
-  status.textContent = 'Building your world...';
+  btn.disabled = true; btn.textContent = 'Generating…';
+  status.textContent = 'Building your world…';
 
   try {
     var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        max_tokens: 3000,
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: 'Brief: ' + brief }
-        ]
+        model: 'llama-3.3-70b-versatile', max_tokens: 3000,
+        messages: [{ role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: brief }]
       })
     });
-
     var data = await res.json();
-    var raw = data.choices[0].message.content;
-    raw = raw.replace(/```json/g, '').replace(/```/g, '').trim();
-    var parsed = JSON.parse(raw);
-    var elements = Array.isArray(parsed) ? parsed : (parsed.elements || []);
-    renderBoard(brief, elements);
-
+    var raw = data.choices[0].message.content.replace(/```json/g,'').replace(/```/g,'').trim();
+    var els = JSON.parse(raw);
+    if (!Array.isArray(els)) els = els.elements || [];
+    renderBoard(brief, els);
   } catch(e) {
     status.textContent = 'Something went wrong. Try again.';
-    btn.disabled = false;
-    btn.textContent = 'Generate';
+    btn.disabled = false; btn.textContent = 'Generate';
   }
 }
 
@@ -173,26 +254,33 @@ function renderBoard(brief, elements) {
   grid.innerHTML = '';
 
   elements.forEach(function(el, i) {
-    var imgUrl = 'https://image.pollinations.ai/prompt/' + encodeURIComponent(el.element_name + ' ' + brief) + '?width=600&height=400&nologo=true&seed=' + Math.floor(Math.random() * 9999);
-    var fallback = 'https://picsum.photos/seed/' + (i * 13 + 7) + '/600/400';
-    var colors = (el.color_palette && el.color_palette.length >= 3) ? el.color_palette : ['#2C3E50', '#8B6914', '#2C4A2E'];
+    var colors = (el.color_palette && el.color_palette.length >= 3)
+      ? el.color_palette
+      : ['#1a2a3a', '#2a1a3a', '#3a2a1a'];
 
-    var swatchesHtml = colors.map(function(c) {
-      return '<div class="swatch" style="background:' + c + ';" data-hex="' + c + '" title="' + c + '"></div>';
+    var c1 = colors[0], c2 = colors[1], c3 = colors[2];
+    var gradient = 'linear-gradient(135deg, ' + c1 + ' 0%, ' + c2 + ' 55%, ' + c3 + ' 100%)';
+
+    var swatches = colors.map(function(c) {
+      return '<div class="swatch" style="background:' + c + '" data-hex="' + c + '"></div>';
     }).join('');
 
     var card = document.createElement('div');
     card.className = 'card';
-    card.style.animationDelay = (i * 0.08) + 's';
+    card.style.animationDelay = (i * 0.07) + 's';
 
-    card.innerHTML = '<img class="card-img" src="' + imgUrl + '" onerror="this.onerror=null;this.src=\'' + fallback + '\'">'
-      + '<div class="card-body">'
-      + '<div class="card-top">'
-      + '<div class="card-name">' + (el.element_name || '') + '</div>'
-      + '<div class="swatches">' + swatchesHtml + '</div>'
+    card.innerHTML =
+      '<div class="card-canvas">'
+      + '<div class="card-canvas-inner" style="background:' + gradient + ';width:100%;height:100%;"></div>'
+      + '<span class="card-num">0' + (i+1) + '</span>'
       + '</div>'
+      + '<div class="card-body">'
+      + '<div class="card-name">' + (el.element_name || '') + '</div>'
       + '<div class="card-insight">' + (el.insight_line || '') + '</div>'
+      + '<div class="card-footer">'
       + '<div class="card-tag">' + (el.emotional_significance || '') + '</div>'
+      + '<div class="swatches">' + swatches + '</div>'
+      + '</div>'
       + '</div>';
 
     grid.appendChild(card);
@@ -200,17 +288,19 @@ function renderBoard(brief, elements) {
 }
 
 function newBrief() {
-  document.getElementById('hero').style.display = 'flex';
   document.getElementById('board').style.display = 'none';
+  document.getElementById('hero').style.display = 'flex';
   document.getElementById('brief').value = '';
-  document.getElementById('btn').disabled = false;
-  document.getElementById('btn').textContent = 'Generate';
+  document.getElementById('gen-btn').disabled = false;
+  document.getElementById('gen-btn').textContent = 'Generate';
   document.getElementById('status').textContent = '';
 }
 
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && document.getElementById('hero').style.display === 'flex') generate();
-  if (e.key === 'Enter' && document.getElementById('setup').style.display !== 'none') saveKey();
+  if (e.key === 'Enter') {
+    if (document.getElementById('hero').style.display === 'flex') generate();
+    if (document.getElementById('setup').style.display !== 'none') saveKey();
+  }
 });
 </script>
 </body>
