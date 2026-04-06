@@ -1,1 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worldforge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0a0a0a; color: #f0ece4; font-family: 'DM Sans', sans-serif; min-height: 100vh; }
 
+#setup { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 40px 20px; text-align: center; }
+#setup .logo { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 6px; text-transform: uppercase; color: #b8a882; margin-bottom: 40px; }
+#setup h2 { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300; margin-bottom: 12px; }
+#setup p { font-size: 13px; color: #7a7060; margin-bottom: 32px; }
+#setup input { width: 100%; max-width: 500px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 16px 20px; color: #f0ece4; font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none; margin-bottom: 12px; }
+#setup input:focus { border-color: rgba(184,168,130,0.4); }
+#setup button { background: #b8a882; border: none; border-radius: 4px; padding: 16px 40px; color: #0a0a0a; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; }
+#setup button:hover { background: #cfc0a0; }
+
+.hero { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 40px 20px; text-align: center; }
+.logo { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 6px; text-transform: uppercase; color: #b8a882; margin-bottom: 60px; }
+.headline { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 6vw, 72px); font-weight: 300; line-height: 1.1; margin-bottom: 16px; }
+.subline { font-size: 14px; font-weight: 300; color: #7a7060; letter-spacing: 1px; margin-bottom: 52px; }
+.brief-row { display: flex; gap: 12px; width: 100%; max-width: 640px; }
+.brief-row input { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 16px 20px; color: #f0ece4; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 300; outline: none; transition: border-color 0.3s; }
+.brief-row input::placeholder { color: #4a4640; }
+.brief-row input:focus { border-color: rgba(184,168,130,0.4); }
+.brief-row button { background: #b8a882; border: none; border-radius: 4px; padding: 16px 28px; color: #0a0a0a; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; white-space: nowrap; }
+.brief-row button:hover { background: #cfc0a0; }
+.brief-row button:disabled { background: #3a3530; color: #6a6560; cursor: not-allowed; }
+.status { margin-top: 24px; font-size: 13px; color: #7a7060; letter-spacing: 1px; min-height: 20px; }
+.reset-key { margin-top: 16px; font-size: 11px; color: #3a3530; cursor: pointer; letter-spacing: 1px; }
+.reset-key:hover { color: #7a7060; }
+
+#board { display: none; padding: 80px 40px; max-width: 1400px; margin: 0 auto; }
+.board-header { text-align: center; margin-bottom: 60px; }
+.board-label { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 4px; text-transform: uppercase; color: #b8a882; margin-bottom: 12px; }
+.board-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 4vw, 48px); font-weight: 300; color: #f0ece4; }
+
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+
+.card { background: #111111; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; overflow: hidden; opacity: 0; animation: cardIn 0.6s ease forwards; transition: border-color 0.3s, transform 0.3s; }
+.card:hover { border-color: rgba(184,168,130,0.25); transform: translateY(-4px); }
+
+.card-img { width: 100%; height: 200px; object-fit: cover; display: block; background: #1a1a1a; }
+
+.card-body { padding: 20px 24px 24px; }
+
+.card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+
+.card-name { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: #f0ece4; line-height: 1.2; flex: 1; padding-right: 12px; }
+
+/* COLOR SWATCHES */
+.swatches { display: flex; gap: 6px; align-items: center; flex-shrink: 0; margin-top: 4px; }
+.swatch { width: 18px; height: 18px; border-radius: 5px; cursor: pointer; position: relative; transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.1); }
+.swatch:hover { transform: scale(1.3); }
+.swatch:hover::after { content: attr(data-hex); position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: #f0ece4; font-size: 10px; letter-spacing: 1px; padding: 4px 8px; border-radius: 4px; white-space: nowrap; border: 1px solid rgba(255,255,255,0.1); font-family: 'DM Sans', sans-serif; pointer-events: none; }
+
+.card-insight { font-size: 13px; font-weight: 300; color: #7a7060; line-height: 1.8; margin-bottom: 16px; }
+
+.card-tag { font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: #4a4640; }
+
+.new-btn { display: block; margin: 60px auto 0; background: transparent; border: 1px solid rgba(184,168,130,0.3); color: #b8a882; padding: 14px 32px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; border-radius: 4px; }
+.new-btn:hover { background: rgba(184,168,130,0.08); }
+
+@keyframes cardIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div id="setup">
+  <div class="logo">Worldforge</div>
+  <h2>Connect your Groq API Key</h2>
+  <p>One-time setup. Your key will be saved in your browser.</p>
+  <input type="password" id="setup-key" placeholder="Paste your Groq API key (gsk_...)" />
+  <button onclick="saveKey()">Save & Enter Worldforge</button>
+</div>
+
+<div class="hero" id="hero">
+  <div class="logo">Worldforge</div>
+  <h1 class="headline">One brief.<br>One world.</h1>
+  <p class="subline">Type a creative brief. Get an immersive world.</p>
+  <div class="brief-row">
+    <input type="text" id="brief" placeholder="Japanese matcha brand, premium and calm..." />
+    <button id="btn" onclick="generate()">Generate</button>
+  </div>
+  <p class="status" id="status"></p>
+  <p class="reset-key" onclick="resetKey()">Change API key</p>
+</div>
+
+<div id="board">
+  <div class="board-header">
+    <div class="board-label">Creative World for</div>
+    <div class="board-title" id="board-title"></div>
+  </div>
+  <div class="cards-grid" id="grid"></div>
+  <button class="new-btn" onclick="newBrief()">← New Brief</button>
+</div>
+
+<script>
+var SYSTEM_PROMPT = "You are a creative intelligence engine for Worldforge. Given a one-line creative brief, identify exactly 8 emotionally and culturally significant elements. For each element return: element_name (2-4 evocative words), emotional_significance (3-5 words describing core emotion), insight_line (one powerful sentence about cultural or emotional significance), color_palette (array of exactly 3 hex color codes representing the emotional mood - be bold, specific, and varied. Example: ['#2C4A2E', '#8B6914', '#1C2B3A']). Think like a world-class creative director. Find rituals, tensions, textures, specific moments - not generic objects. Return ONLY a valid JSON array. No markdown. No code blocks. No explanation. Raw JSON array only.";
+
+window.onload = function() {
+  var saved = localStorage.getItem('wf_api_key');
+  if (saved) {
+    document.getElementById('setup').style.display = 'none';
+    document.getElementById('hero').style.display = 'flex';
+  }
+};
+
+function saveKey() {
+  var key = document.getElementById('setup-key').value.trim();
+  if (!key) { alert('Please enter your Groq API key.'); return; }
+  localStorage.setItem('wf_api_key', key);
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('hero').style.display = 'flex';
+}
+
+function resetKey() {
+  localStorage.removeItem('wf_api_key');
+  document.getElementById('hero').style.display = 'none';
+  document.getElementById('board').style.display = 'none';
+  document.getElementById('setup').style.display = 'flex';
+}
+
+async function generate() {
+  var apiKey = localStorage.getItem('wf_api_key');
+  var brief = document.getElementById('brief').value.trim();
+  var status = document.getElementById('status');
+  var btn = document.getElementById('btn');
+
+  if (!brief) { status.textContent = 'Please enter a creative brief.'; return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Generating...';
+  status.textContent = 'Building your world...';
+
+  try {
+    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        max_tokens: 3000,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: 'Brief: ' + brief }
+        ]
+      })
+    });
+
+    var data = await res.json();
+    var raw = data.choices[0].message.content;
+    raw = raw.replace(/```json/g, '').replace(/```/g, '').trim();
+    var parsed = JSON.parse(raw);
+    var elements = Array.isArray(parsed) ? parsed : (parsed.elements || []);
+    renderBoard(brief, elements);
+
+  } catch(e) {
+    status.textContent = 'Something went wrong. Try again.';
+    btn.disabled = false;
+    btn.textContent = 'Generate';
+  }
+}
+
+function renderBoard(brief, elements) {
+  document.getElementById('hero').style.display = 'none';
+  document.getElementById('board').style.display = 'block';
+  document.getElementById('board-title').textContent = brief;
+
+  var grid = document.getElementById('grid');
+  grid.innerHTML = '';
+
+  elements.forEach(function(el, i) {
+    var imgUrl = 'https://image.pollinations.ai/prompt/' + encodeURIComponent(el.element_name + ' ' + brief) + '?width=600&height=400&nologo=true&seed=' + Math.floor(Math.random() * 9999);
+    var fallback = 'https://picsum.photos/seed/' + (i * 13 + 7) + '/600/400';
+    var colors = (el.color_palette && el.color_palette.length >= 3) ? el.color_palette : ['#2C3E50', '#8B6914', '#2C4A2E'];
+
+    var swatchesHtml = colors.map(function(c) {
+      return '<div class="swatch" style="background:' + c + ';" data-hex="' + c + '" title="' + c + '"></div>';
+    }).join('');
+
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.style.animationDelay = (i * 0.08) + 's';
+
+    card.innerHTML = '<img class="card-img" src="' + imgUrl + '" onerror="this.onerror=null;this.src=\'' + fallback + '\'">'
+      + '<div class="card-body">'
+      + '<div class="card-top">'
+      + '<div class="card-name">' + (el.element_name || '') + '</div>'
+      + '<div class="swatches">' + swatchesHtml + '</div>'
+      + '</div>'
+      + '<div class="card-insight">' + (el.insight_line || '') + '</div>'
+      + '<div class="card-tag">' + (el.emotional_significance || '') + '</div>'
+      + '</div>';
+
+    grid.appendChild(card);
+  });
+}
+
+function newBrief() {
+  document.getElementById('hero').style.display = 'flex';
+  document.getElementById('board').style.display = 'none';
+  document.getElementById('brief').value = '';
+  document.getElementById('btn').disabled = false;
+  document.getElementById('btn').textContent = 'Generate';
+  document.getElementById('status').textContent = '';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.getElementById('hero').style.display === 'flex') generate();
+  if (e.key === 'Enter' && document.getElementById('setup').style.display !== 'none') saveKey();
+});
+</script>
+</body>
+</html>
