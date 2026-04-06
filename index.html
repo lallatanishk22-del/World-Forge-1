@@ -194,7 +194,7 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
 var SYSTEM_PROMPT = "You are the creative intelligence engine for Worldforge — a tool that aligns creative teams around a shared world. Given a one-line brief, identify exactly 8 emotionally and culturally significant elements. For each element return EXACTLY these fields as a JSON object: element_name (2-4 bold evocative words — avoid generic nouns), emotional_significance (3-6 words capturing the core emotion), insight_line (one precise, poetic sentence about why this element matters culturally or emotionally — make it feel like a creative director wrote it), color_palette (an array of EXACTLY 3 hex color codes that embody the mood and feeling of this element — be bold, specific, and intentional. Example for 'golden savannah at dusk': ['#C17A2A', '#8B3A1A', '#1A1208']). Think like the best creative director in the world. Find the ritual, the tension, the texture — not the obvious. Return ONLY a raw JSON array. Zero markdown. Zero explanation. Zero code fences.";
 
 window.onload = function() {
-  if (localStorage.getItem('wf_key')) {
+  if (localStorage.getItem('wf_api_key')) {
     document.getElementById('setup').style.display = 'none';
     document.getElementById('hero').style.display = 'flex';
   }
@@ -203,20 +203,20 @@ window.onload = function() {
 function saveKey() {
   var k = document.getElementById('setup-key').value.trim();
   if (!k) return;
-  localStorage.setItem('wf_key', k);
+  localStorage.setItem('wf_api_key', k);
   document.getElementById('setup').style.display = 'none';
   document.getElementById('hero').style.display = 'flex';
 }
 
 function resetKey() {
-  localStorage.removeItem('wf_key');
+  localStorage.removeItem('wf_api_key');
   document.getElementById('hero').style.display = 'none';
   document.getElementById('board').style.display = 'none';
   document.getElementById('setup').style.display = 'flex';
 }
 
 async function generate() {
-  var key = localStorage.getItem('wf_key');
+  var key = localStorage.getItem('wf_api_key');
   var brief = document.getElementById('brief').value.trim();
   var btn = document.getElementById('gen-btn');
   var status = document.getElementById('status');
