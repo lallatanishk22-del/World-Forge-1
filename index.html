@@ -65,15 +65,10 @@
     /* OUTPUT */
     .output { display: none; padding-bottom: 80px; }
 
-    /* TOP — 3 things only */
-    .top-strip { max-width: 1400px; margin: 0 auto; padding: 48px 24px 40px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; }
-    @media(max-width:700px) { .top-strip { grid-template-columns: 1fr; } }
-
-    .top-block { background: var(--surface); border: 1px solid var(--border); padding: 24px 26px; }
-    .top-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 10px; }
-    .top-value { font-family: 'Cormorant Garamond', serif; font-size: 18px; line-height: 1.5; color: var(--text); }
-    .top-value.feeling { font-size: 26px; font-style: italic; font-weight: 300; color: #fff; }
-    .top-value.action { font-size: 17px; color: var(--accent); }
+    /* TOP — cinematic, no boxes */
+    .top-cinematic { max-width: 900px; margin: 0 auto; padding: 72px 32px 56px; }
+    .top-feeling { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 5vw, 56px); font-weight: 300; font-style: italic; color: #fff; line-height: 1.2; margin-bottom: 20px; }
+    .top-action { font-family: 'Syne', sans-serif; font-size: 13px; letter-spacing: 1px; color: var(--text-muted); line-height: 1.6; max-width: 600px; }
 
     /* GRID */
     .grid-section { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
@@ -193,20 +188,10 @@
   <!-- OUTPUT -->
   <div class="output" id="output">
 
-    <!-- TOP: 3 THINGS ONLY -->
-    <div class="top-strip">
-      <div class="top-block">
-        <div class="top-label">🎯 Core Feeling</div>
-        <div class="top-value feeling" id="coreFeeling"></div>
-      </div>
-      <div class="top-block">
-        <div class="top-label">🧠 Insight</div>
-        <div class="top-value" id="humanInsight"></div>
-      </div>
-      <div class="top-block">
-        <div class="top-label">🚀 First Action</div>
-        <div class="top-value action" id="firstStep"></div>
-      </div>
+    <!-- TOP: CINEMATIC — 1 emotional line + 1 action line -->
+    <div class="top-cinematic">
+      <div class="top-feeling" id="coreFeeling"></div>
+      <div class="top-action" id="firstStep"></div>
     </div>
 
     <!-- MIDDLE: IMAGE GRID -->
@@ -338,9 +323,8 @@ RULES:
         worldData = w;
         setStatus('Curating visuals…');
 
-        // TOP 3
-        document.getElementById('coreFeeling').textContent = w.core_feeling || '';
-        document.getElementById('humanInsight').textContent = w.human_insight || '';
+        // CINEMATIC TOP
+        document.getElementById('coreFeeling').textContent = w.human_insight || w.core_feeling || '';
         document.getElementById('firstStep').textContent = w.first_step || '';
 
         // PALETTE
