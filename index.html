@@ -258,6 +258,10 @@
         </div>
       </div>
       <div class="avoid-block">
+        <span class="avoid-label">🚀 First Step</span>
+        <div class="avoid-value" id="vFirstStep" style="color:var(--accent);"></div>
+      </div>
+      <div class="avoid-block">
         <span class="avoid-label">🚫 Avoid</span>
         <div class="avoid-value" id="vAvoid"></div>
       </div>
@@ -294,6 +298,10 @@
         </div>
       </div>
       <div class="avoid-block">
+        <span class="avoid-label">🚀 First Step</span>
+        <div class="avoid-value" id="dFirstStep" style="color:var(--accent);"></div>
+      </div>
+      <div class="avoid-block">
         <span class="avoid-label">🚫 Avoid</span>
         <div class="avoid-value" id="dAvoid"></div>
       </div>
@@ -328,6 +336,10 @@
           <div class="block-label"><span class="block-emoji">📢</span> Example Messaging</div>
           <ul class="bullet-list" id="bExampleMessaging"></ul>
         </div>
+      </div>
+      <div class="avoid-block">
+        <span class="avoid-label">🚀 First Step</span>
+        <div class="avoid-value" id="bFirstStep" style="color:var(--accent);"></div>
       </div>
       <div class="avoid-block">
         <span class="avoid-label">🚫 Avoid</span>
@@ -388,6 +400,7 @@
 
 Your role is NOT to generate moodboards, captions, or aesthetic descriptions.
 You act like a professional creative director giving instructions to their team.
+The output must help the user START immediately.
 
 Given a brief and a selected role, output:
 1. A CORE LAYER (always) — universal creative direction
@@ -397,44 +410,48 @@ Given a brief and a selected role, output:
 STRICT RULES:
 - Never use: "beautiful", "aesthetic", "vibe", "stunning", "amazing", "moody"
 - No long paragraphs. Every line = a decision
-- Replace adjectives with instructions
-- Be specific and concrete
-- Start from meaning, then guide execution
+- Replace adjectives with actions
+- Every line must guide a decision
+- Make output feel like instructions, not description
+- Start from meaning, then guide execution, then give FIRST STEP
 - Unsplash queries must reflect the EXACT mood, time, atmosphere of the brief (3am = night/dark, winter = snow/cold etc.)
 - Elements must be role-specific: Video Editor = motion-focused, Designer = composition-focused, Brand = meaning-focused
 
 Return ONLY valid JSON. No markdown. No preamble:
 {
   "core": {
-    "core_feeling": "Define the dominant emotional experience clearly — 1 line",
+    "core_feeling": "Clear dominant emotional experience — 1 line",
     "human_insight": "Real behavioral truth — non-generic, slightly uncomfortable if needed — 1-2 lines",
-    "color_texture": "Material, lighting, color mood — practical and visual",
-    "sound_direction": "Real-world sound environment — not just music genres"
+    "color_texture": "Lighting, materials, color mood — practical",
+    "sound_direction": "Real-world sound environment — specific"
   },
   "video_editor": {
-    "visual_direction": ["specific shot type + subject behavior", "movement instruction", "third direction"],
-    "suggested_sequence": ["step 1 shot description", "step 2", "step 3", "step 4"],
+    "visual_direction": ["specific shot type + subject behavior", "movement style", "third direction"],
+    "suggested_sequence": ["step 1 — exact shot", "step 2", "step 3", "step 4"],
     "pacing": "Shot duration in seconds + rhythm of cuts",
-    "framing": "Composition rules + subject placement + negative space use",
+    "framing": "Composition rules + subject placement",
     "transitions": "Exact transition style",
-    "audio_treatment": "How to treat sound — ambient vs music, silence use",
+    "audio_treatment": "How to use sound vs silence",
+    "first_step": "Exact first shot to place in timeline",
     "avoid": "Specific things NOT to include — clear and practical"
   },
   "designer": {
-    "layout_system": "Structure — single subject/dense/minimal — with use of space",
-    "hierarchy": "What dominates — image vs text — attention flow",
-    "typography": "Font style behavior — thin/bold/spacing — directly applicable",
-    "grid_system": "Columns, symmetry, spacing rules",
-    "visual_behavior": "How images, colors, elements should behave",
+    "layout_system": "Structure and spacing rules",
+    "hierarchy": "What dominates and how attention flows",
+    "typography": "Font behavior — weight, size, spacing — directly applicable in Figma",
+    "grid_system": "Columns, symmetry, layout rules",
+    "visual_behavior": "How visuals and elements should behave",
+    "first_step": "Exact layout to create first — frame instruction",
     "avoid": "Design mistakes to avoid — specific, Figma-applicable"
   },
   "brand": {
-    "positioning": "What this brand represents — clear strategic angle",
-    "audience_insight": "Why people are drawn to this — deep psychological reason",
-    "messaging_tone": "How the brand speaks — precise tone description",
+    "positioning": "Clear strategic angle",
+    "audience_insight": "Deep psychological reason — non-obvious",
+    "messaging_tone": "Exact tone behavior",
     "brand_perception": "How audience should feel about the brand",
-    "example_messaging": ["line 1", "line 2", "line 3"],
-    "avoid": "Messaging styles that break the positioning"
+    "example_messaging": ["sharp line 1", "sharp line 2", "sharp line 3"],
+    "first_step": "First usable line — headline or message ready to use",
+    "avoid": "Messaging mistakes that break the positioning"
   },
   "color_palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"],
   "elements": [
@@ -508,6 +525,7 @@ Return ONLY valid JSON. No markdown. No preamble:
           document.getElementById('vFraming').textContent = v.framing;
           document.getElementById('vTransitions').textContent = v.transitions;
           document.getElementById('vAudio').textContent = v.audio_treatment;
+          document.getElementById('vFirstStep').textContent = v.first_step;
           document.getElementById('vAvoid').textContent = v.avoid;
           document.getElementById('roleVideo').classList.add('visible');
         } else if (selectedRole === 'designer' && world.designer) {
@@ -517,6 +535,7 @@ Return ONLY valid JSON. No markdown. No preamble:
           document.getElementById('dTypography').textContent = d.typography;
           document.getElementById('dGrid').textContent = d.grid_system;
           document.getElementById('dVisualBehavior').textContent = d.visual_behavior;
+          document.getElementById('dFirstStep').textContent = d.first_step;
           document.getElementById('dAvoid').textContent = d.avoid;
           document.getElementById('roleDesigner').classList.add('visible');
         } else if (selectedRole === 'brand' && world.brand) {
@@ -528,6 +547,7 @@ Return ONLY valid JSON. No markdown. No preamble:
           const bem = document.getElementById('bExampleMessaging');
           bem.innerHTML = '';
           (b.example_messaging || []).forEach(line => { const li = document.createElement('li'); li.textContent = line; bem.appendChild(li); });
+          document.getElementById('bFirstStep').textContent = b.first_step;
           document.getElementById('bAvoid').textContent = b.avoid;
           document.getElementById('roleBrand').classList.add('visible');
         }
@@ -587,8 +607,19 @@ Return ONLY valid JSON. No markdown. No preamble:
     }
 
     function fetchUnsplashImage(query, card, el, usedPhotoIds) {
-      const page = Math.floor(Math.random() * 3) + 1; // random page 1-3 for variety
-      fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=10&page=${page}&orientation=portrait`, {
+      // Force atmosphere keywords based on brief context
+      const brief = document.getElementById('brief').value.toLowerCase();
+      let atmosphereBoost = '';
+      if (brief.includes('3am') || brief.includes('night') || brief.includes('midnight') || brief.includes('dark')) {
+        atmosphereBoost = ' night dark';
+      } else if (brief.includes('morning') || brief.includes('sunrise') || brief.includes('dawn')) {
+        atmosphereBoost = ' morning golden hour';
+      } else if (brief.includes('winter') || brief.includes('snow') || brief.includes('cold')) {
+        atmosphereBoost = ' winter cold';
+      }
+      const finalQuery = query + atmosphereBoost;
+
+      fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(finalQuery)}&per_page=10&orientation=portrait`, {
         headers: { 'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}` }
       })
       .then(r => r.json())
