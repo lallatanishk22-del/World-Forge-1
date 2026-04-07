@@ -506,13 +506,17 @@ Return ONLY valid JSON:
         }
 
         // VISUAL GRID
-        document.getElementById('worldGrid').innerHTML = '';
+        const grid = document.getElementById('worldGrid');
+        grid.innerHTML = '';
         document.getElementById('worldSection').style.display = 'block';
+        
+        const usedPhotoIds = new Set(); // track used photos to avoid duplicates
+        
         for (let i = 0; i < world.elements.length; i++) {
           const el = world.elements[i];
           const card = createCard(el, i + 1);
-          document.getElementById('worldGrid').appendChild(card);
-          fetchUnsplashImage(el.unsplash_query, card, el);
+          grid.appendChild(card);
+          fetchUnsplashImage(el.unsplash_query, card, el, usedPhotoIds);
           setTimeout(() => card.classList.add('visible'), i * 80);
         }
 
@@ -543,14 +547,17 @@ Return ONLY valid JSON:
       return card;
     }
 
-    function fetchUnsplashImage(query, card, el) {
-      fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=5&orientation=portrait`, {
+    function fetchUnsplashImage(query, card, el, usedPhotoIds) {
+      fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=10&orientation=portrait`, {
         headers: { 'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}` }
       })
       .then(r => r.json())
       .then(data => {
         if (data.results && data.results.length > 0) {
-          const photo = data.results[0];
+          // Pick first photo not already used
+          const photo = data.results.find(p => !usedPhotoIds.has(p.id)) || data.results[0];
+          usedPhotoIds.add(photo.id);
+
           const img = document.createElement('img');
           img.className = 'card-image';
           img.src = photo.urls.regular;
