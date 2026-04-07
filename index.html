@@ -65,38 +65,56 @@
     /* OUTPUT */
     .output { display: none; padding-bottom: 80px; }
 
-    /* DIRECTION PANEL — TOP 5 */
-    .direction-panel { max-width: 1200px; margin: 0 auto; padding: 64px 24px 48px; }
+    /* DIRECTION SECTION */
+    .direction-section { max-width: 1400px; margin: 0 auto; padding: 64px 24px 48px; }
 
-    .panel-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 12px; }
-    .panel-brief { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: var(--text-muted); }
-    .panel-role { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; padding: 4px 12px; border-radius: 2px; font-weight: 700; }
-    .panel-role.video { background: rgba(74,158,255,0.1); color: #4a9eff; border: 1px solid rgba(74,158,255,0.2); }
-    .panel-role.designer { background: rgba(167,139,250,0.1); color: #a78bfa; border: 1px solid rgba(167,139,250,0.2); }
-    .panel-role.brand { background: rgba(52,211,153,0.1); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+    /* SECTION HEADER */
+    .dir-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .dir-title { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); }
+    .dir-brief { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: var(--text-muted); }
 
-    /* 5 BLOCKS */
-    .five-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; margin-bottom: 2px; }
-    @media(max-width:900px) { .five-grid { grid-template-columns: 1fr 1fr; } }
-    @media(max-width:500px) { .five-grid { grid-template-columns: 1fr; } }
+    /* CORE ROW — 4 columns */
+    .core-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-bottom: 24px; }
+    @media(max-width:900px) { .core-row { grid-template-columns: repeat(2,1fr); } }
+    @media(max-width:500px) { .core-row { grid-template-columns: 1fr; } }
 
-    .block { background: var(--surface); border: 1px solid var(--border); padding: 28px 24px; }
-    .block.span2 { grid-column: span 2; }
-    @media(max-width:900px) { .block.span2 { grid-column: span 1; } }
+    .dir-block { background: var(--surface); border: 1px solid var(--border); padding: 24px 22px; }
+    .dir-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .dir-value { font-family: 'Cormorant Garamond', serif; font-size: 17px; line-height: 1.6; color: var(--text); }
+    .dir-value.feeling { font-size: 24px; font-style: italic; font-weight: 300; color: #fff; }
 
-    .block-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 12px; }
-    .block-value { font-family: 'Cormorant Garamond', serif; font-size: 17px; line-height: 1.6; color: var(--text); }
-    .block-value.big { font-size: 26px; font-style: italic; font-weight: 300; color: #fff; }
+    /* EXECUTION BLOCK */
+    .exec-wrap { border: 1px solid var(--border); margin-bottom: 24px; }
+    .exec-header { display: flex; align-items: center; gap: 14px; padding: 14px 22px; border-bottom: 1px solid var(--border); }
+    .role-tag { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; padding: 5px 12px; font-weight: 700; border-radius: 2px; }
+    .role-tag.video { background: rgba(74,158,255,0.12); color: #4a9eff; border: 1px solid rgba(74,158,255,0.25); }
+    .role-tag.designer { background: rgba(167,139,250,0.12); color: #a78bfa; border: 1px solid rgba(167,139,250,0.25); }
+    .role-tag.brand { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.25); }
+    .exec-header-label { font-size: 13px; letter-spacing: 1px; color: var(--text-dim); }
 
-    /* FIRST STEP — hero block */
-    .first-step-block { background: var(--accent); padding: 28px 32px; margin-bottom: 2px; }
-    .fs-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: rgba(0,0,0,0.45); margin-bottom: 10px; }
-    .fs-value { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #0a0a0a; line-height: 1.4; }
+    /* EXEC GRID ROW 1 — 4 columns */
+    .exec-row { display: grid; gap: 2px; border-bottom: 1px solid var(--border); }
+    .exec-row.cols4 { grid-template-columns: repeat(4,1fr); }
+    .exec-row.cols2 { grid-template-columns: repeat(2,1fr); }
+    @media(max-width:900px) { .exec-row.cols4, .exec-row.cols2 { grid-template-columns: repeat(2,1fr); } }
+    @media(max-width:500px) { .exec-row.cols4, .exec-row.cols2 { grid-template-columns: 1fr; } }
 
-    /* SEQUENCE */
-    .seq-list { list-style: none; }
-    .seq-list li { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); line-height: 1.7; padding-left: 16px; position: relative; margin-bottom: 4px; }
-    .seq-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 11px; top: 4px; }
+    .exec-block { background: var(--surface); padding: 22px 22px; }
+    .exec-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .exec-value { font-family: 'Cormorant Garamond', serif; font-size: 16px; line-height: 1.7; color: var(--text-dim); }
+    .exec-list { list-style: none; }
+    .exec-list li { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); line-height: 1.7; padding-left: 16px; position: relative; margin-bottom: 3px; }
+    .exec-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 11px; top: 4px; }
+
+    /* AVOID BAR */
+    .avoid-bar { display: flex; align-items: flex-start; gap: 14px; padding: 16px 22px; background: var(--surface); }
+    .avoid-tag-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #c0392b; white-space: nowrap; margin-top: 2px; }
+    .avoid-value { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); line-height: 1.6; }
+
+    /* FIRST STEP */
+    .first-step-bar { background: var(--accent); padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; gap: 16px; }
+    .fs-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: rgba(0,0,0,0.45); white-space: nowrap; }
+    .fs-value { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #0a0a0a; line-height: 1.4; }
 
     /* VISUAL WORLD */
     .visual-section { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
@@ -121,14 +139,13 @@
     .card-label { display: inline-block; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); background: rgba(201,169,110,0.1); border: 1px solid rgba(201,169,110,0.2); padding: 3px 8px; }
     .card-credit { position: absolute; top: 10px; right: 10px; font-size: 9px; color: rgba(255,255,255,0.3); background: rgba(0,0,0,0.55); padding: 3px 7px; text-decoration: none; border-radius: 2px; transition: color 0.2s; }
     .card-credit:hover { color: rgba(255,255,255,0.65); }
-
     .img-skeleton { width: 100%; aspect-ratio: 3/4; background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
     /* PALETTE */
     .palette-row { max-width: 1400px; margin: 32px auto 0; padding: 0 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .palette-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); }
-    .swatch { width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.2s; cursor: default; }
+    .swatch { width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.2s; }
     .swatch:hover { transform: scale(1.2); }
 
     ::-webkit-scrollbar { width: 4px; }
@@ -140,7 +157,6 @@
 
   <button class="settings-btn" onclick="openSettings()">⚙ API Keys</button>
 
-  <!-- SETTINGS -->
   <div class="settings-overlay" id="settingsOverlay" onclick="closeSettingsOnBg(event)">
     <div class="settings-modal">
       <div class="settings-title">API Keys</div>
@@ -185,42 +201,59 @@
   <!-- OUTPUT -->
   <div class="output" id="output">
 
-    <!-- TOP 5 DIRECTION PANEL -->
-    <div class="direction-panel">
-      <div class="panel-header">
-        <div class="panel-brief" id="panelBrief"></div>
-        <div class="panel-role" id="panelRole"></div>
+    <div class="direction-section">
+
+      <!-- CORE DIRECTION -->
+      <div class="dir-header">
+        <span class="dir-title">Core Direction</span>
+        <span class="dir-brief" id="dirBrief"></span>
       </div>
 
-      <!-- BLOCK 1+2: Core Feeling + Human Insight -->
-      <div class="five-grid" style="margin-bottom:2px;">
-        <div class="block">
-          <div class="block-label">🎯 Core Feeling</div>
-          <div class="block-value big" id="coreFeeling"></div>
+      <div class="core-row">
+        <div class="dir-block">
+          <div class="dir-label">🎯 Core Feeling</div>
+          <div class="dir-value feeling" id="coreFeeling"></div>
         </div>
-        <div class="block span2">
-          <div class="block-label">🧠 Human Insight</div>
-          <div class="block-value" id="humanInsight"></div>
+        <div class="dir-block">
+          <div class="dir-label">🧠 Human Insight</div>
+          <div class="dir-value" id="humanInsight"></div>
+        </div>
+        <div class="dir-block">
+          <div class="dir-label">🎨 Color & Texture</div>
+          <div class="dir-value" id="colorTexture"></div>
+        </div>
+        <div class="dir-block">
+          <div class="dir-label">🔊 Sound Direction</div>
+          <div class="dir-value" id="soundDirection"></div>
         </div>
       </div>
 
-      <!-- FIRST STEP HERO -->
-      <div class="first-step-block">
-        <div class="fs-label">🚀 First Step — Start here</div>
-        <div class="fs-value" id="firstStep"></div>
+      <!-- FIRST STEP -->
+      <div class="first-step-bar">
+        <span class="fs-label">🚀 First Step</span>
+        <span class="fs-value" id="firstStep"></span>
       </div>
 
-      <!-- BLOCK 4+5: Visual Direction + Sequence -->
-      <div class="five-grid">
-        <div class="block">
-          <div class="block-label">🎬 Visual Direction</div>
-          <ul class="seq-list" id="visualDirection"></ul>
+      <!-- EXECUTION DIRECTION -->
+      <div class="exec-wrap">
+        <div class="exec-header">
+          <span class="role-tag" id="roleTag"></span>
+          <span class="exec-header-label">Execution Direction</span>
         </div>
-        <div class="block span2">
-          <div class="block-label">🎞️ Sequence</div>
-          <ul class="seq-list" id="sequence"></ul>
+
+        <!-- ROW 1: 4 cols -->
+        <div class="exec-row cols4" id="execRow1"></div>
+
+        <!-- ROW 2: 2 cols -->
+        <div class="exec-row cols2" id="execRow2"></div>
+
+        <!-- AVOID -->
+        <div class="avoid-bar">
+          <span class="avoid-tag-label">🚫 Avoid</span>
+          <span class="avoid-value" id="avoidValue"></span>
         </div>
       </div>
+
     </div>
 
     <!-- VISUAL WORLD -->
@@ -271,31 +304,60 @@ Avoid generic or poetic language.
 
 Return ONLY valid JSON. No markdown. No extra text.
 
+FOR Video Editor:
 {
-  "core_feeling": "1 sharp observable line — not an emotion label",
-  "human_insight": "specific observed behavior — slightly uncomfortable truth — 1-2 lines",
-  "first_step": "subject + duration + camera + environment — immediately actionable",
+  "core_feeling": "1 sharp observable line",
+  "human_insight": "specific observed behavior — slightly uncomfortable — 1-2 lines",
+  "color_texture": "lighting + material + color — specific",
+  "sound_direction": "real-world sounds — name them specifically",
+  "first_step": "subject + duration + camera + environment",
   "visual_direction": ["shot+subject+camera", "shot 2", "shot 3"],
-  "sequence": ["Step 1: subject+action+camera", "Step 2", "Step 3"],
+  "suggested_sequence": ["Step 1: subject+action+camera", "Step 2", "Step 3", "Step 4"],
+  "pacing": "exact seconds per shot + rhythm",
+  "framing": "placement + tight/wide + depth",
+  "transitions": "exact type",
+  "audio_treatment": "dominant sound + music or not",
+  "avoid": "specific things NOT to do — 1 clear line",
   "color_palette": ["#hex1","#hex2","#hex3","#hex4","#hex5"],
-  "elements": [
-    {
-      "element_name": "evocative 2-4 word name — NOT literal",
-      "insight_line": "emotional truth behind this — max 10 words",
-      "direction_label": "2-3 word action",
-      "unsplash_query": "4-6 word photographic query — match brief atmosphere exactly"
-    }
-  ]
+  "elements": [{"element_name":"evocative NOT literal","insight_line":"emotional truth max 10 words","direction_label":"2-3 word action","unsplash_query":"4-6 word photographic query match atmosphere"}]
+}
+
+FOR Designer:
+{
+  "core_feeling": "...", "human_insight": "...", "color_texture": "...", "sound_direction": "...",
+  "first_step": "exact first frame to create",
+  "layout": "structure + spacing",
+  "hierarchy": "what dominates + placement",
+  "typography": "specific Google Font heading + body + weight + spacing",
+  "grid": "columns + symmetry",
+  "visual_behavior": "how images/colors behave",
+  "avoid": "specific design mistakes",
+  "color_palette": ["#hex1","#hex2","#hex3","#hex4","#hex5"],
+  "elements": [{"element_name":"...","insight_line":"...","direction_label":"...","unsplash_query":"..."}]
+}
+
+FOR Brand:
+{
+  "core_feeling": "...", "human_insight": "...", "color_texture": "...", "sound_direction": "...",
+  "first_step": "one usable headline ready now",
+  "positioning": "strategic angle",
+  "audience_insight": "psychological behavior",
+  "tone": "exact tone behavior",
+  "perception": "how audience should feel",
+  "example_messaging": ["line 1", "line 2", "line 3"],
+  "avoid": "messaging mistakes",
+  "color_palette": ["#hex1","#hex2","#hex3","#hex4","#hex5"],
+  "elements": [{"element_name":"...","insight_line":"...","direction_label":"...","unsplash_query":"..."}]
 }
 
 RULES:
 - No: aesthetic, vibe, beautiful, cinematic, energy, mood
-- Observable actions only. Numbers where possible.
-- element_name must be evocative NOT literal (NOT "Laughing Faces", "Colorful Hands", "Rush Hour Crowd")
-- Unsplash queries: 3am=night dark, Holi=colorful powder, rush hour=crowded people, snow=winter cold
-- Video role elements = motion/people/action focused
-- Designer role elements = texture/pattern/surface/close-up details
-- Brand role elements = symbolic objects representing meaning, NOT literal subject`;
+- Observable actions only
+- element_name must be evocative NOT literal
+- Unsplash queries match brief atmosphere exactly
+- Video elements = motion/people/action
+- Designer elements = texture/pattern/close-up/surface
+- Brand elements = symbolic objects NOT literal subject`;
 
     async function generateWorld() {
       const brief = document.getElementById('brief').value.trim();
@@ -318,46 +380,71 @@ RULES:
               { role: 'system', content: SYSTEM_PROMPT },
               { role: 'user', content: `Brief: ${brief}\nRole: ${selectedRole}` }
             ],
-            temperature: 0.85, max_tokens: 2000
+            temperature: 0.85, max_tokens: 2500
           })
         });
         if (!res.ok) { const e = await res.text(); throw new Error(`Groq (${res.status}): ${e}`); }
         const data = await res.json();
-        let world;
-        try { world = JSON.parse(data.choices[0].message.content.replace(/```json|```/g,'').trim()); }
+        let w;
+        try { w = JSON.parse(data.choices[0].message.content.replace(/```json|```/g,'').trim()); }
         catch(e) { throw new Error('Parse failed'); }
 
         setStatus('Curating visuals…');
 
-        // PANEL HEADER
-        document.getElementById('panelBrief').textContent = `"${brief}"`;
-        const roleLabels = { video: 'Video Editor', designer: 'Designer', brand: 'Brand' };
-        const roleEl = document.getElementById('panelRole');
-        roleEl.textContent = roleLabels[selectedRole];
-        roleEl.className = 'panel-role ' + selectedRole;
+        // CORE
+        document.getElementById('dirBrief').textContent = `"${brief}"`;
+        document.getElementById('coreFeeling').textContent = w.core_feeling || '';
+        document.getElementById('humanInsight').textContent = w.human_insight || '';
+        document.getElementById('colorTexture').textContent = w.color_texture || '';
+        document.getElementById('soundDirection').textContent = w.sound_direction || '';
+        document.getElementById('firstStep').textContent = w.first_step || '';
 
-        // TOP 5
-        document.getElementById('coreFeeling').textContent = world.core_feeling || '';
-        document.getElementById('humanInsight').textContent = world.human_insight || '';
-        document.getElementById('firstStep').textContent = world.first_step || '';
+        // ROLE TAG
+        const rt = document.getElementById('roleTag');
+        rt.textContent = { video: 'Video Editor', designer: 'Designer', brand: 'Brand' }[selectedRole];
+        rt.className = 'role-tag ' + selectedRole;
 
-        const vd = document.getElementById('visualDirection');
-        vd.innerHTML = '';
-        (world.visual_direction || []).slice(0,3).forEach(item => {
-          const li = document.createElement('li'); li.textContent = item; vd.appendChild(li);
-        });
+        // EXECUTION ROWS
+        const row1 = document.getElementById('execRow1');
+        const row2 = document.getElementById('execRow2');
+        row1.innerHTML = '';
+        row2.innerHTML = '';
 
-        const seq = document.getElementById('sequence');
-        seq.innerHTML = '';
-        (world.sequence || []).slice(0,3).forEach(item => {
-          const li = document.createElement('li'); li.textContent = item; seq.appendChild(li);
-        });
+        if (selectedRole === 'video') {
+          row1.innerHTML = `
+            ${block('🎬 Visual Direction', list(w.visual_direction))}
+            ${block('🎞️ Suggested Sequence', list(w.suggested_sequence))}
+            ${block('⏱️ Pacing', val(w.pacing))}
+            ${block('📐 Framing', val(w.framing))}`;
+          row2.innerHTML = `
+            ${block('🔁 Transitions', val(w.transitions))}
+            ${block('🔊 Audio Treatment', val(w.audio_treatment))}`;
+        } else if (selectedRole === 'designer') {
+          row1.innerHTML = `
+            ${block('🧩 Layout', val(w.layout))}
+            ${block('📐 Hierarchy', val(w.hierarchy))}
+            ${block('🔤 Typography', val(w.typography))}
+            ${block('📏 Grid', val(w.grid))}`;
+          row2.innerHTML = `
+            ${block('🎨 Visual Behavior', val(w.visual_behavior))}`;
+        } else if (selectedRole === 'brand') {
+          row1.innerHTML = `
+            ${block('💡 Positioning', val(w.positioning))}
+            ${block('🧠 Audience Insight', val(w.audience_insight))}
+            ${block('🗣️ Tone', val(w.tone))}
+            ${block('🎯 Perception', val(w.perception))}`;
+          row2.innerHTML = `
+            ${block('📢 Example Messaging', list(w.example_messaging))}`;
+        }
+
+        // AVOID
+        document.getElementById('avoidValue').textContent = w.avoid || '';
 
         // PALETTE
-        if (world.color_palette) {
+        if (w.color_palette) {
           const sw = document.getElementById('paletteSwatches');
           sw.innerHTML = '';
-          world.color_palette.forEach(hex => {
+          w.color_palette.forEach(hex => {
             const s = document.createElement('div');
             s.className = 'swatch'; s.style.background = hex; s.title = hex;
             sw.appendChild(s);
@@ -370,8 +457,8 @@ RULES:
         grid.innerHTML = '';
         document.getElementById('output').style.display = 'block';
         const usedIds = new Set();
-        for (let i = 0; i < (world.elements || []).length; i++) {
-          const el = world.elements[i];
+        for (let i = 0; i < (w.elements||[]).length; i++) {
+          const el = w.elements[i];
           const card = buildCard(el, i);
           grid.appendChild(card);
           fetchImage(el.unsplash_query, card, el, usedIds, brief);
@@ -388,6 +475,16 @@ RULES:
         errorMsg.style.display = 'block';
       }
       btn.disabled = false;
+    }
+
+    // HELPERS
+    function block(label, content) {
+      return `<div class="exec-block"><div class="exec-label">${label}</div>${content}</div>`;
+    }
+    function val(v) { return `<div class="exec-value">${v||''}</div>`; }
+    function list(arr) {
+      if (!arr || !arr.length) return '';
+      return `<ul class="exec-list">${arr.map(i=>`<li>${i}</li>`).join('')}</ul>`;
     }
 
     function buildCard(el, index) {
