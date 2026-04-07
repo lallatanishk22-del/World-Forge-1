@@ -65,7 +65,7 @@
     /* OUTPUT */
     .output { display: none; padding-bottom: 80px; }
 
-    /* TOP — cinematic, no boxes */
+    /* CINEMATIC TOP — no boxes, no labels */
     .top-cinematic { max-width: 900px; margin: 0 auto; padding: 72px 32px 56px; }
     .top-feeling { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 5vw, 56px); font-weight: 300; font-style: italic; color: #fff; line-height: 1.2; margin-bottom: 20px; }
     .top-action { font-family: 'Syne', sans-serif; font-size: 13px; letter-spacing: 1px; color: var(--text-muted); line-height: 1.6; max-width: 600px; }
@@ -74,7 +74,7 @@
     .grid-section { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
     .grid-head { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 16px; }
     .grid-head::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-    .grid-head-right { font-size: 10px; letter-spacing: 1px; color: var(--text-muted); text-transform: none; font-family: 'Cormorant Garamond', serif; font-style: italic; }
+    .grid-hint { font-size: 11px; color: var(--text-muted); font-family: 'Cormorant Garamond', serif; font-style: italic; text-transform: none; letter-spacing: 0; }
 
     .world-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; }
     @media(max-width:1100px) { .world-grid { grid-template-columns: repeat(3,1fr); } }
@@ -82,27 +82,21 @@
     @media(max-width:480px) { .world-grid { grid-template-columns: 1fr; } }
 
     /* CARD */
-    .card { position: relative; overflow: hidden; cursor: default; opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; background: #111; }
+    .card { position: relative; overflow: hidden; cursor: pointer; opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; background: #111; }
     .card.visible { opacity: 1; transform: translateY(0); }
     .card-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; transition: transform 0.5s ease; }
     .card:hover .card-img { transform: scale(1.05); }
     .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.94) 0%, rgba(0,0,0,0.1) 55%, transparent 100%); pointer-events: none; transition: background 0.3s; }
     .card:hover .card-overlay { background: linear-gradient(to top, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.05) 100%); }
-
     .card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 16px 16px; }
     .card-num { font-size: 10px; letter-spacing: 3px; color: var(--accent); margin-bottom: 4px; font-weight: 600; }
     .card-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #fff; line-height: 1.1; margin-bottom: 6px; }
     .card-insight { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: rgba(255,255,255,0.55); line-height: 1.5; margin-bottom: 8px; }
     .card-label { display: inline-block; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); background: rgba(201,169,110,0.1); border: 1px solid rgba(201,169,110,0.2); padding: 3px 8px; }
-
-    /* HOVER HINT */
     .card-click-hint { position: absolute; top: 12px; left: 12px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.5); background: rgba(0,0,0,0.6); padding: 4px 10px; opacity: 0; transition: opacity 0.3s; border: 1px solid rgba(255,255,255,0.1); }
     .card:hover .card-click-hint { opacity: 1; }
-
-    /* Credit — tiny, compliance only */
-    .card-credit { position: absolute; bottom: 8px; right: 8px; font-size: 8px; color: rgba(255,255,255,0.18); background: transparent; padding: 2px 4px; text-decoration: none; z-index: 5; }
+    .card-credit { position: absolute; bottom: 6px; right: 8px; font-size: 8px; color: rgba(255,255,255,0.18); text-decoration: none; }
     .card-credit:hover { color: rgba(255,255,255,0.35); }
-
     .img-skeleton { width: 100%; aspect-ratio: 3/4; background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
@@ -112,28 +106,24 @@
     .swatch { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.2s; cursor: default; }
     .swatch:hover { transform: scale(1.2); }
 
-    /* REVEAL SECTION */
-    .reveal-section { max-width: 1400px; margin: 24px auto 0; padding: 0 24px; display: none; }
-    .reveal-section.visible { display: block; }
-    .reveal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-    .reveal-name { font-family: 'Cormorant Garamond', serif; font-size: 13px; font-style: italic; color: var(--text-muted); }
-    .reveal-role { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; padding: 4px 10px; font-weight: 700; border-radius: 2px; }
-    .reveal-role.video { background: rgba(74,158,255,0.1); color: #4a9eff; border: 1px solid rgba(74,158,255,0.2); }
-    .reveal-role.designer { background: rgba(167,139,250,0.1); color: #a78bfa; border: 1px solid rgba(167,139,250,0.2); }
-    .reveal-role.brand { background: rgba(52,211,153,0.1); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
-    .r-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; margin-bottom: 2px; }
-    @media(max-width:900px) { .r-grid { grid-template-columns: repeat(2,1fr); } }
-    @media(max-width:500px) { .r-grid { grid-template-columns: 1fr; } }
-    .r-block { background: var(--surface); border: 1px solid var(--border); padding: 22px 22px; }
-    .r-block.half { grid-column: span 2; }
-    .r-block.full { grid-column: span 4; }
-    @media(max-width:900px) { .r-block.half { grid-column: span 1; } .r-block.full { grid-column: span 2; } }
-    @media(max-width:500px) { .r-block.half, .r-block.full { grid-column: span 1; } }
-    .r-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-    .r-value { font-family: 'Cormorant Garamond', serif; font-size: 16px; line-height: 1.7; color: var(--text-dim); }
-    .r-list { list-style: none; }
-    .r-list li { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); line-height: 1.7; padding-left: 16px; position: relative; margin-bottom: 3px; }
-    .r-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 11px; top: 4px; }
+    /* SIDE PANEL */
+    .panel { position: fixed; right: 0; top: 0; bottom: 0; width: 380px; background: #0d0d0d; border-left: 1px solid var(--border); z-index: 400; transform: translateX(100%); transition: transform 0.32s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; overflow: hidden; }
+    .panel.open { transform: translateX(0); }
+    @media(max-width:500px) { .panel { width: 100%; } }
+    .panel-head { padding: 22px 20px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-shrink: 0; }
+    .panel-name { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: #fff; line-height: 1.2; }
+    .panel-x { background: transparent; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; line-height: 1; padding: 0; transition: color 0.2s; }
+    .panel-x:hover { color: var(--text); }
+    .panel-body { flex: 1; overflow-y: auto; padding: 20px; }
+    .p-insight { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-style: italic; color: var(--text); line-height: 1.6; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+    .p-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 2px; }
+    .p-block { background: var(--surface); border: 1px solid var(--border); padding: 16px 18px; }
+    .p-block.full { grid-column: span 2; }
+    .p-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 8px; }
+    .p-value { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-dim); line-height: 1.7; }
+    .p-list { list-style: none; }
+    .p-list li { font-family: 'Cormorant Garamond', serif; font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-left: 14px; position: relative; margin-bottom: 2px; }
+    .p-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 10px; top: 4px; }
 
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
@@ -188,17 +178,18 @@
   <!-- OUTPUT -->
   <div class="output" id="output">
 
-    <!-- TOP: CINEMATIC — 1 emotional line + 1 action line -->
+    <!-- CINEMATIC TOP -->
     <div class="top-cinematic">
-      <div class="top-feeling" id="coreFeeling"></div>
-      <div class="top-action" id="firstStep"></div>
+      <div class="top-feeling" id="topFeeling"></div>
+      <div class="top-action" id="topAction"></div>
     </div>
 
-    <!-- MIDDLE: IMAGE GRID -->
+    <!-- IMAGE GRID -->
     <div class="grid-section">
       <div class="grid-head">
         Visual World
-        <div style="flex:1;height:1px;background:var(--border);"></div>
+        <span class="grid-hint">Click any image to explore the direction</span>
+        <div style="flex:1"></div>
       </div>
       <div class="world-grid" id="worldGrid"></div>
       <div class="palette-row" id="paletteRow" style="display:none">
@@ -207,37 +198,42 @@
       </div>
     </div>
 
-    <!-- REVEAL SECTION — appears below grid on image click -->
-    <div class="reveal-section" id="revealSection">
-      <div class="reveal-header">
-        <span class="reveal-role" id="revealRole"></span>
-        <span class="reveal-name" id="revealName"></span>
-      </div>
-      <div id="revealContent"></div>
-    </div>
+  </div>
 
+  <!-- SIDE PANEL -->
+  <div class="panel" id="sidePanel">
+    <div class="panel-head">
+      <div class="panel-name" id="panelName"></div>
+      <button class="panel-x" onclick="closePanel()">✕</button>
+    </div>
+    <div class="panel-body" id="panelBody"></div>
   </div>
 
   <script>
-    let GROQ_API_KEY = localStorage.getItem('groq_api_key') || '';
-    let UNSPLASH_ACCESS_KEY = localStorage.getItem('unsplash_access_key') || '';
-    let selectedRole = 'video';
-    let worldData = null;
+    var GROQ_API_KEY = localStorage.getItem('groq_api_key') || '';
+    var UNSPLASH_ACCESS_KEY = localStorage.getItem('unsplash_access_key') || '';
+    var selectedRole = 'video';
+    var worldData = null;
 
-    window.addEventListener('load', () => {
+    window.addEventListener('load', function() {
       updateKeyStatuses();
       if (!GROQ_API_KEY || !UNSPLASH_ACCESS_KEY) openSettings();
     });
 
-    function openSettings() { document.getElementById('groqKeyInput').value = GROQ_API_KEY; document.getElementById('unsplashKeyInput').value = UNSPLASH_ACCESS_KEY; document.getElementById('settingsOverlay').classList.add('open'); }
+    function openSettings() {
+      document.getElementById('groqKeyInput').value = GROQ_API_KEY;
+      document.getElementById('unsplashKeyInput').value = UNSPLASH_ACCESS_KEY;
+      document.getElementById('settingsOverlay').classList.add('open');
+    }
     function closeSettings() { document.getElementById('settingsOverlay').classList.remove('open'); }
     function closeSettingsOnBg(e) { if (e.target === document.getElementById('settingsOverlay')) closeSettings(); }
     function saveKeys() {
-      const g = document.getElementById('groqKeyInput').value.trim();
-      const u = document.getElementById('unsplashKeyInput').value.trim();
+      var g = document.getElementById('groqKeyInput').value.trim();
+      var u = document.getElementById('unsplashKeyInput').value.trim();
       if (g) { GROQ_API_KEY = g; localStorage.setItem('groq_api_key', g); }
       if (u) { UNSPLASH_ACCESS_KEY = u; localStorage.setItem('unsplash_access_key', u); }
-      updateKeyStatuses(); closeSettings();
+      updateKeyStatuses();
+      closeSettings();
     }
     function updateKeyStatuses() {
       document.getElementById('groqStatus').className = 'key-status' + (GROQ_API_KEY ? ' set' : '');
@@ -245,156 +241,60 @@
     }
     function selectRole(role) {
       selectedRole = role;
-      document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-      document.querySelector(`[data-role="${role}"]`).classList.add('active');
+      document.querySelectorAll('.role-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelector('[data-role="' + role + '"]').classList.add('active');
     }
-    function closePanel() {
-      document.getElementById('revealSection').classList.remove('visible');
-    }
+    function closePanel() { document.getElementById('sidePanel').classList.remove('open'); }
 
-    function openPanel(el, w) {
-      const rs = document.getElementById('revealSection');
-      const roleLabels = { video: 'Video Editor', designer: 'Designer', brand: 'Brand' };
-      const rr = document.getElementById('revealRole');
-      rr.textContent = roleLabels[selectedRole];
-      rr.className = 'reveal-role ' + selectedRole;
-      document.getElementById('revealName').textContent = `"${el.element_name}" — ${el.insight_line}`;
+    var SYSTEM_PROMPT = 'You are a creative director giving clear, practical direction.\nReturn ONLY valid JSON. No markdown. No extra text.\n\n{\n  "core_feeling": "1 sharp observable line",\n  "human_insight": "specific observed behavior — slightly uncomfortable — 1 line",\n  "first_step": "subject + duration + camera + environment",\n  "visual_direction": ["shot+subject+camera", "shot 2", "shot 3"],\n  "suggested_sequence": ["Step 1: subject+action+camera", "Step 2", "Step 3", "Step 4"],\n  "pacing": "exact seconds + rhythm",\n  "framing": "placement + tight/wide + depth",\n  "transitions": "exact type",\n  "audio_treatment": "dominant sound + music or not",\n  "positioning": "strategic angle",\n  "tone": "exact tone behavior",\n  "example_messaging": ["line 1", "line 2"],\n  "layout": "structure + spacing",\n  "typography": "specific Google Font heading + body + weight",\n  "color_palette": ["#hex1","#hex2","#hex3","#hex4","#hex5"],\n  "elements": [{"element_name":"evocative NOT literal","insight_line":"emotional truth max 10 words","direction_label":"2-3 word action","unsplash_query":"4-6 word photographic query match atmosphere"}]\n}\n\nRULES:\n- No: aesthetic, vibe, beautiful, cinematic, energy, mood\n- Observable actions only\n- element_name evocative NOT literal\n- Unsplash: 3am=night dark, Holi=colorful powder, rush hour=crowded people, snow=winter cold\n- Video elements = motion/people/action\n- Designer elements = texture/pattern/close-up/surface\n- Brand elements = symbolic objects NOT literal subject';
 
-      const block = (label, content, cls='') =>
-        `<div class="r-block ${cls}"><div class="r-label">${label}</div>${content}</div>`;
-      const val = (v) => `<div class="r-value">${v||''}</div>`;
-      const list = (arr) => `<ul class="r-list">${(arr||[]).map(i=>`<li>${i}</li>`).join('')}</ul>`;
-
-      let html = '';
-      if (selectedRole === 'video') {
-        html = `
-          <div class="r-grid">
-            ${block('🎬 Visual Direction', list(w.visual_direction))}
-            ${block('🎞️ Suggested Sequence', list((w.suggested_sequence||[]).slice(0,4)))}
-            ${block('⏱️ Pacing', val(w.pacing))}
-            ${block('📐 Framing', val(w.framing))}
-          </div>
-          <div class="r-grid">
-            ${block('🔁 Transitions', val(w.transitions))}
-            ${block('🔊 Audio Treatment', val(w.audio_treatment))}
-          </div>`;
-      } else if (selectedRole === 'designer') {
-        html = `
-          <div class="r-grid">
-            ${block('🧩 Layout', val(w.layout))}
-            ${block('📐 Hierarchy', val(w.framing))}
-            ${block('🔤 Typography', val(w.typography))}
-            ${block('📏 Grid', val(w.grid))}
-          </div>`;
-      } else if (selectedRole === 'brand') {
-        html = `
-          <div class="r-grid">
-            ${block('💡 Positioning', val(w.positioning))}
-            ${block('🗣️ Tone', val(w.tone))}
-            ${block('📢 Example Messaging', list(w.example_messaging), 'half')}
-          </div>`;
-      }
-
-      document.getElementById('revealContent').innerHTML = html;
-      rs.classList.add('visible');
-      rs.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }function buildCard(el, index, w) {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <div class="img-skeleton skeleton-ph"></div>
-        <div class="card-overlay"></div>
-        <div class="card-body">
-          <div class="card-num">${index+1 < 10 ? '0'+(index+1) : index+1}</div>
-          <div class="card-name">${el.element_name}</div>
-          <div class="card-insight">${el.insight_line}</div>
-          <span class="card-label">${el.direction_label||''}</span>
-        </div>`;
-      return card;
-    }
-
-    function openPanel(el, w) {} = `You are a creative director giving clear, practical direction.
-Return ONLY valid JSON. No markdown. No extra text.
-
-{
-  "core_feeling": "1 sharp observable line — not an emotion label",
-  "human_insight": "specific observed behavior — slightly uncomfortable — 1 line",
-  "first_step": "subject + duration + camera + environment — immediately actionable",
-  "visual_direction": ["shot+subject+camera", "shot 2", "shot 3"],
-  "suggested_sequence": ["Step 1: subject+action+camera", "Step 2", "Step 3", "Step 4"],
-  "pacing": "exact seconds + rhythm",
-  "framing": "placement + tight/wide + depth",
-  "transitions": "exact type",
-  "audio_treatment": "dominant sound + music or not",
-  "positioning": "strategic angle — for brand role",
-  "tone": "exact tone behavior",
-  "example_messaging": ["line 1", "line 2"],
-  "layout": "structure + spacing — for designer role",
-  "typography": "specific Google Font heading + body + weight",
-  "color_palette": ["#hex1","#hex2","#hex3","#hex4","#hex5"],
-  "elements": [
-    {
-      "element_name": "evocative 2-4 word name — NOT literal",
-      "insight_line": "emotional truth — max 10 words",
-      "direction_label": "2-3 word action",
-      "unsplash_query": "4-6 word photographic query — match brief atmosphere exactly"
-    }
-  ]
-}
-
-RULES:
-- No: aesthetic, vibe, beautiful, cinematic, energy, mood
-- Observable actions only. Numbers where possible.
-- element_name evocative NOT literal (NOT "Laughing Faces", "Rush Hour Crowd")
-- Unsplash: 3am=night dark, Holi=colorful powder, rush hour=crowded people, snow=winter cold
-- Video elements = motion/people/action
-- Designer elements = texture/pattern/close-up/surface
-- Brand elements = symbolic objects NOT literal subject`;
-
-    async function generateWorld() {
-      const brief = document.getElementById('brief').value.trim();
+    function generateWorld() {
+      var brief = document.getElementById('brief').value.trim();
       if (!brief) return;
       if (!GROQ_API_KEY || !UNSPLASH_ACCESS_KEY) { openSettings(); return; }
 
-      const btn = document.getElementById('generateBtn');
-      const errorMsg = document.getElementById('errorMsg');
+      var btn = document.getElementById('generateBtn');
+      var errorMsg = document.getElementById('errorMsg');
       btn.disabled = true;
       errorMsg.style.display = 'none';
       closePanel();
       setStatus('Building creative direction…');
 
-      try {
-        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
-          body: JSON.stringify({
-            model: 'llama-3.3-70b-versatile',
-            messages: [
-              { role: 'system', content: SYSTEM_PROMPT },
-              { role: 'user', content: `Brief: ${brief}\nRole: ${selectedRole}` }
-            ],
-            temperature: 0.85, max_tokens: 2000
-          })
-        });
-        if (!res.ok) { const e = await res.text(); throw new Error(`Groq (${res.status}): ${e}`); }
-        const data = await res.json();
-        let w;
-        try { w = JSON.parse(data.choices[0].message.content.replace(/```json|```/g,'').trim()); }
-        catch(e) { throw new Error('Parse failed'); }
+      fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'user', content: 'Brief: ' + brief + '\nRole: ' + selectedRole }
+          ],
+          temperature: 0.85,
+          max_tokens: 2000
+        })
+      })
+      .then(function(res) {
+        if (!res.ok) return res.text().then(function(e) { throw new Error('Groq (' + res.status + '): ' + e); });
+        return res.json();
+      })
+      .then(function(data) {
+        var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
+        var w;
+        try { w = JSON.parse(raw); } catch(e) { throw new Error('Parse failed'); }
 
         worldData = w;
         setStatus('Curating visuals…');
 
         // CINEMATIC TOP
-        document.getElementById('coreFeeling').textContent = w.human_insight || w.core_feeling || '';
-        document.getElementById('firstStep').textContent = w.first_step || '';
+        document.getElementById('topFeeling').textContent = w.human_insight || w.core_feeling || '';
+        document.getElementById('topAction').textContent = w.first_step || '';
 
         // PALETTE
         if (w.color_palette) {
-          const sw = document.getElementById('paletteSwatches');
+          var sw = document.getElementById('paletteSwatches');
           sw.innerHTML = '';
-          w.color_palette.forEach(hex => {
-            const s = document.createElement('div');
+          w.color_palette.forEach(function(hex) {
+            var s = document.createElement('div');
             s.className = 'swatch'; s.style.background = hex; s.title = hex;
             sw.appendChild(s);
           });
@@ -402,87 +302,72 @@ RULES:
         }
 
         // GRID
-        const grid = document.getElementById('worldGrid');
+        var grid = document.getElementById('worldGrid');
         grid.innerHTML = '';
         document.getElementById('output').style.display = 'block';
-        const usedIds = new Set();
-        for (let i = 0; i < (w.elements||[]).length; i++) {
-          const el = w.elements[i];
-          const card = buildCard(el, i, w);
+        var usedIds = new Set();
+        (w.elements || []).forEach(function(el, i) {
+          var card = buildCard(el, i, w);
           grid.appendChild(card);
           fetchImage(el.unsplash_query, card, el, usedIds, brief);
-          setTimeout(() => card.classList.add('visible'), i * 70);
-        }
+          setTimeout(function() { card.classList.add('visible'); }, i * 70);
+        });
 
         setStatus('');
         document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
-
-      } catch(err) {
+        btn.disabled = false;
+      })
+      .catch(function(err) {
         console.error(err);
         setStatus('');
         errorMsg.textContent = 'Error: ' + err.message;
         errorMsg.style.display = 'block';
-      }
-      btn.disabled = false;
+        btn.disabled = false;
+      });
     }
 
     function buildCard(el, index, w) {
-      const card = document.createElement('div');
+      var card = document.createElement('div');
       card.className = 'card';
-      card.innerHTML = `
-        <div class="img-skeleton skeleton-ph"></div>
-        <div class="card-overlay"></div>
-        <div class="card-click-hint">Tap to explore</div>
-        <div class="card-body">
-          <div class="card-num">${index+1 < 10 ? '0'+(index+1) : index+1}</div>
-          <div class="card-name">${el.element_name}</div>
-          <div class="card-insight">${el.insight_line}</div>
-          <span class="card-label">${el.direction_label||''}</span>
-        </div>`;
-
-      card.addEventListener('click', () => openPanel(el, w));
+      card.innerHTML =
+        '<div class="img-skeleton skeleton-ph"></div>' +
+        '<div class="card-overlay"></div>' +
+        '<div class="card-click-hint">Tap to explore</div>' +
+        '<div class="card-body">' +
+          '<div class="card-num">' + (index+1 < 10 ? '0'+(index+1) : index+1) + '</div>' +
+          '<div class="card-name">' + el.element_name + '</div>' +
+          '<div class="card-insight">' + el.insight_line + '</div>' +
+          '<span class="card-label">' + (el.direction_label||'') + '</span>' +
+        '</div>';
+      card.addEventListener('click', function() { openPanel(el, w); });
       return card;
     }
 
     function openPanel(el, w) {
       document.getElementById('panelName').textContent = el.element_name;
-
-      let content = `<div class="p-insight">${el.insight_line}</div>`;
+      var content = '<div class="p-insight">' + el.insight_line + '</div>';
 
       if (selectedRole === 'video') {
-        content += `
-          <div class="p-row">
-            <div class="p-block full"><div class="p-label">Visual Direction</div><ul class="p-list">${(w.visual_direction||[]).map(i=>`<li>${i}</li>`).join('')}</ul></div>
-          </div>
-          <div class="p-row">
-            <div class="p-block full"><div class="p-label">Sequence</div><ul class="p-list">${(w.suggested_sequence||[]).slice(0,3).map(i=>`<li>${i}</li>`).join('')}</ul></div>
-          </div>
-          <div class="p-row">
-            <div class="p-block"><div class="p-label">Pacing</div><div class="p-value">${w.pacing||''}</div></div>
-            <div class="p-block"><div class="p-label">Transitions</div><div class="p-value">${w.transitions||''}</div></div>
-          </div>
-          <div class="p-row">
-            <div class="p-block full"><div class="p-label">Audio</div><div class="p-value">${w.audio_treatment||''}</div></div>
-          </div>`;
+        var vd = (w.visual_direction||[]).map(function(i){return '<li>'+i+'</li>';}).join('');
+        var seq = (w.suggested_sequence||[]).slice(0,3).map(function(i){return '<li>'+i+'</li>';}).join('');
+        content +=
+          '<div class="p-row"><div class="p-block full"><div class="p-label">Visual Direction</div><ul class="p-list">' + vd + '</ul></div></div>' +
+          '<div class="p-row"><div class="p-block full"><div class="p-label">Sequence</div><ul class="p-list">' + seq + '</ul></div></div>' +
+          '<div class="p-row">' +
+            '<div class="p-block"><div class="p-label">Pacing</div><div class="p-value">' + (w.pacing||'') + '</div></div>' +
+            '<div class="p-block"><div class="p-label">Transitions</div><div class="p-value">' + (w.transitions||'') + '</div></div>' +
+          '</div>' +
+          '<div class="p-row"><div class="p-block full"><div class="p-label">Audio</div><div class="p-value">' + (w.audio_treatment||'') + '</div></div></div>';
       } else if (selectedRole === 'designer') {
-        content += `
-          <div class="p-row">
-            <div class="p-block full"><div class="p-label">Layout</div><div class="p-value">${w.layout||''}</div></div>
-          </div>
-          <div class="p-row">
-            <div class="p-block full"><div class="p-label">Typography</div><div class="p-value">${w.typography||''}</div></div>
-          </div>`;
+        content +=
+          '<div class="p-row"><div class="p-block full"><div class="p-label">Layout</div><div class="p-value">' + (w.layout||'') + '</div></div></div>' +
+          '<div class="p-row"><div class="p-block full"><div class="p-label">Typography</div><div class="p-value">' + (w.typography||'') + '</div></div></div>';
       } else if (selectedRole === 'brand') {
-        content += `
-          <div class="p-row">
-            <div class="p-block full"><div class="p-label">Positioning</div><div class="p-value">${w.positioning||''}</div></div>
-          </div>
-          <div class="p-row">
-            <div class="p-block full"><div class="p-label">Tone</div><div class="p-value">${w.tone||''}</div></div>
-          </div>
-          <div class="p-row">
-            <div class="p-block full"><div class="p-label">Example Messaging</div><ul class="p-list">${(w.example_messaging||[]).map(i=>`<li>${i}</li>`).join('')}</ul></div>
-          </div>`;
+        var msgs = (w.example_messaging||[]).map(function(i){return '<li>'+i+'</li>';}).join('');
+        content +=
+          '<div class="p-row"><div class="p-block full"><div class="p-label">Positioning</div><div class="p-value">' + (w.positioning||'') + '</div></div></div>' +
+          '<div class="p-row"><div class="p-block full"><div class="p-label">Tone</div><div class="p-value">' + (w.tone||'') + '</div></div></div>' +
+          '<div class="p-row"><div class="p-block full"><div class="p-label">Example Messaging</div><ul class="p-list">' + msgs + '</ul></div></div>';
       }
 
       document.getElementById('panelBody').innerHTML = content;
@@ -490,48 +375,51 @@ RULES:
     }
 
     function fetchImage(query, card, el, usedIds, brief) {
-      const b = brief.toLowerCase();
-      let boost = '';
-      if (b.includes('3am')||b.includes('night')||b.includes('midnight')) boost = ' night dark';
-      else if (b.includes('holi')||b.includes('color')||b.includes('festival')) boost = ' colorful vibrant';
-      else if (b.includes('snow')||b.includes('winter')||b.includes('cold')) boost = ' winter snow';
-      else if (b.includes('rush hour')||b.includes('crowd')) boost = ' crowded people';
+      var b = brief.toLowerCase();
+      var boost = '';
+      if (b.indexOf('3am') > -1 || b.indexOf('night') > -1 || b.indexOf('midnight') > -1) boost = ' night dark';
+      else if (b.indexOf('holi') > -1 || b.indexOf('color') > -1 || b.indexOf('festival') > -1) boost = ' colorful vibrant';
+      else if (b.indexOf('snow') > -1 || b.indexOf('winter') > -1 || b.indexOf('cold') > -1) boost = ' winter snow';
+      else if (b.indexOf('rush hour') > -1 || b.indexOf('crowd') > -1) boost = ' crowded people';
 
-      fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query+boost)}&per_page=10&orientation=portrait`, {
-        headers: { 'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}` }
+      fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(query+boost) + '&per_page=10&orientation=portrait', {
+        headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
       })
-      .then(r => r.json())
-      .then(data => {
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
         if (!data.results || !data.results.length) return;
-        const photo = data.results.find(p => !usedIds.has(p.id)) || data.results[0];
+        var photo = data.results.find(function(p) { return !usedIds.has(p.id); }) || data.results[0];
         usedIds.add(photo.id);
-        const img = document.createElement('img');
+        var img = document.createElement('img');
         img.className = 'card-img';
         img.src = photo.urls.regular;
         img.alt = el.element_name;
-        img.onload = () => {
-          const sk = card.querySelector('.skeleton-ph');
+        img.onload = function() {
+          var sk = card.querySelector('.skeleton-ph');
           if (sk) sk.replaceWith(img);
-          // Tiny credit — compliance only, not a distraction
-          const credit = document.createElement('a');
+          var credit = document.createElement('a');
           credit.className = 'card-credit';
           credit.href = photo.links.html + '?utm_source=worldforge&utm_medium=referral';
-          credit.target = '_blank'; credit.rel = 'noopener';
+          credit.target = '_blank';
+          credit.rel = 'noopener';
           credit.textContent = photo.user.name + ' / Unsplash';
           card.appendChild(credit);
         };
-        img.onerror = () => { const sk = card.querySelector('.skeleton-ph'); if (sk) sk.style.background = '#1a1a1a'; };
+        img.onerror = function() {
+          var sk = card.querySelector('.skeleton-ph');
+          if (sk) sk.style.background = '#1a1a1a';
+        };
       })
-      .catch(err => console.error('Unsplash:', err));
+      .catch(function(err) { console.error('Unsplash:', err); });
     }
 
     function setStatus(msg) {
-      const s = document.getElementById('status');
+      var s = document.getElementById('status');
       s.textContent = msg;
       s.classList.toggle('visible', !!msg);
     }
 
-    document.getElementById('brief').addEventListener('keydown', e => {
+    document.getElementById('brief').addEventListener('keydown', function(e) {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); generateWorld(); }
     });
   </script>
