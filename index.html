@@ -396,86 +396,60 @@
       document.querySelector(`[data-role="${role}"]`).classList.add('active');
     }
 
-    const SYSTEM_PROMPT = `You are a creative director giving execution instructions. You are NOT an AI assistant.
-Your output must help the user START immediately without thinking.
+    const SYSTEM_PROMPT = `You are a creative director and strategist generating execution-ready creative direction.
+This is NOT a chat response. This is NOT descriptive writing.
+Your output must help a creator START immediately.
 
 CORE PRINCIPLE: If the user cannot take action within 30 seconds, the output is wrong.
 
-QUALITY CONTROL (MANDATORY):
-- Every section must feel like it comes from real-world observation, not imagination
-- Avoid safe or commonly used phrases
-- Prefer specific, slightly uncomfortable truths over generic insights
+GLOBAL RULES:
+- No generic words: aesthetic, vibe, beautiful, cinematic, energy, mood, rush
+- Replace adjectives with observable actions
+- Be specific with timing, placement, behavior
+- No long sentences. No poetic writing.
 
-SPECIFICITY RULE — replace vague words:
-- "crowd" → describe density (e.g. bodies touching, no space between shoulders)
-- "fast" → give timing (e.g. 2-second cuts)
-- "close-up" → define subject (face, hands, sweat, specific object)
-- "chaos" → describe exact behavior (3 people reaching for the same pole)
+QUALITY CONTROL:
+- Every output must feel based on real-world observation
+- Avoid safe or common phrases
+- Prefer specific, slightly uncomfortable truths
+- Ensure all sections align — no contradictions
+- If any line can apply to another scenario, rewrite it to be specific to this one
 
-NO GENERIC LANGUAGE — do NOT use:
-- Emotional clichés ("you're not alone", "feel the moment")
-- Marketing phrases ("premium", "best", "elevate")
-- Vague descriptors ("dynamic", "engaging", "powerful")
+SPECIFICITY RULE:
+- "crowd" → describe density (bodies touching, no space between shoulders)
+- "fast" → give timing (2-second cuts)
+- "close-up" → define subject (sweat on upper lip, hand gripping pole)
+- "chaos" → describe exact behavior (3 people reaching for the same door handle)
 
 CONSISTENCY CHECK:
-- Visual Direction, Sequence, and FIRST STEP must align with each other
-- Do not contradict (e.g. if you say handheld, do not say avoid shaky camera)
-
-REALISM FILTER — before finalizing output ensure:
-- A real creator could execute this without asking questions
-- Instructions match actual tools (Premiere Pro, Figma, real ad campaigns)
-
-DEPTH RULE:
-- If any line feels like it could apply to any other scenario, rewrite it to be specific to this one
-- Add one more layer of detail (movement, texture, behavior) — NOT fluff, precision
-
-Given a brief and a selected role, output:
-1. CORE LAYER (always)
-2. ROLE LAYER (only for selected role)
-3. 8 VISUAL ELEMENTS (role-specific, with precise Unsplash queries)
+- Visual Direction, Sequence, and FIRST STEP must align
+- Do not contradict (e.g. handheld + avoid shaky = contradiction)
 
 Unsplash query rules:
-- Must reflect EXACT mood, time, atmosphere of brief (3am = add "night dark", rush hour = add "crowded", winter = add "snow cold")
+- Reflect EXACT mood/time/atmosphere (3am = night dark, rush hour = crowded, winter = snow cold)
 - Must be photographic and specific
-- Video Editor elements = motion/action focused — people, physical movement, literal subject
-- Designer elements = composition/texture/structure focused — patterns, materials, close-up details, surfaces
-- Brand elements = symbolic/conceptual — objects and scenes that REPRESENT the meaning, NOT the literal subject. Example: for "Mumbai train chaos" a Brand element searches for "hands gripping iron bar" or "clock face time pressure" not "Mumbai train station"
+- Video Editor = motion/action/people focused
+- Designer = composition/texture/structure/close-up details focused
+- Brand = symbolic/conceptual — objects representing meaning, NOT literal subject
 
-Return ONLY valid JSON. No markdown. No preamble:
+Return ONLY valid JSON. No markdown. No preamble. Ensure JSON is COMPLETE and properly closed:
 {
   "core": {
     "core_feeling": "Clear sharp emotional state — 1 line, no adjectives",
-    "human_insight": "Non-obvious behavioral truth — max 2 lines",
+    "human_insight": "Non-obvious behavioral truth — max 2 lines, specific",
     "color_texture": "Lighting + material + color behavior — specific",
     "sound_direction": "Real-world sounds — specific, not music genres"
   },
-  "video_editor": {
-    "visual_direction": ["EXACT shot type + SUBJECT physical behavior + CAMERA style", "second direction", "third direction"],
-    "suggested_sequence": ["Step 1 — visible shot description", "Step 2", "Step 3", "Step 4", "Step 5"],
-    "pacing": "Exact duration per shot (e.g. 2-3 seconds) + rhythm definition",
-    "framing": "Subject placement + space (tight/wide) + depth (shallow/deep)",
-    "transitions": "Exact transition type (hard cut / no dissolve etc.)",
-    "audio_treatment": "What sound dominates + whether music exists or not",
-    "first_step": "ONE exact first shot: shot type + subject + duration + camera style",
-    "avoid": ["specific thing 1", "specific thing 2", "specific thing 3", "specific thing 4"]
-  },
-  "designer": {
-    "layout_system": "Number of elements per section + use of space (percent if possible)",
-    "hierarchy": "Primary vs secondary + exact placement (top/bottom-left etc.)",
-    "typography": "Font weight + size behavior + spacing",
-    "grid_system": "Number of columns + symmetry or asymmetry",
-    "visual_behavior": "How images and colors behave — contrast, light/dark usage",
-    "first_step": "Exact first frame to design — layout + element position",
-    "avoid": ["specific mistake 1", "specific mistake 2", "specific mistake 3", "specific mistake 4"]
-  },
-  "brand": {
-    "positioning": "Clear strategic statement — no adjectives",
-    "audience_insight": "Specific psychological behavior — non-obvious",
-    "messaging_tone": "Exact tone behavior — not adjectives like nice/warm",
-    "brand_perception": "How brand should feel — specific and grounded",
-    "example_messaging": ["indirect line 1", "indirect line 2", "indirect line 3", "indirect line 4"],
-    "first_step": "One usable headline or message — ready to use now",
-    "avoid": ["messaging mistake 1", "messaging mistake 2", "messaging mistake 3", "messaging mistake 4"]
+  "role": "video_editor OR designer OR brand",
+  "execution": {
+    "visual_direction": ["Specific shot + subject physical behavior + camera", "second", "third"],
+    "sequence": ["Step 1: exact visible shot", "Step 2", "Step 3", "Step 4", "Step 5"],
+    "pacing": "exact seconds per shot + rhythm",
+    "framing": "subject placement + tight/wide + shallow/deep",
+    "transitions": "hard cut / no dissolve — exact",
+    "audio": "what sound dominates + music or not",
+    "first_step": "exact first shot: shot type + subject + duration + camera",
+    "avoid": ["specific mistake", "specific mistake", "specific mistake", "specific mistake"]
   },
   "color_palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"],
   "elements": [
@@ -483,10 +457,13 @@ Return ONLY valid JSON. No markdown. No preamble:
       "element_name": "2-4 word name",
       "insight_line": "Sharp insight max 10 words — no clichés",
       "direction_label": "2-3 word action label",
-      "unsplash_query": "Precise 4-6 word photographic search query matching brief atmosphere"
+      "unsplash_query": "Precise 4-6 word photographic search query"
     }
   ]
-}`;
+}
+
+For Designer role, execution contains: layout_system, hierarchy, typography, grid, visual_behavior, first_step, avoid
+For Brand role, execution contains: positioning, audience_insight, messaging_tone, brand_perception, example_messaging (array), first_step, avoid`;
 
     async function generateWorld() {
       const brief = document.getElementById('brief').value.trim();
@@ -532,57 +509,59 @@ Return ONLY valid JSON. No markdown. No preamble:
         document.getElementById('colorTexture').textContent = world.core.color_texture;
         document.getElementById('soundDirection').textContent = world.core.sound_direction;
 
-        // ROLE LAYER
+        // ROLE LAYER — support both new execution wrapper and old structure
         document.getElementById('roleVideo').classList.remove('visible');
         document.getElementById('roleDesigner').classList.remove('visible');
         document.getElementById('roleBrand').classList.remove('visible');
 
-        if (selectedRole === 'video' && world.video_editor) {
-          const v = world.video_editor;
+        const ex = world.execution || {};
+        const role = world.role || selectedRole;
+
+        function renderAvoid(id, data) {
+          const el = document.getElementById(id);
+          if (Array.isArray(data)) {
+            el.innerHTML = data.map(a => `<div style="margin-bottom:4px">— ${a}</div>`).join('');
+          } else { el.textContent = data || ''; }
+        }
+
+        if (selectedRole === 'video') {
+          const v = ex.visual_direction ? ex : (world.video_editor || {});
           const vvd = document.getElementById('vVisualDirection');
           vvd.innerHTML = '';
           (v.visual_direction || []).forEach(b => { const li = document.createElement('li'); li.textContent = b; vvd.appendChild(li); });
           const vseq = document.getElementById('vSequence');
           vseq.innerHTML = '';
-          (v.suggested_sequence || []).forEach(b => { const li = document.createElement('li'); li.textContent = b; vseq.appendChild(li); });
-          document.getElementById('vPacing').textContent = v.pacing;
-          document.getElementById('vFraming').textContent = v.framing;
-          document.getElementById('vTransitions').textContent = v.transitions;
-          document.getElementById('vAudio').textContent = v.audio_treatment;
-          document.getElementById('vFirstStep').textContent = v.first_step;
-          // avoid is now an array
-          const vAvoid = document.getElementById('vAvoid');
-          if (Array.isArray(v.avoid)) {
-            vAvoid.innerHTML = v.avoid.map(a => `<div style="margin-bottom:4px">— ${a}</div>`).join('');
-          } else { vAvoid.textContent = v.avoid; }
+          (v.sequence || v.suggested_sequence || []).forEach(b => { const li = document.createElement('li'); li.textContent = b; vseq.appendChild(li); });
+          document.getElementById('vPacing').textContent = v.pacing || '';
+          document.getElementById('vFraming').textContent = v.framing || '';
+          document.getElementById('vTransitions').textContent = v.transitions || '';
+          document.getElementById('vAudio').textContent = v.audio || v.audio_treatment || '';
+          document.getElementById('vFirstStep').textContent = v.first_step || '';
+          renderAvoid('vAvoid', v.avoid);
           document.getElementById('roleVideo').classList.add('visible');
-        } else if (selectedRole === 'designer' && world.designer) {
-          const d = world.designer;
-          document.getElementById('dLayout').textContent = d.layout_system;
-          document.getElementById('dHierarchy').textContent = d.hierarchy;
-          document.getElementById('dTypography').textContent = d.typography;
-          document.getElementById('dGrid').textContent = d.grid_system;
-          document.getElementById('dVisualBehavior').textContent = d.visual_behavior;
-          document.getElementById('dFirstStep').textContent = d.first_step;
-          const dAvoid = document.getElementById('dAvoid');
-          if (Array.isArray(d.avoid)) {
-            dAvoid.innerHTML = d.avoid.map(a => `<div style="margin-bottom:4px">— ${a}</div>`).join('');
-          } else { dAvoid.textContent = d.avoid; }
+
+        } else if (selectedRole === 'designer') {
+          const d = ex.layout_system ? ex : (world.designer || {});
+          document.getElementById('dLayout').textContent = d.layout_system || '';
+          document.getElementById('dHierarchy').textContent = d.hierarchy || '';
+          document.getElementById('dTypography').textContent = d.typography || '';
+          document.getElementById('dGrid').textContent = d.grid || d.grid_system || '';
+          document.getElementById('dVisualBehavior').textContent = d.visual_behavior || '';
+          document.getElementById('dFirstStep').textContent = d.first_step || '';
+          renderAvoid('dAvoid', d.avoid);
           document.getElementById('roleDesigner').classList.add('visible');
-        } else if (selectedRole === 'brand' && world.brand) {
-          const b = world.brand;
-          document.getElementById('bPositioning').textContent = b.positioning;
-          document.getElementById('bAudienceInsight').textContent = b.audience_insight;
-          document.getElementById('bTone').textContent = b.messaging_tone;
-          document.getElementById('bPerception').textContent = b.brand_perception;
+
+        } else if (selectedRole === 'brand') {
+          const b = ex.positioning ? ex : (world.brand || {});
+          document.getElementById('bPositioning').textContent = b.positioning || '';
+          document.getElementById('bAudienceInsight').textContent = b.audience_insight || '';
+          document.getElementById('bTone').textContent = b.messaging_tone || '';
+          document.getElementById('bPerception').textContent = b.brand_perception || '';
           const bem = document.getElementById('bExampleMessaging');
           bem.innerHTML = '';
           (b.example_messaging || []).forEach(line => { const li = document.createElement('li'); li.textContent = line; bem.appendChild(li); });
-          document.getElementById('bFirstStep').textContent = b.first_step;
-          const bAvoid = document.getElementById('bAvoid');
-          if (Array.isArray(b.avoid)) {
-            bAvoid.innerHTML = b.avoid.map(a => `<div style="margin-bottom:4px">— ${a}</div>`).join('');
-          } else { bAvoid.textContent = b.avoid; }
+          document.getElementById('bFirstStep').textContent = b.first_step || '';
+          renderAvoid('bAvoid', b.avoid);
           document.getElementById('roleBrand').classList.add('visible');
         }
 
