@@ -1,582 +1,196 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Worldforge</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #0a0a0a;
-      --surface: #111111;
-      --border: #222222;
-      --accent: #c9a96e;
-      --accent-dim: #7a5f3a;
-      --text: #f0ece4;
-      --text-muted: #6b6560;
-      --text-dim: #9a9590;
-      --radius: 4px;
+      --bg: #0a0a0a; --surface: #111111; --border: #1e1e1e;
+      --accent: #c9a96e; --accent-dim: #7a5f3a;
+      --text: #f0ece4; --text-muted: #6b6560; --text-dim: #9a9590;
     }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Syne', sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* Grain overlay */
+    body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; min-height: 100vh; overflow-x: hidden; }
     body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999; opacity: 0.4;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 999;
-      opacity: 0.4;
     }
+
+    /* SETTINGS */
+    .settings-btn { position: fixed; top: 20px; right: 20px; z-index: 100; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-family: 'Syne', sans-serif; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 8px 16px; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
+    .settings-btn:hover { border-color: var(--accent-dim); color: var(--accent); }
+    .settings-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 200; align-items: center; justify-content: center; }
+    .settings-overlay.open { display: flex; }
+    .settings-modal { background: #111; border: 1px solid var(--border); padding: 40px; width: 100%; max-width: 500px; margin: 24px; }
+    .settings-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; margin-bottom: 6px; }
+    .settings-subtitle { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 32px; }
+    .settings-field { margin-bottom: 24px; }
+    .settings-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 8px; display: block; }
+    .settings-input { width: 100%; background: #0a0a0a; border: 1px solid var(--border); color: var(--text); font-family: 'Syne', sans-serif; font-size: 13px; padding: 12px 16px; outline: none; transition: border-color 0.2s; }
+    .settings-input:focus { border-color: var(--accent-dim); }
+    .settings-input::placeholder { color: var(--text-muted); font-size: 11px; }
+    .settings-save { width: 100%; background: var(--accent); color: #0a0a0a; border: none; padding: 14px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; margin-top: 8px; transition: background 0.2s; }
+    .settings-save:hover { background: #d4b47a; }
+    .settings-note { font-size: 11px; color: var(--text-muted); margin-top: 16px; font-family: 'Cormorant Garamond', serif; font-style: italic; line-height: 1.6; }
+    .key-status { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; background: #c0392b; vertical-align: middle; }
+    .key-status.set { background: #27ae60; }
 
     /* HERO */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 60px 24px;
-      position: relative;
-    }
+    .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; position: relative; }
+    .hero::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(201,169,110,0.05) 0%, transparent 70%); pointer-events: none; }
+    .logo-mark { font-family: 'Cormorant Garamond', serif; font-size: 11px; font-weight: 300; letter-spacing: 6px; text-transform: uppercase; color: var(--accent); margin-bottom: 48px; opacity: 0.8; }
+    h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(64px, 10vw, 120px); font-weight: 300; line-height: 0.9; letter-spacing: -2px; text-align: center; margin-bottom: 24px; }
+    h1 em { font-style: italic; color: var(--accent); }
+    .tagline { font-size: 13px; font-weight: 400; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 64px; text-align: center; }
 
-    .hero::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(201,169,110,0.06) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .logo-mark {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 11px;
-      font-weight: 300;
-      letter-spacing: 6px;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 48px;
-      opacity: 0.8;
-    }
-
-    h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(64px, 10vw, 120px);
-      font-weight: 300;
-      line-height: 0.9;
-      letter-spacing: -2px;
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    h1 em {
-      font-style: italic;
-      color: var(--accent);
-    }
-
-    .tagline {
-      font-size: 13px;
-      font-weight: 400;
-      letter-spacing: 2px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      margin-bottom: 64px;
-      text-align: center;
-    }
-
-    /* INPUT AREA */
-    .input-wrap {
-      width: 100%;
-      max-width: 640px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .input-label {
-      font-size: 10px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--accent-dim);
-      margin-bottom: 12px;
-      display: block;
-    }
-
-    .input-row {
-      display: flex;
-      gap: 0;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      transition: border-color 0.3s;
-    }
-
-    .input-row:focus-within {
-      border-color: var(--accent-dim);
-    }
-
-    textarea {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      color: var(--text);
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 20px;
-      font-weight: 300;
-      padding: 16px 20px;
-      resize: none;
-      height: 58px;
-      min-height: 58px;
-      max-height: 58px;
-      line-height: 1.5;
-    }
-
-    textarea::placeholder {
-      color: var(--text-muted);
-      font-style: italic;
-    }
-
-    .generate-btn {
-      background: var(--accent);
-      color: #0a0a0a;
-      border: none;
-      padding: 0 28px;
-      height: 58px;
-      font-family: 'Syne', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: background 0.2s, opacity 0.2s;
-      white-space: nowrap;
-      min-width: 140px;
-    }
-
+    /* INPUT */
+    .input-wrap { width: 100%; max-width: 640px; position: relative; z-index: 1; }
+    .input-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 12px; display: block; }
+    .input-row { display: flex; border: 1px solid var(--border); background: var(--surface); transition: border-color 0.3s; }
+    .input-row:focus-within { border-color: var(--accent-dim); }
+    textarea { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 300; padding: 16px 20px; resize: none; height: 58px; min-height: 58px; max-height: 58px; line-height: 1.5; }
+    textarea::placeholder { color: var(--text-muted); font-style: italic; }
+    .generate-btn { background: var(--accent); color: #0a0a0a; border: none; padding: 0 28px; height: 58px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.2s; white-space: nowrap; min-width: 140px; }
     .generate-btn:hover { background: #d4b47a; }
     .generate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    .hint {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 12px;
-      font-style: italic;
-      font-family: 'Cormorant Garamond', serif;
-    }
-
-    /* STATUS */
-    .status {
-      margin-top: 40px;
-      font-size: 12px;
-      letter-spacing: 2px;
-      color: var(--accent);
-      text-transform: uppercase;
-      text-align: center;
-      min-height: 20px;
-      opacity: 0;
-      transition: opacity 0.4s;
-    }
+    .hint { font-size: 11px; color: var(--text-muted); margin-top: 12px; font-style: italic; font-family: 'Cormorant Garamond', serif; }
+    .error-msg { color: #c0392b; font-size: 13px; margin-top: 12px; display: none; font-family: 'Cormorant Garamond', serif; font-style: italic; }
+    .status { margin-top: 40px; font-size: 12px; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; text-align: center; min-height: 20px; opacity: 0; transition: opacity 0.4s; }
     .status.visible { opacity: 1; }
 
-    /* WORLD BOARD */
-    .world-section {
-      padding: 80px 24px 120px;
-      max-width: 1400px;
-      margin: 0 auto;
-      display: none;
-    }
+    /* OUTPUT */
+    .world-section { padding: 80px 24px 120px; max-width: 1400px; margin: 0 auto; display: none; }
 
-    .world-header {
-      display: flex;
-      align-items: baseline;
-      gap: 24px;
-      margin-bottom: 16px;
-    }
-
-    .world-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 13px;
-      font-weight: 300;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--accent);
-    }
-
-    .world-brief {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 18px;
-      font-style: italic;
-      color: var(--text-dim);
-    }
-
-    .divider {
-      width: 100%;
-      height: 1px;
-      background: var(--border);
-      margin-bottom: 48px;
-    }
-
-    /* CREATIVE BRIEF PARAGRAPH */
-    .brief-paragraph {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 20px;
-      font-weight: 300;
-      line-height: 1.8;
-      color: var(--text-dim);
-      max-width: 800px;
-      margin: 0 auto 64px;
-      text-align: center;
-      font-style: italic;
-      padding: 0 24px;
-      border-left: 2px solid var(--accent-dim);
-      text-align: left;
-    }
+    /* CREATIVE DIRECTION LAYER */
+    .creative-layer { margin-bottom: 64px; border: 1px solid var(--border); background: var(--surface); }
+    .creative-layer-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 28px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 8px; }
+    .creative-layer-title { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); }
+    .creative-layer-brief { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-style: italic; color: var(--text-dim); }
+    .creative-layer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; }
+    @media (max-width: 1000px) { .creative-layer-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .creative-layer-grid { grid-template-columns: 1fr; } }
+    .cl-block { padding: 24px 28px; border-right: 1px solid var(--border); }
+    .cl-block:last-child { border-right: none; }
+    @media (max-width: 1000px) { .cl-block { border-bottom: 1px solid var(--border); border-right: none; } .cl-block:nth-child(odd) { border-right: 1px solid var(--border); } }
+    .cl-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 12px; }
+    .cl-value { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 400; line-height: 1.6; color: var(--text); }
+    .cl-value.core-feeling { font-size: 21px; font-weight: 300; font-style: italic; color: #fff; }
+    .cl-bullets { list-style: none; }
+    .cl-bullets li { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); line-height: 1.7; padding-left: 16px; position: relative; }
+    .cl-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 12px; top: 3px; }
 
     /* GRID */
-    .world-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 2px;
-    }
-
+    .grid-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+    .grid-title { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
+    .grid-divider { flex: 1; height: 1px; background: var(--border); }
+    .world-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
     @media (max-width: 1100px) { .world-grid { grid-template-columns: repeat(3, 1fr); } }
     @media (max-width: 768px) { .world-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 480px) { .world-grid { grid-template-columns: 1fr; } }
 
     /* CARD */
-    .card {
-      position: relative;
-      background: var(--surface);
-      overflow: hidden;
-      cursor: pointer;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-
-    .card.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .card-image {
-      width: 100%;
-      aspect-ratio: 3/4;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.6s ease;
-      background: #1a1a1a;
-    }
-
+    .card { position: relative; background: var(--surface); overflow: hidden; opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .card.visible { opacity: 1; transform: translateY(0); }
+    .card-image { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; transition: transform 0.6s ease; background: #1a1a1a; }
     .card:hover .card-image { transform: scale(1.04); }
+    .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.2) 55%, transparent 100%); pointer-events: none; }
+    .card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 24px 20px 20px; }
+    .card-number { font-size: 10px; letter-spacing: 3px; color: var(--accent); margin-bottom: 6px; font-weight: 600; }
+    .card-name { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; line-height: 1.1; margin-bottom: 8px; color: #fff; }
+    .card-insight { font-family: 'Cormorant Garamond', serif; font-size: 13px; font-style: italic; color: rgba(240,236,228,0.65); line-height: 1.5; margin-bottom: 10px; }
+    .card-direction-label { display: inline-block; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); background: rgba(201,169,110,0.12); border: 1px solid rgba(201,169,110,0.25); padding: 3px 8px; }
+    .card-credit { position: absolute; top: 12px; right: 12px; font-size: 9px; color: rgba(255,255,255,0.35); background: rgba(0,0,0,0.5); padding: 3px 7px; text-decoration: none; border-radius: 2px; }
+    .card-credit:hover { color: rgba(255,255,255,0.6); }
+    .img-skeleton { width: 100%; aspect-ratio: 3/4; background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-    .card-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, transparent 100%);
-      pointer-events: none;
-    }
-
-    .card-body {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 24px 20px 20px;
-    }
-
-    .card-number {
-      font-size: 10px;
-      letter-spacing: 3px;
-      color: var(--accent);
-      margin-bottom: 6px;
-      font-weight: 600;
-    }
-
-    .card-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
-      font-weight: 400;
-      line-height: 1.1;
-      margin-bottom: 8px;
-      color: #fff;
-    }
-
-    .card-insight {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 13px;
-      font-style: italic;
-      color: rgba(240,236,228,0.7);
-      line-height: 1.5;
-    }
-
-    /* Photo credit */
-    .card-credit {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      font-size: 9px;
-      letter-spacing: 1px;
-      color: rgba(255,255,255,0.4);
-      background: rgba(0,0,0,0.5);
-      padding: 3px 7px;
-      border-radius: 2px;
-      text-decoration: none;
-    }
-
-    .card-credit:hover { color: rgba(255,255,255,0.7); }
-
-    /* IMAGE LOADING SKELETON */
-    .img-skeleton {
-      width: 100%;
-      aspect-ratio: 3/4;
-      background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-    }
-
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    /* COLOR PALETTE */
-    .palette-section {
-      margin-top: 48px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .palette-label {
-      font-size: 10px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-
-    .palette-swatch {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.1);
-      transition: transform 0.2s;
-      cursor: default;
-      title: attr(data-color);
-    }
-
+    /* PALETTE */
+    .palette-section { margin-top: 48px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .palette-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); }
+    .palette-swatch { width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.2s; cursor: default; }
     .palette-swatch:hover { transform: scale(1.2); }
 
-    /* ERROR */
-    .error-msg {
-      color: #c0392b;
-      font-size: 13px;
-      letter-spacing: 1px;
-      margin-top: 12px;
-      display: none;
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-    }
-
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--border); }
-
-    /* SETTINGS PANEL */
-    .settings-btn {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 100;
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      font-family: 'Syne', sans-serif;
-      font-size: 10px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      padding: 8px 16px;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .settings-btn:hover { border-color: var(--accent-dim); color: var(--accent); }
-
-    .settings-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-    }
-    .settings-overlay.open { display: flex; }
-
-    .settings-modal {
-      background: #111;
-      border: 1px solid var(--border);
-      padding: 40px;
-      width: 100%;
-      max-width: 500px;
-      margin: 24px;
-    }
-
-    .settings-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 28px;
-      font-weight: 300;
-      margin-bottom: 8px;
-    }
-
-    .settings-subtitle {
-      font-size: 11px;
-      color: var(--text-muted);
-      letter-spacing: 1px;
-      margin-bottom: 32px;
-    }
-
-    .settings-field {
-      margin-bottom: 24px;
-    }
-
-    .settings-label {
-      font-size: 10px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--accent-dim);
-      margin-bottom: 8px;
-      display: block;
-    }
-
-    .settings-input {
-      width: 100%;
-      background: #0a0a0a;
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: 'Syne', sans-serif;
-      font-size: 13px;
-      padding: 12px 16px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .settings-input:focus { border-color: var(--accent-dim); }
-    .settings-input::placeholder { color: var(--text-muted); font-size: 11px; }
-
-    .settings-save {
-      width: 100%;
-      background: var(--accent);
-      color: #0a0a0a;
-      border: none;
-      padding: 14px;
-      font-family: 'Syne', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      cursor: pointer;
-      margin-top: 8px;
-      transition: background 0.2s;
-    }
-    .settings-save:hover { background: #d4b47a; }
-
-    .settings-note {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 16px;
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      line-height: 1.6;
-    }
-
-    .key-status {
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      margin-right: 6px;
-      background: #c0392b;
-      vertical-align: middle;
-    }
-    .key-status.set { background: #27ae60; }
   </style>
 </head>
 <body>
 
-  <!-- SETTINGS BUTTON -->
   <button class="settings-btn" onclick="openSettings()">⚙ API Keys</button>
 
-  <!-- SETTINGS MODAL -->
   <div class="settings-overlay" id="settingsOverlay" onclick="closeSettingsOnBg(event)">
     <div class="settings-modal">
       <div class="settings-title">API Keys</div>
-      <div class="settings-subtitle">Stored locally in your browser. Never sent anywhere else.</div>
-
+      <div class="settings-subtitle">Stored locally in your browser. Never sent anywhere.</div>
       <div class="settings-field">
-        <label class="settings-label">
-          <span class="key-status" id="groqStatus"></span>
-          Groq API Key
-        </label>
-        <input class="settings-input" id="groqKeyInput" type="password" placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxx"/>
-        <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Get free key at console.groq.com</div>
+        <label class="settings-label"><span class="key-status" id="groqStatus"></span>Groq API Key</label>
+        <input class="settings-input" id="groqKeyInput" type="password" placeholder="gsk_xxxxxxxxxxxxxxxx"/>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Free at console.groq.com</div>
       </div>
-
       <div class="settings-field">
-        <label class="settings-label">
-          <span class="key-status" id="unsplashStatus"></span>
-          Unsplash Access Key
-        </label>
-        <input class="settings-input" id="unsplashKeyInput" type="password" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"/>
-        <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Get free key at unsplash.com/developers</div>
+        <label class="settings-label"><span class="key-status" id="unsplashStatus"></span>Unsplash Access Key</label>
+        <input class="settings-input" id="unsplashKeyInput" type="password" placeholder="xxxxxxxxxxxxxxxxxxxxxxxx"/>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Free at unsplash.com/developers</div>
       </div>
-
       <button class="settings-save" onclick="saveKeys()">Save Keys</button>
-      <p class="settings-note">Keys are saved in your browser's localStorage and never shared. Clear your browser data to remove them.</p>
+      <p class="settings-note">Keys are saved in your browser's localStorage and never shared.</p>
     </div>
   </div>
 
-  <!-- HERO -->
   <section class="hero">
     <div class="logo-mark">Creative Intelligence Platform</div>
     <h1>World<em>forge</em></h1>
     <p class="tagline">One brief. One world. Every creative aligned.</p>
-
     <div class="input-wrap">
       <label class="input-label" for="brief">Your brief</label>
       <div class="input-row">
-        <textarea id="brief" rows="2" placeholder="Japanese matcha brand, premium and calm…"></textarea>
+        <textarea id="brief" placeholder="Japanese matcha brand, premium and calm…"></textarea>
         <button class="generate-btn" id="generateBtn" onclick="generateWorld()">Generate</button>
       </div>
-      <p class="hint">Type a one-line brief. Worldforge does the rest.</p>
+      <p class="hint">Type a one-line brief. Worldforge builds the creative direction.</p>
       <p class="error-msg" id="errorMsg"></p>
     </div>
-
     <div class="status" id="status"></div>
   </section>
 
-  <!-- WORLD OUTPUT -->
   <section class="world-section" id="worldSection">
-    <div class="world-header">
-      <span class="world-title">Your World</span>
-      <span class="world-brief" id="worldBriefLabel"></span>
-    </div>
-    <div class="divider"></div>
 
-    <p class="brief-paragraph" id="briefParagraph"></p>
+    <div class="creative-layer">
+      <div class="creative-layer-header">
+        <span class="creative-layer-title">Creative Direction</span>
+        <span class="creative-layer-brief" id="clBriefLabel"></span>
+      </div>
+      <div class="creative-layer-grid">
+        <div class="cl-block">
+          <div class="cl-label">Core Feeling</div>
+          <div class="cl-value core-feeling" id="clCoreFeeling"></div>
+        </div>
+        <div class="cl-block">
+          <div class="cl-label">Human Insight</div>
+          <div class="cl-value" id="clHumanInsight"></div>
+        </div>
+        <div class="cl-block">
+          <div class="cl-label">Visual Direction</div>
+          <ul class="cl-bullets" id="clVisualDirection"></ul>
+        </div>
+        <div class="cl-block">
+          <div class="cl-label">Color & Texture</div>
+          <div class="cl-value" id="clColorTexture"></div>
+        </div>
+        <div class="cl-block">
+          <div class="cl-label">Sound Direction</div>
+          <div class="cl-value" id="clSoundDirection"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-header">
+      <span class="grid-title">Visual World</span>
+      <div class="grid-divider"></div>
+    </div>
 
     <div class="world-grid" id="worldGrid"></div>
 
@@ -584,19 +198,16 @@
       <span class="palette-label">Palette</span>
       <div id="paletteSwatches" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
     </div>
+
   </section>
 
   <script>
-    // ── CONFIG ──────────────────────────────────────────────────────────────
     let GROQ_API_KEY = localStorage.getItem('groq_api_key') || '';
     let UNSPLASH_ACCESS_KEY = localStorage.getItem('unsplash_access_key') || '';
 
-    // Show settings on first load if keys missing
     window.addEventListener('load', () => {
       updateKeyStatuses();
-      if (!GROQ_API_KEY || !UNSPLASH_ACCESS_KEY) {
-        openSettings();
-      }
+      if (!GROQ_API_KEY || !UNSPLASH_ACCESS_KEY) openSettings();
     });
 
     function openSettings() {
@@ -604,15 +215,8 @@
       document.getElementById('unsplashKeyInput').value = UNSPLASH_ACCESS_KEY;
       document.getElementById('settingsOverlay').classList.add('open');
     }
-
-    function closeSettings() {
-      document.getElementById('settingsOverlay').classList.remove('open');
-    }
-
-    function closeSettingsOnBg(e) {
-      if (e.target === document.getElementById('settingsOverlay')) closeSettings();
-    }
-
+    function closeSettings() { document.getElementById('settingsOverlay').classList.remove('open'); }
+    function closeSettingsOnBg(e) { if (e.target === document.getElementById('settingsOverlay')) closeSettings(); }
     function saveKeys() {
       const groq = document.getElementById('groqKeyInput').value.trim();
       const unsplash = document.getElementById('unsplashKeyInput').value.trim();
@@ -621,147 +225,128 @@
       updateKeyStatuses();
       closeSettings();
     }
-
     function updateKeyStatuses() {
       document.getElementById('groqStatus').className = 'key-status' + (GROQ_API_KEY ? ' set' : '');
       document.getElementById('unsplashStatus').className = 'key-status' + (UNSPLASH_ACCESS_KEY ? ' set' : '');
     }
 
-    function promptForGroqKey() {
-      openSettings();
-      return '';
-    }
+    const SYSTEM_PROMPT = `You are a creative direction engine for designers, video editors, and art directors.
 
-    // ── GROQ SYSTEM PROMPT ──────────────────────────────────────────────────
-    const SYSTEM_PROMPT = `You are a world-class creative director. Given a one-line brief, identify 8 emotionally and culturally significant elements that define the creative world of this brief.
+Given a one-line brief, output TWO things:
 
-For each element:
-- element_name: A poetic, evocative name (2-4 words)
-- emotional_significance: Why this element matters emotionally (1 sentence)
-- insight_line: A sharp, memorable creative insight (max 12 words, no clichés)
-- unsplash_query: A precise 3-5 word search query for Unsplash that will return a stunning, relevant editorial photograph
+1. CREATIVE DIRECTION LAYER — specific, actionable guidance. Not poetic. Not generic. Every line helps a creator make an immediate decision.
 
-Also return:
-- brief_paragraph: A 3-sentence creative brief paragraph that a creative director would write. Evocative, specific, directional.
-- color_palette: An array of 5 hex color codes that define this world's visual identity
+2. VISUAL ELEMENTS — 8 specific, culturally grounded visual elements that express this world.
 
-Think like a Cannes-winning creative director. Find moments of tension, beauty, and cultural specificity — not generic objects.
+STRICT RULES:
+- Never use: "beautiful", "aesthetic", "vibe", "stunning", "amazing"
+- No long paragraphs. Every line = a decision, not a description
+- Visual direction bullets = how to shoot/edit, not how to feel
+- Unsplash queries must be specific and photographic (e.g. "Japanese ceramic bowl steam closeup" not "matcha tea")
+- direction_label = 2-3 words, action-oriented (e.g. "Slow movement", "Tight frame", "Raw texture")
 
-Return ONLY valid JSON. No markdown. No explanation. This exact structure:
+Return ONLY valid JSON. No markdown. No preamble:
 {
+  "creative_direction": {
+    "core_feeling": "One sharp line — the dominant experience, not an emotion list",
+    "human_insight": "1-2 lines — a real behavioral truth behind why this exists",
+    "visual_direction": ["how to shoot/edit bullet 1", "bullet 2", "bullet 3", "bullet 4", "bullet 5"],
+    "color_texture": "Short — mood of colors and material feel, no hex codes",
+    "sound_direction": "Short — type of audio experience"
+  },
+  "color_palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"],
   "elements": [
     {
-      "element_name": "",
-      "emotional_significance": "",
-      "insight_line": "",
-      "unsplash_query": ""
+      "element_name": "Poetic 2-4 word name",
+      "insight_line": "Sharp insight max 10 words, no clichés",
+      "direction_label": "2-3 word action label",
+      "unsplash_query": "Precise 4-6 word photographic search query"
     }
-  ],
-  "brief_paragraph": "",
-  "color_palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"]
+  ]
 }`;
 
-    // ── MAIN FUNCTION ───────────────────────────────────────────────────────
     async function generateWorld() {
       const brief = document.getElementById('brief').value.trim();
       if (!brief) return;
+      if (!GROQ_API_KEY || !UNSPLASH_ACCESS_KEY) { openSettings(); return; }
 
       const btn = document.getElementById('generateBtn');
-      const status = document.getElementById('status');
       const errorMsg = document.getElementById('errorMsg');
-
-      if (!GROQ_API_KEY || !UNSPLASH_ACCESS_KEY) {
-        openSettings();
-        return;
-      }
-
       btn.disabled = true;
       errorMsg.style.display = 'none';
-      setStatus('Summoning creative intelligence…');
+      setStatus('Building creative direction…');
 
       try {
-        // Step 1: Call Groq
         const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${GROQ_API_KEY}`
-          },
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
           body: JSON.stringify({
             model: 'llama-3.3-70b-versatile',
             messages: [
               { role: 'system', content: SYSTEM_PROMPT },
               { role: 'user', content: `Brief: ${brief}` }
             ],
-            temperature: 0.85,
-            max_tokens: 2000
+            temperature: 0.8,
+            max_tokens: 2500
           })
         });
 
-        if (!groqRes.ok) {
-          const errBody = await groqRes.text();
-          throw new Error(`Groq failed (${groqRes.status}): ${errBody}`);
-        }
+        if (!groqRes.ok) { const e = await groqRes.text(); throw new Error(`Groq error (${groqRes.status}): ${e}`); }
 
         const groqData = await groqRes.json();
         const raw = groqData.choices[0].message.content;
         const clean = raw.replace(/```json|```/g, '').trim();
         let world;
-        try {
-          world = JSON.parse(clean);
-        } catch(parseErr) {
-          throw new Error('Could not parse Groq response as JSON. Raw: ' + clean.slice(0, 200));
-        }
+        try { world = JSON.parse(clean); }
+        catch(e) { throw new Error('JSON parse failed: ' + clean.slice(0, 200)); }
 
-        setStatus('Curating images from the world…');
+        setStatus('Curating visuals…');
 
-        // Step 2: Fetch Unsplash images for each element
-        document.getElementById('worldBriefLabel').textContent = `"${brief}"`;
-        document.getElementById('briefParagraph').textContent = world.brief_paragraph;
-        document.getElementById('worldSection').style.display = 'block';
-        document.getElementById('worldGrid').innerHTML = '';
+        // Render creative direction
+        const cd = world.creative_direction;
+        document.getElementById('clBriefLabel').textContent = `"${brief}"`;
+        document.getElementById('clCoreFeeling').textContent = cd.core_feeling;
+        document.getElementById('clHumanInsight').textContent = cd.human_insight;
+        const vdList = document.getElementById('clVisualDirection');
+        vdList.innerHTML = '';
+        (cd.visual_direction || []).forEach(b => {
+          const li = document.createElement('li'); li.textContent = b; vdList.appendChild(li);
+        });
+        document.getElementById('clColorTexture').textContent = cd.color_texture;
+        document.getElementById('clSoundDirection').textContent = cd.sound_direction;
 
-        // Show palette
+        // Render palette
         if (world.color_palette) {
-          const swatches = document.getElementById('paletteSwatches');
-          swatches.innerHTML = '';
+          const sw = document.getElementById('paletteSwatches'); sw.innerHTML = '';
           world.color_palette.forEach(hex => {
-            const s = document.createElement('div');
-            s.className = 'palette-swatch';
-            s.style.background = hex;
-            s.title = hex;
-            swatches.appendChild(s);
+            const s = document.createElement('div'); s.className = 'palette-swatch'; s.style.background = hex; s.title = hex; sw.appendChild(s);
           });
           document.getElementById('paletteSection').style.display = 'flex';
         }
 
-        // Render cards with Unsplash images
+        // Render grid
+        document.getElementById('worldGrid').innerHTML = '';
+        document.getElementById('worldSection').style.display = 'block';
         for (let i = 0; i < world.elements.length; i++) {
           const el = world.elements[i];
           const card = createCard(el, i + 1);
           document.getElementById('worldGrid').appendChild(card);
-
-          // Fetch Unsplash image
           fetchUnsplashImage(el.unsplash_query, card, el);
-          
-          // Stagger card appearance
           setTimeout(() => card.classList.add('visible'), i * 80);
         }
 
         setStatus('');
         document.getElementById('worldSection').scrollIntoView({ behavior: 'smooth' });
 
-      } catch (err) {
+      } catch(err) {
         console.error(err);
         setStatus('');
         errorMsg.textContent = 'Error: ' + err.message;
         errorMsg.style.display = 'block';
       }
-
       btn.disabled = false;
     }
 
-    // ── CREATE CARD (skeleton first) ────────────────────────────────────────
     function createCard(el, num) {
       const card = document.createElement('div');
       card.className = 'card';
@@ -769,21 +354,15 @@ Return ONLY valid JSON. No markdown. No explanation. This exact structure:
         <div class="img-skeleton" id="skeleton-${num}"></div>
         <div class="card-overlay"></div>
         <div class="card-body">
-          <div class="card-number">0${num}</div>
+          <div class="card-number">0${num > 9 ? '' : ''}${num}</div>
           <div class="card-name">${el.element_name}</div>
           <div class="card-insight">${el.insight_line}</div>
-        </div>
-      `;
+          <span class="card-direction-label">${el.direction_label || ''}</span>
+        </div>`;
       return card;
     }
 
-    // ── LOAD UNSPLASH IMAGE via source URL (no API key, no CORS) ────────────
     function fetchUnsplashImage(query, card, el) {
-      const skeleton = card.querySelector('[id^="skeleton"]');
-      const img = document.createElement('img');
-      img.className = 'card-image';
-
-      // Use Unsplash API with access key
       fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=5&orientation=portrait`, {
         headers: { 'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}` }
       })
@@ -791,44 +370,34 @@ Return ONLY valid JSON. No markdown. No explanation. This exact structure:
       .then(data => {
         if (data.results && data.results.length > 0) {
           const photo = data.results[0];
+          const img = document.createElement('img');
+          img.className = 'card-image';
           img.src = photo.urls.regular;
           img.alt = el.element_name;
           img.onload = () => {
-            skeleton.replaceWith(img);
+            const sk = card.querySelector('[id^="skeleton"]');
+            if (sk) sk.replaceWith(img);
             const credit = document.createElement('a');
             credit.className = 'card-credit';
             credit.href = photo.links.html + '?utm_source=worldforge&utm_medium=referral';
-            credit.target = '_blank';
-            credit.rel = 'noopener';
+            credit.target = '_blank'; credit.rel = 'noopener';
             credit.textContent = '📷 ' + photo.user.name;
             card.appendChild(credit);
           };
-          img.onerror = () => { skeleton.style.background = '#1a1a1a'; };
-        } else {
-          skeleton.style.background = '#1a1a1a';
+          img.onerror = () => { const sk = card.querySelector('[id^="skeleton"]'); if (sk) sk.style.background = '#1a1a1a'; };
         }
       })
-      .catch(err => {
-        console.error('Unsplash error:', err);
-        skeleton.style.background = '#1a1a1a';
-      });
+      .catch(err => console.error('Unsplash error:', err));
     }
 
-
-
-    // ── HELPERS ─────────────────────────────────────────────────────────────
     function setStatus(msg) {
       const s = document.getElementById('status');
       s.textContent = msg;
       s.classList.toggle('visible', !!msg);
     }
 
-    // Allow Enter to submit (Shift+Enter for newline)
-    document.getElementById('brief').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        generateWorld();
-      }
+    document.getElementById('brief').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); generateWorld(); }
     });
   </script>
 </body>
