@@ -57,7 +57,7 @@
     .role-btn[data-role="video"].active { border-color: #4a9eff; color: #4a9eff; background: rgba(74,158,255,0.06); }
     .role-btn[data-role="designer"].active { border-color: #a78bfa; color: #a78bfa; background: rgba(167,139,250,0.06); }
     .role-btn[data-role="brand"].active { border-color: #34d399; color: #34d399; background: rgba(52,211,153,0.06); }
-    .hint { font-size: 11px; color: var(--text-muted); margin-top: 12px; font-style: italic; font-family: 'Cormorant Garamond', serif; }
+    .hint-text { font-size: 11px; color: var(--text-muted); margin-top: 12px; font-style: italic; font-family: 'Cormorant Garamond', serif; }
     .error-msg { color: #c0392b; font-size: 13px; margin-top: 12px; display: none; font-family: 'Cormorant Garamond', serif; font-style: italic; }
     .status { margin-top: 40px; font-size: 12px; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; text-align: center; min-height: 20px; opacity: 0; transition: opacity 0.4s; }
     .status.visible { opacity: 1; }
@@ -65,125 +65,115 @@
     /* ── WORLD SCREEN ── */
     .world-screen { display: none; }
 
-    /* TOP BAR — small, not dominant */
-    .world-topbar { display: flex; align-items: center; justify-content: space-between; padding: 20px 32px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 12px; }
-    .topbar-feeling { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-style: italic; color: #fff; }
-    .topbar-meta { display: flex; align-items: center; gap: 12px; }
-    .intensity-dot { width: 8px; height: 8px; border-radius: 50%; }
+    /* TOP BAR — minimal */
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid var(--border); }
+    .topbar-feeling { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-style: italic; color: var(--text); }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .intensity-dot { width: 7px; height: 7px; border-radius: 50%; }
     .intensity-dot.high { background: #ef4444; }
     .intensity-dot.medium { background: var(--accent); }
     .intensity-dot.low { background: #34d399; }
-    .intensity-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
     .topbar-brief { font-size: 11px; color: var(--text-muted); font-family: 'Cormorant Garamond', serif; font-style: italic; }
-    .topbar-hint { font-size: 10px; letter-spacing: 1px; color: var(--text-muted); border: 1px solid var(--border); padding: 4px 10px; }
+    .new-brief-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 6px 14px; cursor: pointer; font-family: 'Syne', sans-serif; transition: all 0.2s; }
+    .new-brief-btn:hover { border-color: var(--accent-dim); color: var(--accent); }
 
-    /* FIRST STEP BAR */
-    .first-step-bar { background: rgba(201,169,110,0.08); border-bottom: 1px solid rgba(201,169,110,0.2); padding: 12px 32px; display: flex; align-items: center; gap: 16px; }
+    /* FIRST STEP — slim bar */
+    .fs-bar { background: rgba(201,169,110,0.07); border-bottom: 1px solid rgba(201,169,110,0.15); padding: 10px 24px; display: flex; align-items: center; gap: 14px; }
     .fs-tag { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
-    .fs-text { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: var(--text); }
+    .fs-text { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); }
 
-    /* IMAGE GRID — hero of product */
-    .world-grid-wrap { padding: 24px 24px 120px; }
+    /* ── IMAGE GRID — hero ── */
+    .grid-wrap { padding: 16px 16px 140px; }
     .world-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 3px; }
     @media(max-width:1100px) { .world-grid { grid-template-columns: repeat(3,1fr); } }
-    @media(max-width:768px) { .world-grid { grid-template-columns: repeat(2,1fr); } }
-    @media(max-width:480px) { .world-grid { grid-template-columns: 1fr; } }
+    @media(max-width:700px) { .world-grid { grid-template-columns: repeat(2,1fr); } }
 
-    /* CARD */
-    .card { position: relative; overflow: hidden; cursor: pointer; opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s; background: #111; }
+    /* ── CARD ── */
+    .card { position: relative; overflow: hidden; cursor: pointer; opacity: 0; transform: translateY(12px); transition: opacity 0.45s ease, transform 0.45s ease; background: #111; aspect-ratio: 3/4; }
     .card.visible { opacity: 1; transform: translateY(0); }
-    .card.selected { box-shadow: 0 0 0 2px var(--accent); }
-    .card-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; transition: transform 0.5s ease; }
-    .card:hover .card-img { transform: scale(1.06); }
-    .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.1) 60%, transparent 100%); pointer-events: none; transition: background 0.3s; }
-    .card:hover .card-overlay { background: linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.05) 100%); }
+    .card.selected { outline: 2px solid var(--accent); outline-offset: -2px; }
+    .card-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.45s ease; }
+    .card:hover .card-img { transform: scale(1.05); }
+    .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%); pointer-events: none; }
 
-    /* HOVER — title reveal */
-    .card-name-wrap { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 16px 16px; transform: translateY(4px); transition: transform 0.3s; }
-    .card:hover .card-name-wrap { transform: translateY(0); }
-    .card-num { font-size: 10px; letter-spacing: 3px; color: var(--accent); margin-bottom: 4px; }
-    .card-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #fff; line-height: 1.1; margin-bottom: 6px; }
-    .card-insight { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: rgba(255,255,255,0.55); line-height: 1.4; margin-bottom: 8px; opacity: 0; transition: opacity 0.3s 0.05s; }
-    .card:hover .card-insight { opacity: 1; }
-    .card-action-hint { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); opacity: 0; transition: opacity 0.3s; }
-    .card:hover .card-action-hint { opacity: 1; }
+    /* name — always visible at bottom */
+    .card-name { position: absolute; bottom: 14px; left: 14px; right: 14px; }
+    .card-num { font-size: 9px; letter-spacing: 3px; color: var(--accent); margin-bottom: 3px; }
+    .card-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: #fff; line-height: 1.1; }
 
-    /* SELECTED CHECK */
-    .card-check { position: absolute; top: 12px; left: 12px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); display: none; align-items: center; justify-content: center; font-size: 11px; color: #0a0a0a; font-weight: 700; z-index: 10; }
+    /* insight — hidden, slides up on hover */
+    .card-insight-wrap { position: absolute; bottom: 0; left: 0; right: 0; padding: 40px 14px 14px; background: linear-gradient(to top, rgba(0,0,0,0.97) 0%, transparent 100%); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
+    .card:hover .card-insight-wrap { transform: translateY(0); }
+    .card-insight-text { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: rgba(255,255,255,0.6); margin-bottom: 8px; }
+    .card-tap-hint { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
+
+    /* selected check */
+    .card-check { position: absolute; top: 10px; left: 10px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); display: none; align-items: center; justify-content: center; font-size: 10px; color: #0a0a0a; font-weight: 800; z-index: 10; }
     .card.selected .card-check { display: flex; }
 
-    .card-credit { position: absolute; top: 10px; right: 10px; font-size: 9px; color: rgba(255,255,255,0.3); background: rgba(0,0,0,0.5); padding: 3px 7px; text-decoration: none; border-radius: 2px; z-index: 5; }
-    .card-credit:hover { color: rgba(255,255,255,0.6); }
+    .card-credit { position: absolute; top: 8px; right: 8px; font-size: 9px; color: rgba(255,255,255,0.3); background: rgba(0,0,0,0.55); padding: 3px 7px; text-decoration: none; border-radius: 2px; z-index: 5; transition: color 0.2s; }
+    .card-credit:hover { color: rgba(255,255,255,0.65); }
 
-    .img-skeleton { width: 100%; aspect-ratio: 3/4; background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    .img-skeleton { width: 100%; height: 100%; position: absolute; inset: 0; background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-    /* FLOATING PANEL — appears on image click */
-    .float-panel { position: fixed; right: 0; top: 0; bottom: 0; width: 360px; background: #0d0d0d; border-left: 1px solid var(--border); z-index: 400; transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); overflow-y: auto; }
+    /* ── FLOATING PANEL ── */
+    .float-panel { position: fixed; right: 0; top: 0; bottom: 0; width: 340px; background: #0d0d0d; border-left: 1px solid var(--border); z-index: 400; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; }
     .float-panel.open { transform: translateX(0); }
-    @media(max-width:480px) { .float-panel { width: 100%; } }
+    @media(max-width:500px) { .float-panel { width: 100%; } }
 
-    .panel-header { padding: 24px 20px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-    .panel-name { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #fff; line-height: 1.2; }
-    .panel-close { background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 11px; padding: 6px 12px; cursor: pointer; white-space: nowrap; transition: all 0.2s; font-family: 'Syne', sans-serif; letter-spacing: 1px; }
-    .panel-close:hover { border-color: var(--text-muted); color: var(--text); }
+    .panel-top { padding: 20px 20px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-shrink: 0; }
+    .panel-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #fff; line-height: 1.2; }
+    .panel-x { background: transparent; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; padding: 0 4px; line-height: 1; transition: color 0.2s; }
+    .panel-x:hover { color: var(--text); }
 
-    .panel-body { padding: 20px; }
-    .panel-section { margin-bottom: 20px; }
-    .panel-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 10px; }
-    .panel-list { list-style: none; }
-    .panel-list li { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-dim); line-height: 1.7; padding-left: 14px; position: relative; margin-bottom: 4px; }
-    .panel-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 10px; top: 4px; }
-    .panel-value { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-dim); line-height: 1.7; }
+    .panel-body { flex: 1; overflow-y: auto; padding: 20px; }
+    .p-insight { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-style: italic; color: var(--text); line-height: 1.5; margin-bottom: 24px; }
 
-    .use-shot-btn { width: 100%; background: var(--accent); color: #0a0a0a; border: none; padding: 14px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.2s; margin-top: 4px; }
-    .use-shot-btn:hover { background: #d4b47a; }
-    .use-shot-btn.used { background: #1a1a1a; color: var(--accent); border: 1px solid var(--accent-dim); }
+    .p-section { margin-bottom: 20px; }
+    .p-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 10px; }
+    .p-list { list-style: none; }
+    .p-list li { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-dim); line-height: 1.7; padding-left: 14px; position: relative; margin-bottom: 2px; }
+    .p-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 10px; top: 4px; }
+    .p-value { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-dim); line-height: 1.7; }
 
-    /* FLOATING BOTTOM BAR — shot sequence */
-    .shot-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10,10,10,0.97); border-top: 1px solid var(--border); padding: 16px 24px; display: none; align-items: center; justify-content: space-between; gap: 16px; z-index: 300; backdrop-filter: blur(10px); flex-wrap: wrap; }
+    .panel-footer { padding: 16px 20px; border-top: 1px solid var(--border); flex-shrink: 0; }
+    .use-btn { width: 100%; background: var(--accent); color: #0a0a0a; border: none; padding: 14px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+    .use-btn:hover { background: #d4b47a; }
+    .use-btn.selected-state { background: transparent; color: var(--accent); border: 1px solid var(--accent-dim); }
+
+    /* ── SHOT BAR ── */
+    .shot-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(8,8,8,0.97); border-top: 1px solid var(--border); padding: 14px 24px; display: none; align-items: center; justify-content: space-between; z-index: 300; gap: 16px; flex-wrap: wrap; backdrop-filter: blur(12px); }
     .shot-bar.visible { display: flex; }
-    .shot-bar-left { display: flex; align-items: center; gap: 16px; }
-    .shot-count { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
-    .shot-thumbs { display: flex; gap: 4px; }
-    .shot-thumb { width: 36px; height: 36px; object-fit: cover; border: 1px solid var(--accent-dim); }
-    .shot-thumb-placeholder { width: 36px; height: 36px; background: var(--surface); border: 1px dashed var(--border); }
-    .shot-bar-right { display: flex; align-items: center; gap: 12px; }
-    .clear-shots-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 8px 14px; cursor: pointer; font-family: 'Syne', sans-serif; transition: all 0.2s; }
-    .clear-shots-btn:hover { border-color: #ef4444; color: #ef4444; }
-    .generate-seq-btn { background: var(--accent); color: #0a0a0a; border: none; padding: 10px 20px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
-    .generate-seq-btn:hover { background: #d4b47a; }
+    .shot-left { display: flex; align-items: center; gap: 12px; }
+    .shot-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
+    .shot-thumbs { display: flex; gap: 4px; align-items: center; }
+    .shot-thumb { width: 34px; height: 34px; object-fit: cover; border: 1px solid var(--accent-dim); }
+    .shot-right { display: flex; gap: 10px; align-items: center; }
+    .clear-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 8px 14px; cursor: pointer; font-family: 'Syne', sans-serif; transition: all 0.2s; }
+    .clear-btn:hover { border-color: #ef4444; color: #ef4444; }
+    .build-btn { background: var(--accent); color: #0a0a0a; border: none; padding: 10px 22px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+    .build-btn:hover { background: #d4b47a; }
 
-    /* EXECUTION SECTION */
-    .exec-toggle-wrap { max-width: 1400px; margin: 0 auto; padding: 0 24px 20px; }
-    .exec-toggle-btn { width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-family: 'Syne', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; padding: 14px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
-    .exec-toggle-btn:hover { border-color: var(--accent-dim); color: var(--accent); }
-    .exec-arrow { transition: transform 0.3s; }
-    .exec-toggle-btn.open .exec-arrow { transform: rotate(180deg); }
-    .exec-section { max-width: 1400px; margin: 0 auto; padding: 0 24px 80px; display: none; }
-    .exec-section.visible { display: block; }
-    .exec-head { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
-    .exec-head::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-    .role-tag { font-size: 9px; letter-spacing: 2px; padding: 4px 10px; font-weight: 700; border-radius: 2px; }
-    .role-tag.video { background: rgba(74,158,255,0.12); color: #4a9eff; border: 1px solid rgba(74,158,255,0.25); }
-    .role-tag.designer { background: rgba(167,139,250,0.12); color: #a78bfa; border: 1px solid rgba(167,139,250,0.25); }
-    .role-tag.brand { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.25); }
-    .exec-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; margin-bottom: 2px; }
-    @media(max-width:800px) { .exec-grid { grid-template-columns: 1fr 1fr; } }
-    @media(max-width:500px) { .exec-grid { grid-template-columns: 1fr; } }
-    .exec-block { background: var(--surface); border: 1px solid var(--border); padding: 20px 22px; }
-    .exec-block.full { grid-column: span 3; }
-    @media(max-width:800px) { .exec-block.full { grid-column: span 2; } }
-    @media(max-width:500px) { .exec-block.full { grid-column: span 1; } }
-    .e-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 10px; }
-    .e-value { font-family: 'Cormorant Garamond', serif; font-size: 15px; line-height: 1.7; color: var(--text-dim); }
-    .e-list { list-style: none; }
-    .e-list li { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-dim); line-height: 1.7; padding-left: 14px; position: relative; }
-    .e-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 10px; top: 4px; }
-    .avoid-row { background: rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.12); padding: 16px 22px; margin-top: 2px; }
-    .avoid-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #ef4444; margin-bottom: 10px; }
-    .avoid-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-    .avoid-tag { font-family: 'Cormorant Garamond', serif; font-size: 13px; color: rgba(239,68,68,0.7); background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.15); padding: 4px 10px; }
+    /* ── SEQUENCE MODAL ── */
+    .seq-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 700; align-items: center; justify-content: center; padding: 24px; }
+    .seq-modal.open { display: flex; }
+    .seq-box { background: #111; border: 1px solid var(--border); padding: 40px; width: 100%; max-width: 600px; max-height: 80vh; overflow-y: auto; }
+    .seq-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; margin-bottom: 8px; }
+    .seq-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 32px; }
+    .seq-step { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+    .seq-step:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .seq-num { font-size: 11px; letter-spacing: 2px; color: var(--accent); font-weight: 700; white-space: nowrap; padding-top: 3px; }
+    .seq-content { flex: 1; }
+    .seq-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #fff; margin-bottom: 4px; }
+    .seq-insight { font-family: 'Cormorant Garamond', serif; font-size: 13px; font-style: italic; color: var(--text-muted); margin-bottom: 8px; }
+    .seq-direction { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-dim); }
+    .seq-meta { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .seq-meta-item { }
+    .seq-meta-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 6px; }
+    .seq-meta-value { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-dim); }
+    .seq-close { margin-top: 28px; width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-family: 'Syne', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; padding: 14px; cursor: pointer; transition: all 0.2s; }
+    .seq-close:hover { border-color: var(--accent-dim); color: var(--accent); }
 
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
@@ -230,7 +220,7 @@
         <button class="role-btn" data-role="designer" onclick="selectRole('designer')">🎨 Designer</button>
         <button class="role-btn" data-role="brand" onclick="selectRole('brand')">💡 Brand</button>
       </div>
-      <p class="hint">Click images to explore. Select shots to build your sequence.</p>
+      <p class="hint-text">Click any image to explore. Select shots to build your sequence.</p>
       <p class="error-msg" id="errorMsg"></p>
     </div>
     <div class="status" id="status"></div>
@@ -239,64 +229,63 @@
   <!-- WORLD SCREEN -->
   <div class="world-screen" id="worldScreen">
 
-    <!-- TOP BAR -->
-    <div class="world-topbar">
-      <div>
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:14px;">
         <div class="topbar-feeling" id="topFeeling"></div>
-        <div class="topbar-brief" id="topBrief"></div>
-      </div>
-      <div class="topbar-meta">
         <div class="intensity-dot" id="intensityDot"></div>
-        <div class="intensity-label" id="intensityLabel"></div>
-        <div class="topbar-hint">Click images to explore</div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-brief" id="topBrief"></div>
+        <button class="new-brief-btn" onclick="newBrief()">↩ New Brief</button>
       </div>
     </div>
 
     <!-- FIRST STEP BAR -->
-    <div class="first-step-bar">
+    <div class="fs-bar">
       <span class="fs-tag">🚀 Start here</span>
       <span class="fs-text" id="fsText"></span>
     </div>
 
     <!-- IMAGE GRID -->
-    <div class="world-grid-wrap">
+    <div class="grid-wrap">
       <div class="world-grid" id="worldGrid"></div>
-    </div>
-
-    <!-- EXECUTION TOGGLE -->
-    <div class="exec-toggle-wrap">
-      <button class="exec-toggle-btn" id="execToggleBtn" onclick="toggleExecution()">
-        View Full Execution Plan <span class="exec-arrow">↓</span>
-      </button>
-    </div>
-    <div class="exec-section" id="execSection">
-      <div class="exec-head">
-        <span class="role-tag" id="roleTag"></span>
-        Execution Direction
-      </div>
-      <div id="execContent"></div>
     </div>
 
   </div>
 
   <!-- FLOATING PANEL -->
   <div class="float-panel" id="floatPanel">
-    <div class="panel-header">
-      <div class="panel-name" id="panelName"></div>
-      <button class="panel-close" onclick="closePanel()">✕ Close</button>
+    <div class="panel-top">
+      <div class="panel-title" id="panelTitle"></div>
+      <button class="panel-x" onclick="closePanel()">✕</button>
     </div>
     <div class="panel-body" id="panelBody"></div>
+    <div class="panel-footer">
+      <button class="use-btn" id="useBtn" onclick="toggleShot()">+ Use This Shot</button>
+    </div>
   </div>
 
   <!-- SHOT BAR -->
   <div class="shot-bar" id="shotBar">
-    <div class="shot-bar-left">
-      <div class="shot-count" id="shotCount">0 shots selected</div>
+    <div class="shot-left">
+      <span class="shot-label" id="shotLabel">0 shots</span>
       <div class="shot-thumbs" id="shotThumbs"></div>
     </div>
-    <div class="shot-bar-right">
-      <button class="clear-shots-btn" onclick="clearShots()">Clear</button>
-      <button class="generate-seq-btn" onclick="generateSequence()">Generate Edit Plan →</button>
+    <div class="shot-right">
+      <button class="clear-btn" onclick="clearShots()">Clear</button>
+      <button class="build-btn" onclick="buildSequence()">Build Sequence →</button>
+    </div>
+  </div>
+
+  <!-- SEQUENCE MODAL -->
+  <div class="seq-modal" id="seqModal" onclick="closeSeqOnBg(event)">
+    <div class="seq-box" id="seqBox">
+      <div class="seq-title">Your Edit Sequence</div>
+      <div class="seq-sub" id="seqSub"></div>
+      <div id="seqSteps"></div>
+      <div class="seq-meta" id="seqMeta"></div>
+      <button class="seq-close" onclick="closeSeq()">Close</button>
     </div>
   </div>
 
@@ -305,23 +294,24 @@
     let UNSPLASH_ACCESS_KEY = localStorage.getItem('unsplash_access_key') || '';
     let selectedRole = 'video';
     let currentExecution = {};
-    let selectedShots = [];
-    let activeCardIndex = null;
     let worldElements = [];
+    let selectedShots = [];
+    let activePanelIndex = null;
 
     window.addEventListener('load', () => {
       updateKeyStatuses();
       if (!GROQ_API_KEY || !UNSPLASH_ACCESS_KEY) openSettings();
     });
 
+    // ── SETTINGS ──
     function openSettings() { document.getElementById('groqKeyInput').value = GROQ_API_KEY; document.getElementById('unsplashKeyInput').value = UNSPLASH_ACCESS_KEY; document.getElementById('settingsOverlay').classList.add('open'); }
     function closeSettings() { document.getElementById('settingsOverlay').classList.remove('open'); }
     function closeSettingsOnBg(e) { if (e.target === document.getElementById('settingsOverlay')) closeSettings(); }
     function saveKeys() {
-      const groq = document.getElementById('groqKeyInput').value.trim();
-      const unsplash = document.getElementById('unsplashKeyInput').value.trim();
-      if (groq) { GROQ_API_KEY = groq; localStorage.setItem('groq_api_key', groq); }
-      if (unsplash) { UNSPLASH_ACCESS_KEY = unsplash; localStorage.setItem('unsplash_access_key', unsplash); }
+      const g = document.getElementById('groqKeyInput').value.trim();
+      const u = document.getElementById('unsplashKeyInput').value.trim();
+      if (g) { GROQ_API_KEY = g; localStorage.setItem('groq_api_key', g); }
+      if (u) { UNSPLASH_ACCESS_KEY = u; localStorage.setItem('unsplash_access_key', u); }
       updateKeyStatuses(); closeSettings();
     }
     function updateKeyStatuses() {
@@ -333,15 +323,14 @@
       document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
       document.querySelector(`[data-role="${role}"]`).classList.add('active');
     }
-    function toggleExecution() {
-      const sec = document.getElementById('execSection');
-      const btn = document.getElementById('execToggleBtn');
-      sec.classList.toggle('visible');
-      btn.classList.toggle('open');
-      btn.querySelector('.exec-arrow').textContent = sec.classList.contains('visible') ? '↑' : '↓';
-      if (sec.classList.contains('visible')) sec.scrollIntoView({ behavior: 'smooth' });
+    function newBrief() {
+      document.getElementById('worldScreen').style.display = 'none';
+      document.getElementById('heroSection').style.display = 'flex';
+      closePanel();
+      window.scrollTo({ top: 0 });
     }
 
+    // ── SYSTEM PROMPT ──
     const SYSTEM_PROMPT = `You are a creative director giving clear, practical direction.
 Focus on helping the user START immediately.
 Avoid generic or poetic language.
@@ -351,68 +340,37 @@ Return ONLY valid JSON. No markdown. No extra text.
 {
   "core": {
     "core_feeling": "1 sharp observable line",
-    "human_insight": "specific observed behavior — 1-2 lines, slightly uncomfortable",
-    "color_texture": "lighting + material + color — specific",
-    "sound_direction": "real-world sounds — name them",
+    "human_insight": "specific observed behavior — slightly uncomfortable truth",
     "intensity": "low OR medium OR high",
-    "constraint": "one hard rule — what must NEVER appear"
+    "first_step": "subject + duration + camera + environment"
   },
-  "role": "video_editor OR designer OR brand",
-  "execution": {},
+  "execution": {
+    "visual_direction": ["shot+subject+camera", "shot 2"],
+    "sequence": ["Step 1: subject+action+camera", "Step 2", "Step 3"],
+    "pacing": "exact seconds + rhythm",
+    "transitions": "exact type"
+  },
   "color_palette": ["#hex1","#hex2","#hex3","#hex4","#hex5"],
   "elements": [
     {
       "element_name": "evocative 2-4 word name — NOT literal",
-      "insight_line": "emotional or human truth — max 10 words",
+      "insight_line": "emotional truth — max 10 words",
       "direction_label": "2-3 word action",
-      "unsplash_query": "4-6 word photographic query — match brief atmosphere exactly"
+      "unsplash_query": "4-6 word photographic query — match brief atmosphere"
     }
   ]
-}
-
-FOR Video Editor, execution =
-{
-  "visual_direction": ["shot+subject+camera","shot 2","shot 3"],
-  "sequence": ["Step 1: subject+action+camera","Step 2","Step 3"],
-  "pacing": "exact seconds + rhythm",
-  "framing": "placement + tight/wide + depth",
-  "transitions": "exact type",
-  "audio": "dominant sound + music or not",
-  "first_step": "subject + duration + camera + environment",
-  "avoid": ["mistake 1","mistake 2","mistake 3","mistake 4"]
-}
-
-FOR Designer, execution =
-{
-  "layout": "structure + spacing",
-  "hierarchy": "what dominates + placement",
-  "typography": "specific Google Font heading + specific Google Font body + weight + spacing",
-  "grid": "columns + symmetry",
-  "visual_behavior": "how images/colors behave",
-  "first_step": "exact first frame to create",
-  "avoid": ["mistake 1","mistake 2","mistake 3","mistake 4"]
-}
-
-FOR Brand, execution =
-{
-  "positioning": "strategic angle — no adjectives",
-  "audience_insight": "specific psychological behavior",
-  "tone": "exact tone behavior",
-  "perception": "how audience should feel",
-  "example_messaging": ["line 1","line 2","line 3"],
-  "first_step": "one usable headline ready now",
-  "avoid": ["mistake 1","mistake 2","mistake 3","mistake 4"]
 }
 
 RULES:
 - No: aesthetic, vibe, beautiful, cinematic, energy
 - Observable actions only
-- Unsplash queries match atmosphere (3am=night dark, Holi=colorful powder, rush hour=crowded)
-- Video Editor elements = motion/people/action
-- Designer elements = texture/pattern/close-up/surface
-- Brand elements = symbolic objects — NOT literal subject
-- element_name must be evocative, NOT literal (NOT "Laughing Faces" or "Colorful Hands")`;
+- element_name must be evocative NOT literal (NOT "Laughing Faces", "Colorful Hands")
+- Unsplash queries: 3am=night dark, Holi=colorful powder, rush hour=crowded people, snow=winter cold
+- Video role: elements = motion/people/action
+- Designer role: elements = texture/pattern/surface/close-up
+- Brand role: elements = symbolic objects, NOT literal subject`;
 
+    // ── GENERATE ──
     async function generateWorld() {
       const brief = document.getElementById('brief').value.trim();
       if (!brief) return;
@@ -424,6 +382,7 @@ RULES:
       errorMsg.style.display = 'none';
       setStatus('Building your world…');
       selectedShots = [];
+      activePanelIndex = null;
       updateShotBar();
 
       try {
@@ -436,7 +395,7 @@ RULES:
               { role: 'system', content: SYSTEM_PROMPT },
               { role: 'user', content: `Brief: ${brief}\nRole: ${selectedRole}` }
             ],
-            temperature: 0.85, max_tokens: 2500
+            temperature: 0.85, max_tokens: 2000
           })
         });
         if (!res.ok) { const e = await res.text(); throw new Error(`Groq (${res.status}): ${e}`); }
@@ -447,29 +406,15 @@ RULES:
 
         setStatus('Curating visuals…');
         const core = world.core || {};
-        const ex = world.execution || {};
-        currentExecution = ex;
+        currentExecution = world.execution || {};
         worldElements = world.elements || [];
 
-        // TOP BAR
+        // TOPBAR
         document.getElementById('topFeeling').textContent = core.core_feeling || '';
         document.getElementById('topBrief').textContent = `"${brief}"`;
         const intensity = (core.intensity || 'medium').toLowerCase();
         document.getElementById('intensityDot').className = 'intensity-dot ' + intensity;
-        document.getElementById('intensityLabel').textContent = intensity.toUpperCase();
-        document.getElementById('fsText').textContent = ex.first_step || '';
-
-        // ROLE TAG
-        const rt = document.getElementById('roleTag');
-        rt.textContent = { video: 'Video Editor', designer: 'Designer', brand: 'Brand' }[selectedRole];
-        rt.className = 'role-tag ' + selectedRole;
-
-        // EXECUTION
-        renderExecution(ex, selectedRole);
-
-        // RESET EXECUTION TOGGLE
-        document.getElementById('execSection').classList.remove('visible');
-        document.getElementById('execToggleBtn').classList.remove('open');
+        document.getElementById('fsText').textContent = core.first_step || currentExecution.first_step || '';
 
         // GRID
         const grid = document.getElementById('worldGrid');
@@ -477,119 +422,115 @@ RULES:
         const usedIds = new Set();
         for (let i = 0; i < worldElements.length; i++) {
           const el = worldElements[i];
-          const card = buildCard(el, i, ex);
+          const card = buildCard(el, i);
           grid.appendChild(card);
           fetchImage(el.unsplash_query, card, el, usedIds, brief);
-          setTimeout(() => card.classList.add('visible'), i * 70);
+          setTimeout(() => card.classList.add('visible'), i * 65);
         }
 
         // SHOW WORLD
         document.getElementById('heroSection').style.display = 'none';
         document.getElementById('worldScreen').style.display = 'block';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        closePanel();
+        window.scrollTo({ top: 0 });
         setStatus('');
 
       } catch(err) {
         console.error(err);
         setStatus('');
-        errorMsg.textContent = 'Error: ' + err.message;
-        errorMsg.style.display = 'block';
+        document.getElementById('errorMsg').textContent = 'Error: ' + err.message;
+        document.getElementById('errorMsg').style.display = 'block';
       }
       btn.disabled = false;
     }
 
-    function buildCard(el, index, ex) {
+    // ── BUILD CARD ──
+    function buildCard(el, index) {
       const card = document.createElement('div');
       card.className = 'card';
       card.dataset.index = index;
-
       card.innerHTML = `
         <div class="img-skeleton skeleton-ph"></div>
         <div class="card-overlay"></div>
         <div class="card-check">✓</div>
-        <div class="card-name-wrap">
+        <div class="card-name">
           <div class="card-num">${index+1 < 10 ? '0'+(index+1) : index+1}</div>
-          <div class="card-name">${el.element_name}</div>
-          <div class="card-insight">${el.insight_line}</div>
-          <div class="card-action-hint">Click to explore →</div>
+          <div class="card-title">${el.element_name}</div>
+        </div>
+        <div class="card-insight-wrap">
+          <div class="card-insight-text">${el.insight_line}</div>
+          <div class="card-tap-hint">Tap to explore →</div>
         </div>`;
-
       card.addEventListener('click', (e) => {
         if (e.target.classList.contains('card-credit')) return;
-        openPanel(el, index, ex, card);
+        openPanel(index);
       });
-
       return card;
     }
 
-    function openPanel(el, index, ex, card) {
-      activeCardIndex = index;
+    // ── PANEL ──
+    function openPanel(index) {
+      activePanelIndex = index;
+      const el = worldElements[index];
+      const ex = currentExecution;
       const isSelected = selectedShots.some(s => s.index === index);
 
-      document.getElementById('panelName').textContent = el.element_name;
+      document.getElementById('panelTitle').textContent = el.element_name;
 
-      const vd = (ex.visual_direction || []).slice(0, 2).map(i => `<li>${i}</li>`).join('');
-      const seq = (ex.sequence || []).slice(0, 3).map(i => `<li>${i}</li>`).join('');
+      const vd = (ex.visual_direction || []).slice(0,2).map(i=>`<li>${i}</li>`).join('');
+      const seq = (ex.sequence || []).slice(0,3).map(i=>`<li>${i}</li>`).join('');
       const pacing = ex.pacing || '';
-      const framing = ex.framing || '';
 
       document.getElementById('panelBody').innerHTML = `
-        <div class="panel-section">
-          <div class="panel-label">Insight</div>
-          <div class="panel-value" style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:var(--text);">${el.insight_line}</div>
-        </div>
-        ${vd ? `<div class="panel-section"><div class="panel-label">Visual Direction</div><ul class="panel-list">${vd}</ul></div>` : ''}
-        ${seq ? `<div class="panel-section"><div class="panel-label">Sequence</div><ul class="panel-list">${seq}</ul></div>` : ''}
-        ${pacing ? `<div class="panel-section"><div class="panel-label">Pacing</div><div class="panel-value">${pacing}</div></div>` : ''}
-        ${framing ? `<div class="panel-section"><div class="panel-label">Framing</div><div class="panel-value">${framing}</div></div>` : ''}
-        <button class="use-shot-btn ${isSelected ? 'used' : ''}" id="useShotBtn" onclick="toggleShot(${index})">
-          ${isSelected ? '✓ Shot Selected' : '+ Use This Shot'}
-        </button>`;
+        <div class="p-insight">${el.insight_line}</div>
+        ${vd ? `<div class="p-section"><div class="p-label">Visual Direction</div><ul class="p-list">${vd}</ul></div>` : ''}
+        ${seq ? `<div class="p-section"><div class="p-label">Sequence</div><ul class="p-list">${seq}</ul></div>` : ''}
+        ${pacing ? `<div class="p-section"><div class="p-label">Pacing</div><div class="p-value">${pacing}</div></div>` : ''}`;
+
+      const useBtn = document.getElementById('useBtn');
+      if (isSelected) {
+        useBtn.textContent = '✓ Shot Selected';
+        useBtn.classList.add('selected-state');
+      } else {
+        useBtn.textContent = '+ Use This Shot';
+        useBtn.classList.remove('selected-state');
+      }
 
       document.getElementById('floatPanel').classList.add('open');
     }
 
-    function closePanel() {
-      document.getElementById('floatPanel').classList.remove('open');
-      activeCardIndex = null;
-    }
+    function closePanel() { document.getElementById('floatPanel').classList.remove('open'); }
 
-    function toggleShot(index) {
+    // ── SHOT SELECTION ──
+    function toggleShot() {
+      if (activePanelIndex === null) return;
+      const index = activePanelIndex;
       const el = worldElements[index];
       const card = document.querySelector(`.card[data-index="${index}"]`);
       const existing = selectedShots.findIndex(s => s.index === index);
+      const img = card ? card.querySelector('img') : null;
 
       if (existing >= 0) {
         selectedShots.splice(existing, 1);
-        card.classList.remove('selected');
-        document.getElementById('useShotBtn').textContent = '+ Use This Shot';
-        document.getElementById('useShotBtn').classList.remove('used');
+        if (card) card.classList.remove('selected');
+        document.getElementById('useBtn').textContent = '+ Use This Shot';
+        document.getElementById('useBtn').classList.remove('selected-state');
       } else {
-        const img = card.querySelector('img');
         selectedShots.push({ index, el, imgSrc: img ? img.src : '' });
-        card.classList.add('selected');
-        document.getElementById('useShotBtn').textContent = '✓ Shot Selected';
-        document.getElementById('useShotBtn').classList.add('used');
+        if (card) card.classList.add('selected');
+        document.getElementById('useBtn').textContent = '✓ Shot Selected';
+        document.getElementById('useBtn').classList.add('selected-state');
       }
       updateShotBar();
     }
 
     function updateShotBar() {
       const bar = document.getElementById('shotBar');
-      const count = document.getElementById('shotCount');
-      const thumbs = document.getElementById('shotThumbs');
-
-      if (selectedShots.length === 0) {
-        bar.classList.remove('visible');
-        return;
-      }
-
+      if (selectedShots.length === 0) { bar.classList.remove('visible'); return; }
       bar.classList.add('visible');
-      count.textContent = `${selectedShots.length} shot${selectedShots.length > 1 ? 's' : ''} selected`;
-      thumbs.innerHTML = selectedShots.map(s =>
-        s.imgSrc
-          ? `<img class="shot-thumb" src="${s.imgSrc}" alt="${s.el.element_name}" title="${s.el.element_name}">`
-          : `<div class="shot-thumb-placeholder"></div>`
+      document.getElementById('shotLabel').textContent = `${selectedShots.length} shot${selectedShots.length > 1 ? 's' : ''}`;
+      document.getElementById('shotThumbs').innerHTML = selectedShots.map(s =>
+        s.imgSrc ? `<img class="shot-thumb" src="${s.imgSrc}" title="${s.el.element_name}">` : ''
       ).join('');
     }
 
@@ -597,61 +538,42 @@ RULES:
       selectedShots = [];
       document.querySelectorAll('.card.selected').forEach(c => c.classList.remove('selected'));
       updateShotBar();
-      closePanel();
-    }
-
-    function generateSequence() {
-      if (selectedShots.length === 0) return;
-      const names = selectedShots.map((s,i) => `${i+1}. ${s.el.element_name} — ${s.el.direction_label}`).join('\n');
-      alert(`Your Edit Sequence:\n\n${names}\n\nPacing: ${currentExecution.pacing || 'See full plan'}\nTransitions: ${currentExecution.transitions || 'See full plan'}`);
-    }
-
-    function renderExecution(ex, role) {
-      const c = document.getElementById('execContent');
-      const avoidHtml = (arr) => (Array.isArray(arr) ? arr : [arr]).filter(Boolean).map(a => `<span class="avoid-tag">${a}</span>`).join('');
-      const listHtml = (arr) => (arr||[]).map(i=>`<li>${i}</li>`).join('');
-
-      if (role === 'video') {
-        c.innerHTML = `
-          <div class="exec-grid">
-            <div class="exec-block"><div class="e-label">🎬 Visual Direction</div><ul class="e-list">${listHtml(ex.visual_direction)}</ul></div>
-            <div class="exec-block"><div class="e-label">🎞️ Sequence</div><ul class="e-list">${listHtml(ex.sequence)}</ul></div>
-            <div class="exec-block"><div class="e-label">⏱️ Pacing</div><div class="e-value">${ex.pacing||''}</div></div>
-            <div class="exec-block"><div class="e-label">📐 Framing</div><div class="e-value">${ex.framing||''}</div></div>
-            <div class="exec-block"><div class="e-label">🔁 Transitions</div><div class="e-value">${ex.transitions||''}</div></div>
-            <div class="exec-block"><div class="e-label">🔊 Audio</div><div class="e-value">${ex.audio||''}</div></div>
-          </div>
-          <div class="avoid-row"><div class="avoid-label">🚫 Avoid</div><div class="avoid-tags">${avoidHtml(ex.avoid)}</div></div>`;
-      } else if (role === 'designer') {
-        c.innerHTML = `
-          <div class="exec-grid">
-            <div class="exec-block"><div class="e-label">🧩 Layout</div><div class="e-value">${ex.layout||''}</div></div>
-            <div class="exec-block"><div class="e-label">📐 Hierarchy</div><div class="e-value">${ex.hierarchy||''}</div></div>
-            <div class="exec-block"><div class="e-label">🔤 Typography</div><div class="e-value">${ex.typography||''}</div></div>
-            <div class="exec-block"><div class="e-label">📏 Grid</div><div class="e-value">${ex.grid||''}</div></div>
-            <div class="exec-block full"><div class="e-label">🎨 Visual Behavior</div><div class="e-value">${ex.visual_behavior||''}</div></div>
-          </div>
-          <div class="avoid-row"><div class="avoid-label">🚫 Avoid</div><div class="avoid-tags">${avoidHtml(ex.avoid)}</div></div>`;
-      } else if (role === 'brand') {
-        c.innerHTML = `
-          <div class="exec-grid">
-            <div class="exec-block"><div class="e-label">💡 Positioning</div><div class="e-value">${ex.positioning||''}</div></div>
-            <div class="exec-block"><div class="e-label">🧠 Audience Insight</div><div class="e-value">${ex.audience_insight||''}</div></div>
-            <div class="exec-block"><div class="e-label">🗣️ Tone</div><div class="e-value">${ex.tone||''}</div></div>
-            <div class="exec-block"><div class="e-label">🎯 Perception</div><div class="e-value">${ex.perception||''}</div></div>
-            <div class="exec-block full"><div class="e-label">📢 Example Messaging</div><ul class="e-list">${listHtml(ex.example_messaging)}</ul></div>
-          </div>
-          <div class="avoid-row"><div class="avoid-label">🚫 Avoid</div><div class="avoid-tags">${avoidHtml(ex.avoid)}</div></div>`;
+      if (activePanelIndex !== null) {
+        document.getElementById('useBtn').textContent = '+ Use This Shot';
+        document.getElementById('useBtn').classList.remove('selected-state');
       }
     }
 
+    function buildSequence() {
+      if (selectedShots.length === 0) return;
+      const ex = currentExecution;
+      document.getElementById('seqSub').textContent = `${selectedShots.length} shot${selectedShots.length > 1 ? 's' : ''} · ${ex.pacing || ''} · ${ex.transitions || ''}`;
+      document.getElementById('seqSteps').innerHTML = selectedShots.map((s,i) => `
+        <div class="seq-step">
+          <div class="seq-num">SHOT ${i+1}</div>
+          <div class="seq-content">
+            <div class="seq-name">${s.el.element_name}</div>
+            <div class="seq-insight">${s.el.insight_line}</div>
+            <div class="seq-direction">${s.el.direction_label}</div>
+          </div>
+        </div>`).join('');
+      document.getElementById('seqMeta').innerHTML = `
+        <div class="seq-meta-item"><div class="seq-meta-label">Pacing</div><div class="seq-meta-value">${ex.pacing||'—'}</div></div>
+        <div class="seq-meta-item"><div class="seq-meta-label">Transitions</div><div class="seq-meta-value">${ex.transitions||'—'}</div></div>`;
+      document.getElementById('seqModal').classList.add('open');
+    }
+
+    function closeSeq() { document.getElementById('seqModal').classList.remove('open'); }
+    function closeSeqOnBg(e) { if (e.target === document.getElementById('seqModal')) closeSeq(); }
+
+    // ── FETCH IMAGE ──
     function fetchImage(query, card, el, usedIds, brief) {
       const b = brief.toLowerCase();
       let boost = '';
       if (b.includes('3am')||b.includes('night')||b.includes('midnight')) boost = ' night dark';
-      else if (b.includes('holi')||b.includes('festival')||b.includes('color')) boost = ' colorful vibrant';
+      else if (b.includes('holi')||b.includes('color')||b.includes('festival')) boost = ' colorful vibrant';
       else if (b.includes('snow')||b.includes('winter')||b.includes('cold')) boost = ' winter snow';
-      else if (b.includes('rush hour')||b.includes('crowd')) boost = ' crowded';
+      else if (b.includes('rush hour')||b.includes('crowd')) boost = ' crowded people';
 
       fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query+boost)}&per_page=10&orientation=portrait`, {
         headers: { 'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}` }
