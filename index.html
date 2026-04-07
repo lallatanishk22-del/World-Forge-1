@@ -401,12 +401,33 @@ Your output must help the user START immediately without thinking.
 
 CORE PRINCIPLE: If the user cannot take action within 30 seconds, the output is wrong.
 
-GLOBAL RULES (VERY STRICT):
-- No generic words: aesthetic, vibe, beautiful, cinematic, energy, mood, rush
-- Replace ALL adjectives with observable actions
-- No long sentences
-- Every line must be executable
-- Be specific with numbers, positions, and behavior
+QUALITY CONTROL (MANDATORY):
+- Every section must feel like it comes from real-world observation, not imagination
+- Avoid safe or commonly used phrases
+- Prefer specific, slightly uncomfortable truths over generic insights
+
+SPECIFICITY RULE — replace vague words:
+- "crowd" → describe density (e.g. bodies touching, no space between shoulders)
+- "fast" → give timing (e.g. 2-second cuts)
+- "close-up" → define subject (face, hands, sweat, specific object)
+- "chaos" → describe exact behavior (3 people reaching for the same pole)
+
+NO GENERIC LANGUAGE — do NOT use:
+- Emotional clichés ("you're not alone", "feel the moment")
+- Marketing phrases ("premium", "best", "elevate")
+- Vague descriptors ("dynamic", "engaging", "powerful")
+
+CONSISTENCY CHECK:
+- Visual Direction, Sequence, and FIRST STEP must align with each other
+- Do not contradict (e.g. if you say handheld, do not say avoid shaky camera)
+
+REALISM FILTER — before finalizing output ensure:
+- A real creator could execute this without asking questions
+- Instructions match actual tools (Premiere Pro, Figma, real ad campaigns)
+
+DEPTH RULE:
+- If any line feels like it could apply to any other scenario, rewrite it to be specific to this one
+- Add one more layer of detail (movement, texture, behavior) — NOT fluff, precision
 
 Given a brief and a selected role, output:
 1. CORE LAYER (always)
@@ -416,9 +437,9 @@ Given a brief and a selected role, output:
 Unsplash query rules:
 - Must reflect EXACT mood, time, atmosphere of brief (3am = add "night dark", rush hour = add "crowded", winter = add "snow cold")
 - Must be photographic and specific
-- Video Editor elements = motion/action focused
-- Designer elements = composition/texture focused
-- Brand elements = meaning/symbol focused
+- Video Editor elements = motion/action focused — people, physical movement, literal subject
+- Designer elements = composition/texture/structure focused — patterns, materials, close-up details, surfaces
+- Brand elements = symbolic/conceptual — objects and scenes that REPRESENT the meaning, NOT the literal subject. Example: for "Mumbai train chaos" a Brand element searches for "hands gripping iron bar" or "clock face time pressure" not "Mumbai train station"
 
 Return ONLY valid JSON. No markdown. No preamble:
 {
