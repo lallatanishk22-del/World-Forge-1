@@ -65,61 +65,21 @@
     /* OUTPUT */
     .output { display: none; padding-bottom: 80px; }
 
-    /* DIRECTION SECTION */
-    .direction-section { max-width: 1400px; margin: 0 auto; padding: 64px 24px 48px; }
+    /* TOP — 3 things only */
+    .top-strip { max-width: 1400px; margin: 0 auto; padding: 48px 24px 40px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; }
+    @media(max-width:700px) { .top-strip { grid-template-columns: 1fr; } }
 
-    /* SECTION HEADER */
-    .dir-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-    .dir-title { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); }
-    .dir-brief { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: var(--text-muted); }
+    .top-block { background: var(--surface); border: 1px solid var(--border); padding: 24px 26px; }
+    .top-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 10px; }
+    .top-value { font-family: 'Cormorant Garamond', serif; font-size: 18px; line-height: 1.5; color: var(--text); }
+    .top-value.feeling { font-size: 26px; font-style: italic; font-weight: 300; color: #fff; }
+    .top-value.action { font-size: 17px; color: var(--accent); }
 
-    /* CORE ROW — 4 columns */
-    .core-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-bottom: 24px; }
-    @media(max-width:900px) { .core-row { grid-template-columns: repeat(2,1fr); } }
-    @media(max-width:500px) { .core-row { grid-template-columns: 1fr; } }
-
-    .dir-block { background: var(--surface); border: 1px solid var(--border); padding: 24px 22px; }
-    .dir-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-    .dir-value { font-family: 'Cormorant Garamond', serif; font-size: 17px; line-height: 1.6; color: var(--text); }
-    .dir-value.feeling { font-size: 24px; font-style: italic; font-weight: 300; color: #fff; }
-
-    /* EXECUTION BLOCK */
-    .exec-wrap { border: 1px solid var(--border); margin-bottom: 24px; }
-    .exec-header { display: flex; align-items: center; gap: 14px; padding: 14px 22px; border-bottom: 1px solid var(--border); }
-    .role-tag { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; padding: 5px 12px; font-weight: 700; border-radius: 2px; }
-    .role-tag.video { background: rgba(74,158,255,0.12); color: #4a9eff; border: 1px solid rgba(74,158,255,0.25); }
-    .role-tag.designer { background: rgba(167,139,250,0.12); color: #a78bfa; border: 1px solid rgba(167,139,250,0.25); }
-    .role-tag.brand { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.25); }
-    .exec-header-label { font-size: 13px; letter-spacing: 1px; color: var(--text-dim); }
-
-    /* EXEC GRID ROW 1 — 4 columns */
-    .exec-row { display: grid; gap: 2px; border-bottom: 1px solid var(--border); }
-    .exec-row.cols4 { grid-template-columns: repeat(4,1fr); }
-    .exec-row.cols2 { grid-template-columns: repeat(2,1fr); }
-    @media(max-width:900px) { .exec-row.cols4, .exec-row.cols2 { grid-template-columns: repeat(2,1fr); } }
-    @media(max-width:500px) { .exec-row.cols4, .exec-row.cols2 { grid-template-columns: 1fr; } }
-
-    .exec-block { background: var(--surface); padding: 22px 22px; }
-    .exec-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-    .exec-value { font-family: 'Cormorant Garamond', serif; font-size: 16px; line-height: 1.7; color: var(--text-dim); }
-    .exec-list { list-style: none; }
-    .exec-list li { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); line-height: 1.7; padding-left: 16px; position: relative; margin-bottom: 3px; }
-    .exec-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 11px; top: 4px; }
-
-    /* AVOID BAR */
-    .avoid-bar { display: flex; align-items: flex-start; gap: 14px; padding: 16px 22px; background: var(--surface); }
-    .avoid-tag-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #c0392b; white-space: nowrap; margin-top: 2px; }
-    .avoid-value { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); line-height: 1.6; }
-
-    /* FIRST STEP */
-    .first-step-bar { background: var(--accent); padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; gap: 16px; }
-    .fs-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: rgba(0,0,0,0.45); white-space: nowrap; }
-    .fs-value { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #0a0a0a; line-height: 1.4; }
-
-    /* VISUAL WORLD */
-    .visual-section { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
-    .section-head { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 16px; }
-    .section-head::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    /* GRID */
+    .grid-section { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+    .grid-head { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 16px; }
+    .grid-head::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .grid-head-right { font-size: 10px; letter-spacing: 1px; color: var(--text-muted); text-transform: none; font-family: 'Cormorant Garamond', serif; font-style: italic; }
 
     .world-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; }
     @media(max-width:1100px) { .world-grid { grid-template-columns: repeat(3,1fr); } }
@@ -127,26 +87,58 @@
     @media(max-width:480px) { .world-grid { grid-template-columns: 1fr; } }
 
     /* CARD */
-    .card { position: relative; overflow: hidden; cursor: default; opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; background: #111; }
+    .card { position: relative; overflow: hidden; cursor: pointer; opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; background: #111; }
     .card.visible { opacity: 1; transform: translateY(0); }
     .card-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; transition: transform 0.5s ease; }
-    .card:hover .card-img { transform: scale(1.04); }
-    .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.1) 58%, transparent 100%); pointer-events: none; }
-    .card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 22px 18px 18px; }
+    .card:hover .card-img { transform: scale(1.05); }
+    .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.94) 0%, rgba(0,0,0,0.1) 55%, transparent 100%); pointer-events: none; transition: background 0.3s; }
+    .card:hover .card-overlay { background: linear-gradient(to top, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.05) 100%); }
+
+    .card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 16px 16px; }
     .card-num { font-size: 10px; letter-spacing: 3px; color: var(--accent); margin-bottom: 4px; font-weight: 600; }
     .card-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #fff; line-height: 1.1; margin-bottom: 6px; }
     .card-insight { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: rgba(255,255,255,0.55); line-height: 1.5; margin-bottom: 8px; }
     .card-label { display: inline-block; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); background: rgba(201,169,110,0.1); border: 1px solid rgba(201,169,110,0.2); padding: 3px 8px; }
-    .card-credit { position: absolute; top: 10px; right: 10px; font-size: 9px; color: rgba(255,255,255,0.3); background: rgba(0,0,0,0.55); padding: 3px 7px; text-decoration: none; border-radius: 2px; transition: color 0.2s; }
-    .card-credit:hover { color: rgba(255,255,255,0.65); }
+
+    /* HOVER HINT */
+    .card-click-hint { position: absolute; top: 12px; left: 12px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.5); background: rgba(0,0,0,0.6); padding: 4px 10px; opacity: 0; transition: opacity 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+    .card:hover .card-click-hint { opacity: 1; }
+
+    /* Credit — tiny, compliance only */
+    .card-credit { position: absolute; bottom: 8px; right: 8px; font-size: 8px; color: rgba(255,255,255,0.18); background: transparent; padding: 2px 4px; text-decoration: none; z-index: 5; }
+    .card-credit:hover { color: rgba(255,255,255,0.35); }
+
     .img-skeleton { width: 100%; aspect-ratio: 3/4; background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
     /* PALETTE */
-    .palette-row { max-width: 1400px; margin: 32px auto 0; padding: 0 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .palette-row { max-width: 1400px; margin: 28px auto 0; padding: 0 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .palette-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); }
-    .swatch { width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.2s; }
+    .swatch { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.2s; cursor: default; }
     .swatch:hover { transform: scale(1.2); }
+
+    /* SIDE PANEL */
+    .panel { position: fixed; right: 0; top: 0; bottom: 0; width: 380px; background: #0d0d0d; border-left: 1px solid var(--border); z-index: 400; transform: translateX(100%); transition: transform 0.32s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; overflow: hidden; }
+    .panel.open { transform: translateX(0); }
+    @media(max-width:500px) { .panel { width: 100%; } }
+
+    .panel-head { padding: 22px 20px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-shrink: 0; }
+    .panel-name { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: #fff; line-height: 1.2; }
+    .panel-x { background: transparent; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; line-height: 1; padding: 0; transition: color 0.2s; }
+    .panel-x:hover { color: var(--text); }
+
+    .panel-body { flex: 1; overflow-y: auto; padding: 20px; }
+
+    .p-insight { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-style: italic; color: var(--text); line-height: 1.6; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+
+    .p-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 2px; }
+    .p-block { background: var(--surface); border: 1px solid var(--border); padding: 16px 18px; }
+    .p-block.full { grid-column: span 2; }
+    .p-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 8px; }
+    .p-value { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-dim); line-height: 1.7; }
+    .p-list { list-style: none; }
+    .p-list li { font-family: 'Cormorant Garamond', serif; font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-left: 14px; position: relative; margin-bottom: 2px; }
+    .p-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 10px; top: 4px; }
 
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
@@ -192,7 +184,7 @@
         <button class="role-btn" data-role="designer" onclick="selectRole('designer')">🎨 Designer</button>
         <button class="role-btn" data-role="brand" onclick="selectRole('brand')">💡 Brand</button>
       </div>
-      <p class="hint-text">Type a brief. Select your role. Start immediately.</p>
+      <p class="hint-text">Type a brief. Select your role. Click images to explore.</p>
       <p class="error-msg" id="errorMsg"></p>
     </div>
     <div class="status" id="status"></div>
@@ -201,64 +193,29 @@
   <!-- OUTPUT -->
   <div class="output" id="output">
 
-    <div class="direction-section">
-
-      <!-- CORE DIRECTION -->
-      <div class="dir-header">
-        <span class="dir-title">Core Direction</span>
-        <span class="dir-brief" id="dirBrief"></span>
+    <!-- TOP: 3 THINGS ONLY -->
+    <div class="top-strip">
+      <div class="top-block">
+        <div class="top-label">🎯 Core Feeling</div>
+        <div class="top-value feeling" id="coreFeeling"></div>
       </div>
-
-      <div class="core-row">
-        <div class="dir-block">
-          <div class="dir-label">🎯 Core Feeling</div>
-          <div class="dir-value feeling" id="coreFeeling"></div>
-        </div>
-        <div class="dir-block">
-          <div class="dir-label">🧠 Human Insight</div>
-          <div class="dir-value" id="humanInsight"></div>
-        </div>
-        <div class="dir-block">
-          <div class="dir-label">🎨 Color & Texture</div>
-          <div class="dir-value" id="colorTexture"></div>
-        </div>
-        <div class="dir-block">
-          <div class="dir-label">🔊 Sound Direction</div>
-          <div class="dir-value" id="soundDirection"></div>
-        </div>
+      <div class="top-block">
+        <div class="top-label">🧠 Insight</div>
+        <div class="top-value" id="humanInsight"></div>
       </div>
-
-      <!-- FIRST STEP -->
-      <div class="first-step-bar">
-        <span class="fs-label">🚀 First Step</span>
-        <span class="fs-value" id="firstStep"></span>
+      <div class="top-block">
+        <div class="top-label">🚀 First Action</div>
+        <div class="top-value action" id="firstStep"></div>
       </div>
-
-      <!-- EXECUTION DIRECTION -->
-      <div class="exec-wrap">
-        <div class="exec-header">
-          <span class="role-tag" id="roleTag"></span>
-          <span class="exec-header-label">Execution Direction</span>
-        </div>
-
-        <!-- ROW 1: 4 cols -->
-        <div class="exec-row cols4" id="execRow1"></div>
-
-        <!-- ROW 2: 2 cols -->
-        <div class="exec-row cols2" id="execRow2"></div>
-
-        <!-- AVOID -->
-        <div class="avoid-bar">
-          <span class="avoid-tag-label">🚫 Avoid</span>
-          <span class="avoid-value" id="avoidValue"></span>
-        </div>
-      </div>
-
     </div>
 
-    <!-- VISUAL WORLD -->
-    <div class="visual-section">
-      <div class="section-head">Visual World</div>
+    <!-- MIDDLE: IMAGE GRID -->
+    <div class="grid-section">
+      <div class="grid-head">
+        Visual World
+        <span class="grid-head-right">Click any image to explore the direction</span>
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+      </div>
       <div class="world-grid" id="worldGrid"></div>
       <div class="palette-row" id="paletteRow" style="display:none">
         <span class="palette-label">Palette</span>
@@ -268,10 +225,20 @@
 
   </div>
 
+  <!-- SIDE PANEL — revealed on click -->
+  <div class="panel" id="sidePanel">
+    <div class="panel-head">
+      <div class="panel-name" id="panelName"></div>
+      <button class="panel-x" onclick="closePanel()">✕</button>
+    </div>
+    <div class="panel-body" id="panelBody"></div>
+  </div>
+
   <script>
     let GROQ_API_KEY = localStorage.getItem('groq_api_key') || '';
     let UNSPLASH_ACCESS_KEY = localStorage.getItem('unsplash_access_key') || '';
     let selectedRole = 'video';
+    let worldData = null;
 
     window.addEventListener('load', () => {
       updateKeyStatuses();
@@ -297,64 +264,42 @@
       document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
       document.querySelector(`[data-role="${role}"]`).classList.add('active');
     }
+    function closePanel() { document.getElementById('sidePanel').classList.remove('open'); }
 
     const SYSTEM_PROMPT = `You are a creative director giving clear, practical direction.
-Focus on helping the user START immediately.
-Avoid generic or poetic language.
-
 Return ONLY valid JSON. No markdown. No extra text.
 
-FOR Video Editor:
 {
-  "core_feeling": "1 sharp observable line",
-  "human_insight": "specific observed behavior — slightly uncomfortable — 1-2 lines",
-  "color_texture": "lighting + material + color — specific",
-  "sound_direction": "real-world sounds — name them specifically",
-  "first_step": "subject + duration + camera + environment",
+  "core_feeling": "1 sharp observable line — not an emotion label",
+  "human_insight": "specific observed behavior — slightly uncomfortable — 1 line",
+  "first_step": "subject + duration + camera + environment — immediately actionable",
   "visual_direction": ["shot+subject+camera", "shot 2", "shot 3"],
   "suggested_sequence": ["Step 1: subject+action+camera", "Step 2", "Step 3", "Step 4"],
-  "pacing": "exact seconds per shot + rhythm",
+  "pacing": "exact seconds + rhythm",
   "framing": "placement + tight/wide + depth",
   "transitions": "exact type",
   "audio_treatment": "dominant sound + music or not",
-  "avoid": "specific things NOT to do — 1 clear line",
-  "color_palette": ["#hex1","#hex2","#hex3","#hex4","#hex5"],
-  "elements": [{"element_name":"evocative NOT literal","insight_line":"emotional truth max 10 words","direction_label":"2-3 word action","unsplash_query":"4-6 word photographic query match atmosphere"}]
-}
-
-FOR Designer:
-{
-  "core_feeling": "...", "human_insight": "...", "color_texture": "...", "sound_direction": "...",
-  "first_step": "exact first frame to create",
-  "layout": "structure + spacing",
-  "hierarchy": "what dominates + placement",
-  "typography": "specific Google Font heading + body + weight + spacing",
-  "grid": "columns + symmetry",
-  "visual_behavior": "how images/colors behave",
-  "avoid": "specific design mistakes",
-  "color_palette": ["#hex1","#hex2","#hex3","#hex4","#hex5"],
-  "elements": [{"element_name":"...","insight_line":"...","direction_label":"...","unsplash_query":"..."}]
-}
-
-FOR Brand:
-{
-  "core_feeling": "...", "human_insight": "...", "color_texture": "...", "sound_direction": "...",
-  "first_step": "one usable headline ready now",
-  "positioning": "strategic angle",
-  "audience_insight": "psychological behavior",
+  "positioning": "strategic angle — for brand role",
   "tone": "exact tone behavior",
-  "perception": "how audience should feel",
-  "example_messaging": ["line 1", "line 2", "line 3"],
-  "avoid": "messaging mistakes",
+  "example_messaging": ["line 1", "line 2"],
+  "layout": "structure + spacing — for designer role",
+  "typography": "specific Google Font heading + body + weight",
   "color_palette": ["#hex1","#hex2","#hex3","#hex4","#hex5"],
-  "elements": [{"element_name":"...","insight_line":"...","direction_label":"...","unsplash_query":"..."}]
+  "elements": [
+    {
+      "element_name": "evocative 2-4 word name — NOT literal",
+      "insight_line": "emotional truth — max 10 words",
+      "direction_label": "2-3 word action",
+      "unsplash_query": "4-6 word photographic query — match brief atmosphere exactly"
+    }
+  ]
 }
 
 RULES:
 - No: aesthetic, vibe, beautiful, cinematic, energy, mood
-- Observable actions only
-- element_name must be evocative NOT literal
-- Unsplash queries match brief atmosphere exactly
+- Observable actions only. Numbers where possible.
+- element_name evocative NOT literal (NOT "Laughing Faces", "Rush Hour Crowd")
+- Unsplash: 3am=night dark, Holi=colorful powder, rush hour=crowded people, snow=winter cold
 - Video elements = motion/people/action
 - Designer elements = texture/pattern/close-up/surface
 - Brand elements = symbolic objects NOT literal subject`;
@@ -368,6 +313,7 @@ RULES:
       const errorMsg = document.getElementById('errorMsg');
       btn.disabled = true;
       errorMsg.style.display = 'none';
+      closePanel();
       setStatus('Building creative direction…');
 
       try {
@@ -380,7 +326,7 @@ RULES:
               { role: 'system', content: SYSTEM_PROMPT },
               { role: 'user', content: `Brief: ${brief}\nRole: ${selectedRole}` }
             ],
-            temperature: 0.85, max_tokens: 2500
+            temperature: 0.85, max_tokens: 2000
           })
         });
         if (!res.ok) { const e = await res.text(); throw new Error(`Groq (${res.status}): ${e}`); }
@@ -389,56 +335,13 @@ RULES:
         try { w = JSON.parse(data.choices[0].message.content.replace(/```json|```/g,'').trim()); }
         catch(e) { throw new Error('Parse failed'); }
 
+        worldData = w;
         setStatus('Curating visuals…');
 
-        // CORE
-        document.getElementById('dirBrief').textContent = `"${brief}"`;
+        // TOP 3
         document.getElementById('coreFeeling').textContent = w.core_feeling || '';
         document.getElementById('humanInsight').textContent = w.human_insight || '';
-        document.getElementById('colorTexture').textContent = w.color_texture || '';
-        document.getElementById('soundDirection').textContent = w.sound_direction || '';
         document.getElementById('firstStep').textContent = w.first_step || '';
-
-        // ROLE TAG
-        const rt = document.getElementById('roleTag');
-        rt.textContent = { video: 'Video Editor', designer: 'Designer', brand: 'Brand' }[selectedRole];
-        rt.className = 'role-tag ' + selectedRole;
-
-        // EXECUTION ROWS
-        const row1 = document.getElementById('execRow1');
-        const row2 = document.getElementById('execRow2');
-        row1.innerHTML = '';
-        row2.innerHTML = '';
-
-        if (selectedRole === 'video') {
-          row1.innerHTML = `
-            ${block('🎬 Visual Direction', list(w.visual_direction))}
-            ${block('🎞️ Suggested Sequence', list(w.suggested_sequence))}
-            ${block('⏱️ Pacing', val(w.pacing))}
-            ${block('📐 Framing', val(w.framing))}`;
-          row2.innerHTML = `
-            ${block('🔁 Transitions', val(w.transitions))}
-            ${block('🔊 Audio Treatment', val(w.audio_treatment))}`;
-        } else if (selectedRole === 'designer') {
-          row1.innerHTML = `
-            ${block('🧩 Layout', val(w.layout))}
-            ${block('📐 Hierarchy', val(w.hierarchy))}
-            ${block('🔤 Typography', val(w.typography))}
-            ${block('📏 Grid', val(w.grid))}`;
-          row2.innerHTML = `
-            ${block('🎨 Visual Behavior', val(w.visual_behavior))}`;
-        } else if (selectedRole === 'brand') {
-          row1.innerHTML = `
-            ${block('💡 Positioning', val(w.positioning))}
-            ${block('🧠 Audience Insight', val(w.audience_insight))}
-            ${block('🗣️ Tone', val(w.tone))}
-            ${block('🎯 Perception', val(w.perception))}`;
-          row2.innerHTML = `
-            ${block('📢 Example Messaging', list(w.example_messaging))}`;
-        }
-
-        // AVOID
-        document.getElementById('avoidValue').textContent = w.avoid || '';
 
         // PALETTE
         if (w.color_palette) {
@@ -459,7 +362,7 @@ RULES:
         const usedIds = new Set();
         for (let i = 0; i < (w.elements||[]).length; i++) {
           const el = w.elements[i];
-          const card = buildCard(el, i);
+          const card = buildCard(el, i, w);
           grid.appendChild(card);
           fetchImage(el.unsplash_query, card, el, usedIds, brief);
           setTimeout(() => card.classList.add('visible'), i * 70);
@@ -477,29 +380,67 @@ RULES:
       btn.disabled = false;
     }
 
-    // HELPERS
-    function block(label, content) {
-      return `<div class="exec-block"><div class="exec-label">${label}</div>${content}</div>`;
-    }
-    function val(v) { return `<div class="exec-value">${v||''}</div>`; }
-    function list(arr) {
-      if (!arr || !arr.length) return '';
-      return `<ul class="exec-list">${arr.map(i=>`<li>${i}</li>`).join('')}</ul>`;
-    }
-
-    function buildCard(el, index) {
+    function buildCard(el, index, w) {
       const card = document.createElement('div');
       card.className = 'card';
       card.innerHTML = `
         <div class="img-skeleton skeleton-ph"></div>
         <div class="card-overlay"></div>
+        <div class="card-click-hint">Tap to explore</div>
         <div class="card-body">
           <div class="card-num">${index+1 < 10 ? '0'+(index+1) : index+1}</div>
           <div class="card-name">${el.element_name}</div>
           <div class="card-insight">${el.insight_line}</div>
           <span class="card-label">${el.direction_label||''}</span>
         </div>`;
+
+      card.addEventListener('click', () => openPanel(el, w));
       return card;
+    }
+
+    function openPanel(el, w) {
+      document.getElementById('panelName').textContent = el.element_name;
+
+      let content = `<div class="p-insight">${el.insight_line}</div>`;
+
+      if (selectedRole === 'video') {
+        content += `
+          <div class="p-row">
+            <div class="p-block full"><div class="p-label">Visual Direction</div><ul class="p-list">${(w.visual_direction||[]).map(i=>`<li>${i}</li>`).join('')}</ul></div>
+          </div>
+          <div class="p-row">
+            <div class="p-block full"><div class="p-label">Sequence</div><ul class="p-list">${(w.suggested_sequence||[]).slice(0,3).map(i=>`<li>${i}</li>`).join('')}</ul></div>
+          </div>
+          <div class="p-row">
+            <div class="p-block"><div class="p-label">Pacing</div><div class="p-value">${w.pacing||''}</div></div>
+            <div class="p-block"><div class="p-label">Transitions</div><div class="p-value">${w.transitions||''}</div></div>
+          </div>
+          <div class="p-row">
+            <div class="p-block full"><div class="p-label">Audio</div><div class="p-value">${w.audio_treatment||''}</div></div>
+          </div>`;
+      } else if (selectedRole === 'designer') {
+        content += `
+          <div class="p-row">
+            <div class="p-block full"><div class="p-label">Layout</div><div class="p-value">${w.layout||''}</div></div>
+          </div>
+          <div class="p-row">
+            <div class="p-block full"><div class="p-label">Typography</div><div class="p-value">${w.typography||''}</div></div>
+          </div>`;
+      } else if (selectedRole === 'brand') {
+        content += `
+          <div class="p-row">
+            <div class="p-block full"><div class="p-label">Positioning</div><div class="p-value">${w.positioning||''}</div></div>
+          </div>
+          <div class="p-row">
+            <div class="p-block full"><div class="p-label">Tone</div><div class="p-value">${w.tone||''}</div></div>
+          </div>
+          <div class="p-row">
+            <div class="p-block full"><div class="p-label">Example Messaging</div><ul class="p-list">${(w.example_messaging||[]).map(i=>`<li>${i}</li>`).join('')}</ul></div>
+          </div>`;
+      }
+
+      document.getElementById('panelBody').innerHTML = content;
+      document.getElementById('sidePanel').classList.add('open');
     }
 
     function fetchImage(query, card, el, usedIds, brief) {
@@ -525,11 +466,12 @@ RULES:
         img.onload = () => {
           const sk = card.querySelector('.skeleton-ph');
           if (sk) sk.replaceWith(img);
+          // Tiny credit — compliance only, not a distraction
           const credit = document.createElement('a');
           credit.className = 'card-credit';
           credit.href = photo.links.html + '?utm_source=worldforge&utm_medium=referral';
           credit.target = '_blank'; credit.rel = 'noopener';
-          credit.textContent = '📷 ' + photo.user.name;
+          credit.textContent = photo.user.name + ' / Unsplash';
           card.appendChild(credit);
         };
         img.onerror = () => { const sk = card.querySelector('.skeleton-ph'); if (sk) sk.style.background = '#1a1a1a'; };
