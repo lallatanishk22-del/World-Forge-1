@@ -82,7 +82,7 @@
     @media(max-width:480px) { .world-grid { grid-template-columns: 1fr; } }
 
     /* CARD */
-    .card { position: relative; overflow: hidden; cursor: pointer; opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; background: #111; }
+    .card { position: relative; overflow: hidden; cursor: default; opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; background: #111; }
     .card.visible { opacity: 1; transform: translateY(0); }
     .card-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; transition: transform 0.5s ease; }
     .card:hover .card-img { transform: scale(1.05); }
@@ -112,28 +112,28 @@
     .swatch { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.2s; cursor: default; }
     .swatch:hover { transform: scale(1.2); }
 
-    /* SIDE PANEL */
-    .panel { position: fixed; right: 0; top: 0; bottom: 0; width: 380px; background: #0d0d0d; border-left: 1px solid var(--border); z-index: 400; transform: translateX(100%); transition: transform 0.32s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; overflow: hidden; }
-    .panel.open { transform: translateX(0); }
-    @media(max-width:500px) { .panel { width: 100%; } }
-
-    .panel-head { padding: 22px 20px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-shrink: 0; }
-    .panel-name { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: #fff; line-height: 1.2; }
-    .panel-x { background: transparent; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; line-height: 1; padding: 0; transition: color 0.2s; }
-    .panel-x:hover { color: var(--text); }
-
-    .panel-body { flex: 1; overflow-y: auto; padding: 20px; }
-
-    .p-insight { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-style: italic; color: var(--text); line-height: 1.6; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
-
-    .p-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 2px; }
-    .p-block { background: var(--surface); border: 1px solid var(--border); padding: 16px 18px; }
-    .p-block.full { grid-column: span 2; }
-    .p-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 8px; }
-    .p-value { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-dim); line-height: 1.7; }
-    .p-list { list-style: none; }
-    .p-list li { font-family: 'Cormorant Garamond', serif; font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-left: 14px; position: relative; margin-bottom: 2px; }
-    .p-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 10px; top: 4px; }
+    /* REVEAL SECTION */
+    .reveal-section { max-width: 1400px; margin: 24px auto 0; padding: 0 24px; display: none; }
+    .reveal-section.visible { display: block; }
+    .reveal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .reveal-name { font-family: 'Cormorant Garamond', serif; font-size: 13px; font-style: italic; color: var(--text-muted); }
+    .reveal-role { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; padding: 4px 10px; font-weight: 700; border-radius: 2px; }
+    .reveal-role.video { background: rgba(74,158,255,0.1); color: #4a9eff; border: 1px solid rgba(74,158,255,0.2); }
+    .reveal-role.designer { background: rgba(167,139,250,0.1); color: #a78bfa; border: 1px solid rgba(167,139,250,0.2); }
+    .reveal-role.brand { background: rgba(52,211,153,0.1); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+    .r-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; margin-bottom: 2px; }
+    @media(max-width:900px) { .r-grid { grid-template-columns: repeat(2,1fr); } }
+    @media(max-width:500px) { .r-grid { grid-template-columns: 1fr; } }
+    .r-block { background: var(--surface); border: 1px solid var(--border); padding: 22px 22px; }
+    .r-block.half { grid-column: span 2; }
+    .r-block.full { grid-column: span 4; }
+    @media(max-width:900px) { .r-block.half { grid-column: span 1; } .r-block.full { grid-column: span 2; } }
+    @media(max-width:500px) { .r-block.half, .r-block.full { grid-column: span 1; } }
+    .r-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .r-value { font-family: 'Cormorant Garamond', serif; font-size: 16px; line-height: 1.7; color: var(--text-dim); }
+    .r-list { list-style: none; }
+    .r-list li { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); line-height: 1.7; padding-left: 16px; position: relative; margin-bottom: 3px; }
+    .r-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 11px; top: 4px; }
 
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
@@ -198,7 +198,6 @@
     <div class="grid-section">
       <div class="grid-head">
         Visual World
-        <span class="grid-head-right">Click any image to explore the direction</span>
         <div style="flex:1;height:1px;background:var(--border);"></div>
       </div>
       <div class="world-grid" id="worldGrid"></div>
@@ -208,15 +207,15 @@
       </div>
     </div>
 
-  </div>
-
-  <!-- SIDE PANEL — revealed on click -->
-  <div class="panel" id="sidePanel">
-    <div class="panel-head">
-      <div class="panel-name" id="panelName"></div>
-      <button class="panel-x" onclick="closePanel()">✕</button>
+    <!-- REVEAL SECTION — appears below grid on image click -->
+    <div class="reveal-section" id="revealSection">
+      <div class="reveal-header">
+        <span class="reveal-role" id="revealRole"></span>
+        <span class="reveal-name" id="revealName"></span>
+      </div>
+      <div id="revealContent"></div>
     </div>
-    <div class="panel-body" id="panelBody"></div>
+
   </div>
 
   <script>
@@ -249,9 +248,72 @@
       document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
       document.querySelector(`[data-role="${role}"]`).classList.add('active');
     }
-    function closePanel() { document.getElementById('sidePanel').classList.remove('open'); }
+    function closePanel() {
+      document.getElementById('revealSection').classList.remove('visible');
+    }
 
-    const SYSTEM_PROMPT = `You are a creative director giving clear, practical direction.
+    function openPanel(el, w) {
+      const rs = document.getElementById('revealSection');
+      const roleLabels = { video: 'Video Editor', designer: 'Designer', brand: 'Brand' };
+      const rr = document.getElementById('revealRole');
+      rr.textContent = roleLabels[selectedRole];
+      rr.className = 'reveal-role ' + selectedRole;
+      document.getElementById('revealName').textContent = `"${el.element_name}" — ${el.insight_line}`;
+
+      const block = (label, content, cls='') =>
+        `<div class="r-block ${cls}"><div class="r-label">${label}</div>${content}</div>`;
+      const val = (v) => `<div class="r-value">${v||''}</div>`;
+      const list = (arr) => `<ul class="r-list">${(arr||[]).map(i=>`<li>${i}</li>`).join('')}</ul>`;
+
+      let html = '';
+      if (selectedRole === 'video') {
+        html = `
+          <div class="r-grid">
+            ${block('🎬 Visual Direction', list(w.visual_direction))}
+            ${block('🎞️ Suggested Sequence', list((w.suggested_sequence||[]).slice(0,4)))}
+            ${block('⏱️ Pacing', val(w.pacing))}
+            ${block('📐 Framing', val(w.framing))}
+          </div>
+          <div class="r-grid">
+            ${block('🔁 Transitions', val(w.transitions))}
+            ${block('🔊 Audio Treatment', val(w.audio_treatment))}
+          </div>`;
+      } else if (selectedRole === 'designer') {
+        html = `
+          <div class="r-grid">
+            ${block('🧩 Layout', val(w.layout))}
+            ${block('📐 Hierarchy', val(w.framing))}
+            ${block('🔤 Typography', val(w.typography))}
+            ${block('📏 Grid', val(w.grid))}
+          </div>`;
+      } else if (selectedRole === 'brand') {
+        html = `
+          <div class="r-grid">
+            ${block('💡 Positioning', val(w.positioning))}
+            ${block('🗣️ Tone', val(w.tone))}
+            ${block('📢 Example Messaging', list(w.example_messaging), 'half')}
+          </div>`;
+      }
+
+      document.getElementById('revealContent').innerHTML = html;
+      rs.classList.add('visible');
+      rs.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }function buildCard(el, index, w) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="img-skeleton skeleton-ph"></div>
+        <div class="card-overlay"></div>
+        <div class="card-body">
+          <div class="card-num">${index+1 < 10 ? '0'+(index+1) : index+1}</div>
+          <div class="card-name">${el.element_name}</div>
+          <div class="card-insight">${el.insight_line}</div>
+          <span class="card-label">${el.direction_label||''}</span>
+        </div>`;
+      return card;
+    }
+
+    function openPanel(el, w) {} = `You are a creative director giving clear, practical direction.
 Return ONLY valid JSON. No markdown. No extra text.
 
 {
