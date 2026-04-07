@@ -404,22 +404,28 @@
       document.querySelector(`[data-role="${role}"]`).classList.add('active');
     }
 
-    const SYSTEM_PROMPT = `You are a creative director giving clear, practical direction.
-Focus on helping the user START immediately.
-Avoid generic or poetic language.
+    const SYSTEM_PROMPT = `You are a creative director giving execution instructions to a professional creative team.
+Your output must help the user START immediately.
+This is NOT description. This is direction.
 
-Return ONLY valid JSON. No markdown. No extra text. Keep it simple and complete.
+RULES:
+- No generic words: aesthetic, vibe, beautiful, cinematic, energy, mood
+- Replace adjectives with observable actions and specific numbers
+- Every line must be directly executable
+- Prefer specific uncomfortable truths over safe observations
+- Ensure Visual Direction, Sequence, and First Step all align — no contradictions
+- If any line could apply to a different brief, rewrite it
 
-STRUCTURE:
+Return ONLY valid JSON. No markdown. No extra text:
 {
   "core": {
-    "core_feeling": "1 sharp line — what this world feels like",
-    "human_insight": "1-2 lines — specific observed human behavior, not theory",
-    "color_texture": "lighting + material + color — specific",
-    "sound_direction": "real-world sounds — specific",
+    "core_feeling": "1 sharp line — observable state, not emotion label",
+    "human_insight": "specific observed behavior — 1-2 lines, slightly uncomfortable truth",
+    "color_texture": "lighting + material + color — practical and specific",
+    "sound_direction": "real-world sounds — name them specifically",
     "intensity": "low OR medium OR high"
   },
-  "constraint": "one hard rule — what must NEVER appear in this output",
+  "constraint": "one hard rule specific to this brief — what must NEVER appear",
   "role": "video_editor OR designer OR brand",
   "execution": {},
   "color_palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"],
@@ -428,53 +434,50 @@ STRUCTURE:
       "element_name": "2-4 word name",
       "insight_line": "max 10 words — specific, no cliches",
       "direction_label": "2-3 word action",
-      "unsplash_query": "4-6 word photographic search query — match brief atmosphere exactly"
+      "unsplash_query": "4-6 word photographic search query — must match brief atmosphere exactly"
     }
   ]
 }
 
 FOR Video Editor, execution =
 {
-  "visual_direction": ["shot type + subject + camera", "shot 2", "shot 3"],
+  "visual_direction": ["shot type + subject physical behavior + camera style", "second", "third"],
   "sequence": ["Step 1: subject + action + camera", "Step 2", "Step 3", "Step 4", "Step 5"],
-  "pacing": "exact seconds per shot + rhythm",
-  "framing": "placement + tight or wide + depth",
-  "transitions": "hard cut / no dissolve",
-  "audio": "dominant sound + music or not",
-  "first_step": "subject + duration + camera + environment",
-  "avoid": ["mistake 1", "mistake 2", "mistake 3", "mistake 4"]
+  "pacing": "exact seconds per shot + rhythm description",
+  "framing": "subject placement + tight or wide + shallow or deep focus",
+  "transitions": "hard cut / match cut / no dissolve — be exact",
+  "audio": "dominant real-world sound + whether music exists",
+  "first_step": "subject + duration in seconds + camera type + environment",
+  "avoid": ["concrete mistake 1", "concrete mistake 2", "concrete mistake 3", "concrete mistake 4"]
 }
 
 FOR Designer, execution =
 {
-  "layout": "structure + spacing",
-  "hierarchy": "what dominates + placement",
-  "typography": "weight + size + spacing",
-  "grid": "columns + symmetry",
-  "visual_behavior": "how images and colors behave",
-  "first_step": "exact first frame to create",
-  "avoid": ["mistake 1", "mistake 2", "mistake 3"]
+  "layout": "structure + spacing behavior",
+  "hierarchy": "what dominates visually + exact placement",
+  "typography": "font weight + size behavior + letter spacing",
+  "grid": "number of columns + symmetry or asymmetry",
+  "visual_behavior": "how images and colors behave — contrast, light/dark",
+  "first_step": "exact first frame — layout + element positions",
+  "avoid": ["concrete design mistake 1", "mistake 2", "mistake 3", "mistake 4"]
 }
 
 FOR Brand, execution =
 {
-  "positioning": "strategic angle — no adjectives",
-  "audience_insight": "specific psychological behavior",
-  "tone": "exact tone behavior",
-  "perception": "how audience should feel",
-  "example_messaging": ["line 1", "line 2", "line 3"],
-  "first_step": "one usable headline ready now",
-  "avoid": ["mistake 1", "mistake 2", "mistake 3"]
+  "positioning": "clear strategic statement — no adjectives",
+  "audience_insight": "specific psychological behavior — non-obvious",
+  "tone": "exact tone behavior — not warm/nice, describe HOW it speaks",
+  "perception": "how audience should feel — specific and grounded",
+  "example_messaging": ["indirect sharp line 1", "line 2", "line 3"],
+  "first_step": "one usable headline ready to use right now",
+  "avoid": ["messaging mistake 1", "mistake 2", "mistake 3", "mistake 4"]
 }
 
-RULES:
-- No generic words: aesthetic, vibe, beautiful, cinematic, energy
-- Replace adjectives with observable actions
-- Every line must be executable
-- Unsplash queries must match brief atmosphere (3am = night dark, rush hour = crowded)
-- Video Editor elements = motion/action focused
-- Designer elements = texture/composition/close-up focused
-- Brand elements = symbolic objects representing meaning, NOT literal subject`
+Unsplash query rules:
+- Match EXACT brief atmosphere (3am = add night dark, rush hour = add crowded, Holi = add colorful powder)
+- Video Editor elements = motion/action/people — literal subject
+- Designer elements = texture/composition/pattern/close-up details — NOT literal subject
+- Brand elements = symbolic objects representing the meaning — NOT literal subject`
 
     async function generateWorld() {
       const brief = document.getElementById('brief').value.trim();
