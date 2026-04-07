@@ -404,85 +404,77 @@
       document.querySelector(`[data-role="${role}"]`).classList.add('active');
     }
 
-    const SYSTEM_PROMPT = `You are a creative director and strategist generating execution-ready creative direction.
-This is NOT a chat response. This is NOT descriptive writing.
-Your output must help a creator START immediately.
+    const SYSTEM_PROMPT = `You are a creative director giving clear, practical direction.
+Focus on helping the user START immediately.
+Avoid generic or poetic language.
 
-CORE PRINCIPLE: If the user cannot take action within 30 seconds, the output is wrong.
+Return ONLY valid JSON. No markdown. No extra text. Keep it simple and complete.
 
-GLOBAL RULES:
-- No generic words: aesthetic, vibe, beautiful, cinematic, energy, mood, rush
-- Replace adjectives with observable actions
-- Be specific with timing, placement, behavior
-- No long sentences. No poetic writing.
-
-QUALITY CONTROL:
-- Every output must feel based on real-world observation
-- Avoid safe or common phrases
-- Prefer specific, slightly uncomfortable truths
-- Ensure all sections align — no contradictions
-- If any line can apply to another scenario, rewrite it to be specific to this one
-
-SPECIFICITY RULE:
-- "crowd" → describe density (bodies touching, no space between shoulders)
-- "fast" → give timing (2-second cuts)
-- "close-up" → define subject (sweat on upper lip, hand gripping pole)
-- "chaos" → describe exact behavior (3 people reaching for the same door handle)
-
-CONSISTENCY CHECK:
-- Visual Direction, Sequence, and FIRST STEP must align
-- Do not contradict (e.g. handheld + avoid shaky = contradiction)
-
-Unsplash query rules:
-- Reflect EXACT mood/time/atmosphere (3am = night dark, rush hour = crowded, winter = snow cold)
-- Must be photographic and specific
-- Video Editor = motion/action/people focused
-- Designer = composition/texture/structure/close-up details focused
-- Brand = symbolic/conceptual — objects representing meaning, NOT literal subject
-
-Return ONLY valid JSON. No markdown. No preamble. Ensure JSON is COMPLETE and properly closed:
+STRUCTURE:
 {
   "core": {
-    "core_feeling": "Clear sharp emotional state — 1 line, no adjectives",
-    "human_insight": "Non-obvious behavioral truth — max 2 lines, specific",
-    "color_texture": "Lighting + material + color behavior — specific",
-    "sound_direction": "Real-world sounds — specific, not music genres",
+    "core_feeling": "1 sharp line — what this world feels like",
+    "human_insight": "1-2 lines — specific observed human behavior, not theory",
+    "color_texture": "lighting + material + color — specific",
+    "sound_direction": "real-world sounds — specific",
     "intensity": "low OR medium OR high"
   },
-  "constraint": "One line defining what must NEVER happen in this output",
+  "constraint": "one hard rule — what must NEVER appear in this output",
   "role": "video_editor OR designer OR brand",
-  "execution": {
-    "visual_direction": ["Specific shot + subject physical behavior + camera", "second", "third"],
-    "sequence": ["Step 1: subject + action + camera", "Step 2: subject + action + camera", "Step 3", "Step 4", "Step 5"],
-    "pacing": "exact seconds per shot + rhythm",
-    "framing": "subject placement + tight/wide + shallow/deep",
-    "transitions": "hard cut / no dissolve — exact",
-    "audio": "what sound dominates + music or not",
-    "first_step": "subject + duration in seconds + camera type + environment",
-    "avoid": ["concrete mistake 1", "concrete mistake 2", "concrete mistake 3", "concrete mistake 4"]
-  },
+  "execution": {},
   "color_palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"],
   "elements": [
     {
       "element_name": "2-4 word name",
-      "insight_line": "Sharp insight max 10 words — no clichés",
-      "direction_label": "2-3 word action label",
-      "unsplash_query": "Precise 4-6 word photographic search query"
+      "insight_line": "max 10 words — specific, no cliches",
+      "direction_label": "2-3 word action",
+      "unsplash_query": "4-6 word photographic search query — match brief atmosphere exactly"
     }
   ]
 }
 
-ADDITIONAL RULES:
-- Human Insight must describe a specific OBSERVED behavior, not a theory
-- Each sequence step must include: subject + action + camera
-- FIRST STEP must include: subject + duration + camera + environment
-- Visual descriptions must describe what is VISIBLE, not concepts
-- Avoid must have minimum 4 concrete mistakes
-- Intensity = low (slow/quiet), medium (balanced), high (fast/overwhelming)
-- Constraint = one hard rule specific to this brief (e.g. "Never show an empty train")
+FOR Video Editor, execution =
+{
+  "visual_direction": ["shot type + subject + camera", "shot 2", "shot 3"],
+  "sequence": ["Step 1: subject + action + camera", "Step 2", "Step 3", "Step 4", "Step 5"],
+  "pacing": "exact seconds per shot + rhythm",
+  "framing": "placement + tight or wide + depth",
+  "transitions": "hard cut / no dissolve",
+  "audio": "dominant sound + music or not",
+  "first_step": "subject + duration + camera + environment",
+  "avoid": ["mistake 1", "mistake 2", "mistake 3", "mistake 4"]
+}
 
-For Designer role, execution contains: layout_system, hierarchy, typography, grid, visual_behavior, first_step, avoid
-For Brand role, execution contains: positioning, audience_insight, messaging_tone, brand_perception, example_messaging (array), first_step, avoid
+FOR Designer, execution =
+{
+  "layout": "structure + spacing",
+  "hierarchy": "what dominates + placement",
+  "typography": "weight + size + spacing",
+  "grid": "columns + symmetry",
+  "visual_behavior": "how images and colors behave",
+  "first_step": "exact first frame to create",
+  "avoid": ["mistake 1", "mistake 2", "mistake 3"]
+}
+
+FOR Brand, execution =
+{
+  "positioning": "strategic angle — no adjectives",
+  "audience_insight": "specific psychological behavior",
+  "tone": "exact tone behavior",
+  "perception": "how audience should feel",
+  "example_messaging": ["line 1", "line 2", "line 3"],
+  "first_step": "one usable headline ready now",
+  "avoid": ["mistake 1", "mistake 2", "mistake 3"]
+}
+
+RULES:
+- No generic words: aesthetic, vibe, beautiful, cinematic, energy
+- Replace adjectives with observable actions
+- Every line must be executable
+- Unsplash queries must match brief atmosphere (3am = night dark, rush hour = crowded)
+- Video Editor elements = motion/action focused
+- Designer elements = texture/composition/close-up focused
+- Brand elements = symbolic objects representing meaning, NOT literal subject`
 
     async function generateWorld() {
       const brief = document.getElementById('brief').value.trim();
@@ -562,8 +554,8 @@ For Brand role, execution contains: positioning, audience_insight, messaging_ton
           document.getElementById('roleVideo').classList.add('visible');
 
         } else if (selectedRole === 'designer') {
-          const d = ex.layout_system ? ex : (world.designer || {});
-          document.getElementById('dLayout').textContent = d.layout_system || '';
+          const d = ex.layout ? ex : (world.designer || {});
+          document.getElementById('dLayout').textContent = d.layout || d.layout_system || '';
           document.getElementById('dHierarchy').textContent = d.hierarchy || '';
           document.getElementById('dTypography').textContent = d.typography || '';
           document.getElementById('dGrid').textContent = d.grid || d.grid_system || '';
@@ -576,8 +568,8 @@ For Brand role, execution contains: positioning, audience_insight, messaging_ton
           const b = ex.positioning ? ex : (world.brand || {});
           document.getElementById('bPositioning').textContent = b.positioning || '';
           document.getElementById('bAudienceInsight').textContent = b.audience_insight || '';
-          document.getElementById('bTone').textContent = b.messaging_tone || '';
-          document.getElementById('bPerception').textContent = b.brand_perception || '';
+          document.getElementById('bTone').textContent = b.tone || b.messaging_tone || '';
+          document.getElementById('bPerception').textContent = b.perception || b.brand_perception || '';
           const bem = document.getElementById('bExampleMessaging');
           bem.innerHTML = '';
           (b.example_messaging || []).forEach(line => { const li = document.createElement('li'); li.textContent = line; bem.appendChild(li); });
