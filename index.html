@@ -14,7 +14,7 @@
     }
     body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; min-height: 100vh; overflow-x: hidden; }
     body::before {
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999; opacity: 0.4;
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999; opacity: 0.35;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
     }
 
@@ -46,7 +46,7 @@
     .tagline { font-size: 13px; font-weight: 400; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 64px; text-align: center; }
 
     /* INPUT */
-    .input-wrap { width: 100%; max-width: 640px; position: relative; z-index: 1; }
+    .input-wrap { width: 100%; max-width: 680px; position: relative; z-index: 1; }
     .input-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 12px; display: block; }
     .input-row { display: flex; border: 1px solid var(--border); background: var(--surface); transition: border-color 0.3s; }
     .input-row:focus-within { border-color: var(--accent-dim); }
@@ -55,6 +55,21 @@
     .generate-btn { background: var(--accent); color: #0a0a0a; border: none; padding: 0 28px; height: 58px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.2s; white-space: nowrap; min-width: 140px; }
     .generate-btn:hover { background: #d4b47a; }
     .generate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ROLE SELECTOR */
+    .role-row { display: flex; gap: 8px; margin-top: 14px; }
+    .role-btn {
+      flex: 1; padding: 10px 8px; background: transparent; border: 1px solid var(--border);
+      color: var(--text-muted); font-family: 'Syne', sans-serif; font-size: 10px;
+      font-weight: 600; letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+      transition: all 0.2s; text-align: center;
+    }
+    .role-btn:hover { border-color: var(--accent-dim); color: var(--text-dim); }
+    .role-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(201,169,110,0.06); }
+    .role-btn[data-role="video"].active { border-color: #4a9eff; color: #4a9eff; background: rgba(74,158,255,0.06); }
+    .role-btn[data-role="designer"].active { border-color: #a78bfa; color: #a78bfa; background: rgba(167,139,250,0.06); }
+    .role-btn[data-role="brand"].active { border-color: #34d399; color: #34d399; background: rgba(52,211,153,0.06); }
+
     .hint { font-size: 11px; color: var(--text-muted); margin-top: 12px; font-style: italic; font-family: 'Cormorant Garamond', serif; }
     .error-msg { color: #c0392b; font-size: 13px; margin-top: 12px; display: none; font-family: 'Cormorant Garamond', serif; font-style: italic; }
     .status { margin-top: 40px; font-size: 12px; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; text-align: center; min-height: 20px; opacity: 0; transition: opacity 0.4s; }
@@ -63,28 +78,46 @@
     /* OUTPUT */
     .world-section { padding: 80px 24px 120px; max-width: 1400px; margin: 0 auto; display: none; }
 
-    /* CREATIVE DIRECTION LAYER */
-    .creative-layer { margin-bottom: 64px; border: 1px solid var(--border); background: var(--surface); }
-    .creative-layer-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 28px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 8px; }
-    .creative-layer-title { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); }
-    .creative-layer-brief { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-style: italic; color: var(--text-dim); }
-    .creative-layer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; }
-    @media (max-width: 1000px) { .creative-layer-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 600px) { .creative-layer-grid { grid-template-columns: 1fr; } }
-    .cl-block { padding: 24px 28px; border-right: 1px solid var(--border); }
-    .cl-block:last-child { border-right: none; }
-    @media (max-width: 1000px) { .cl-block { border-bottom: 1px solid var(--border); border-right: none; } .cl-block:nth-child(odd) { border-right: 1px solid var(--border); } }
-    .cl-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 12px; }
-    .cl-value { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 400; line-height: 1.6; color: var(--text); }
-    .cl-value.core-feeling { font-size: 21px; font-weight: 300; font-style: italic; color: #fff; }
-    .cl-bullets { list-style: none; }
-    .cl-bullets li { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); line-height: 1.7; padding-left: 16px; position: relative; }
-    .cl-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 12px; top: 3px; }
+    /* SECTION HEADER */
+    .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .section-title { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
+    .section-divider { flex: 1; height: 1px; background: var(--border); }
 
-    /* GRID */
-    .grid-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-    .grid-title { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
-    .grid-divider { flex: 1; height: 1px; background: var(--border); }
+    /* CORE LAYER */
+    .core-layer { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--border); margin-bottom: 48px; }
+    @media (max-width: 900px) { .core-layer { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 500px) { .core-layer { grid-template-columns: 1fr; } }
+    .core-block { padding: 28px; border-right: 1px solid var(--border); }
+    .core-block:last-child { border-right: none; }
+    @media (max-width: 900px) { .core-block { border-bottom: 1px solid var(--border); } .core-block:nth-child(2n) { border-right: none; } .core-block:nth-child(odd) { border-right: 1px solid var(--border); } }
+    .block-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .block-emoji { font-size: 13px; }
+    .block-value { font-family: 'Cormorant Garamond', serif; font-size: 17px; line-height: 1.6; color: var(--text); }
+    .block-value.large { font-size: 22px; font-style: italic; font-weight: 300; color: #fff; }
+
+    /* ROLE LAYER */
+    .role-layer { border: 1px solid var(--border); margin-bottom: 48px; display: none; }
+    .role-layer.visible { display: block; }
+    .role-layer-header { padding: 16px 28px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+    .role-tag { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; padding: 4px 10px; border-radius: 2px; font-weight: 700; }
+    .role-tag.video { background: rgba(74,158,255,0.12); color: #4a9eff; border: 1px solid rgba(74,158,255,0.25); }
+    .role-tag.designer { background: rgba(167,139,250,0.12); color: #a78bfa; border: 1px solid rgba(167,139,250,0.25); }
+    .role-tag.brand { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.25); }
+    .role-layer-title { font-size: 13px; letter-spacing: 1px; color: var(--text-dim); }
+    .role-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
+    @media (max-width: 900px) { .role-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 500px) { .role-grid { grid-template-columns: 1fr; } }
+    .role-block { padding: 24px 28px; border-right: 1px solid var(--border); }
+    .role-block:last-child { border-right: none; }
+    @media (max-width: 900px) { .role-block { border-bottom: 1px solid var(--border); } .role-block:nth-child(2n) { border-right: none; } .role-block:nth-child(odd) { border-right: 1px solid var(--border); } }
+    .avoid-block { border-top: 1px solid var(--border); padding: 20px 28px; display: flex; align-items: flex-start; gap: 12px; }
+    .avoid-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #c0392b; white-space: nowrap; margin-top: 2px; }
+    .avoid-value { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); line-height: 1.6; }
+    .bullet-list { list-style: none; }
+    .bullet-list li { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); line-height: 1.7; padding-left: 16px; position: relative; }
+    .bullet-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 11px; top: 4px; }
+
+    /* VISUAL GRID */
     .world-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
     @media (max-width: 1100px) { .world-grid { grid-template-columns: repeat(3, 1fr); } }
     @media (max-width: 768px) { .world-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -93,9 +126,9 @@
     /* CARD */
     .card { position: relative; background: var(--surface); overflow: hidden; opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .card.visible { opacity: 1; transform: translateY(0); }
-    .card-image { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; transition: transform 0.6s ease; background: #1a1a1a; }
+    .card-image { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; transition: transform 0.6s ease; }
     .card:hover .card-image { transform: scale(1.04); }
-    .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.2) 55%, transparent 100%); pointer-events: none; }
+    .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.15) 55%, transparent 100%); pointer-events: none; }
     .card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 24px 20px 20px; }
     .card-number { font-size: 10px; letter-spacing: 3px; color: var(--accent); margin-bottom: 6px; font-weight: 600; }
     .card-name { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; line-height: 1.1; margin-bottom: 8px; color: #fff; }
@@ -107,9 +140,9 @@
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
     /* PALETTE */
-    .palette-section { margin-top: 48px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .palette-row { margin-top: 40px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .palette-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); }
-    .palette-swatch { width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.2s; cursor: default; }
+    .palette-swatch { width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.2s; cursor: default; }
     .palette-swatch:hover { transform: scale(1.2); }
 
     ::-webkit-scrollbar { width: 4px; }
@@ -140,6 +173,7 @@
     </div>
   </div>
 
+  <!-- HERO -->
   <section class="hero">
     <div class="logo-mark">Creative Intelligence Platform</div>
     <h1>World<em>forge</em></h1>
@@ -147,54 +181,146 @@
     <div class="input-wrap">
       <label class="input-label" for="brief">Your brief</label>
       <div class="input-row">
-        <textarea id="brief" placeholder="Japanese matcha brand, premium and calm…"></textarea>
+        <textarea id="brief" placeholder="Neon-lit Tokyo convenience store, 3am, loneliness disguised as routine…"></textarea>
         <button class="generate-btn" id="generateBtn" onclick="generateWorld()">Generate</button>
       </div>
-      <p class="hint">Type a one-line brief. Worldforge builds the creative direction.</p>
+      <div class="role-row">
+        <button class="role-btn active" data-role="video" onclick="selectRole('video')">🎬 Video Editor</button>
+        <button class="role-btn" data-role="designer" onclick="selectRole('designer')">🎨 Designer</button>
+        <button class="role-btn" data-role="brand" onclick="selectRole('brand')">💡 Brand</button>
+      </div>
+      <p class="hint">Select your role — Worldforge tailors the direction for you.</p>
       <p class="error-msg" id="errorMsg"></p>
     </div>
     <div class="status" id="status"></div>
   </section>
 
+  <!-- OUTPUT -->
   <section class="world-section" id="worldSection">
 
-    <div class="creative-layer">
-      <div class="creative-layer-header">
-        <span class="creative-layer-title">Creative Direction</span>
-        <span class="creative-layer-brief" id="clBriefLabel"></span>
+    <!-- CORE LAYER -->
+    <div class="section-header">
+      <span class="section-title">Core Direction</span>
+      <div class="section-divider"></div>
+      <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--text-muted);font-size:14px;white-space:nowrap;" id="briefLabel"></span>
+    </div>
+    <div class="core-layer">
+      <div class="core-block">
+        <div class="block-label"><span class="block-emoji">🎯</span> Core Feeling</div>
+        <div class="block-value large" id="coreFeeling"></div>
       </div>
-      <div class="creative-layer-grid">
-        <div class="cl-block">
-          <div class="cl-label">Core Feeling</div>
-          <div class="cl-value core-feeling" id="clCoreFeeling"></div>
-        </div>
-        <div class="cl-block">
-          <div class="cl-label">Human Insight</div>
-          <div class="cl-value" id="clHumanInsight"></div>
-        </div>
-        <div class="cl-block">
-          <div class="cl-label">Visual Direction</div>
-          <ul class="cl-bullets" id="clVisualDirection"></ul>
-        </div>
-        <div class="cl-block">
-          <div class="cl-label">Color & Texture</div>
-          <div class="cl-value" id="clColorTexture"></div>
-        </div>
-        <div class="cl-block">
-          <div class="cl-label">Sound Direction</div>
-          <div class="cl-value" id="clSoundDirection"></div>
-        </div>
+      <div class="core-block">
+        <div class="block-label"><span class="block-emoji">🧠</span> Human Insight</div>
+        <div class="block-value" id="humanInsight"></div>
+      </div>
+      <div class="core-block">
+        <div class="block-label"><span class="block-emoji">🎨</span> Color & Texture</div>
+        <div class="block-value" id="colorTexture"></div>
+      </div>
+      <div class="core-block">
+        <div class="block-label"><span class="block-emoji">🔊</span> Sound Direction</div>
+        <div class="block-value" id="soundDirection"></div>
       </div>
     </div>
 
-    <div class="grid-header">
-      <span class="grid-title">Visual World</span>
-      <div class="grid-divider"></div>
+    <!-- ROLE LAYER: VIDEO EDITOR -->
+    <div class="role-layer" id="roleVideo">
+      <div class="role-layer-header">
+        <span class="role-tag video">Video Editor</span>
+        <span class="role-layer-title">Execution Direction</span>
+      </div>
+      <div class="role-grid">
+        <div class="role-block">
+          <div class="block-label"><span class="block-emoji">🎬</span> Visual Direction</div>
+          <ul class="bullet-list" id="vVisualDirection"></ul>
+        </div>
+        <div class="role-block">
+          <div class="block-label"><span class="block-emoji">⏱️</span> Pacing</div>
+          <div class="block-value" id="vPacing"></div>
+        </div>
+        <div class="role-block">
+          <div class="block-label"><span class="block-emoji">📐</span> Framing</div>
+          <div class="block-value" id="vFraming"></div>
+        </div>
+        <div class="role-block">
+          <div class="block-label"><span class="block-emoji">🎨</span> Color Grade</div>
+          <div class="block-value" id="vColorGrade"></div>
+        </div>
+      </div>
+      <div class="avoid-block">
+        <span class="avoid-label">🚫 Avoid</span>
+        <div class="avoid-value" id="vAvoid"></div>
+      </div>
     </div>
 
+    <!-- ROLE LAYER: DESIGNER -->
+    <div class="role-layer" id="roleDesigner">
+      <div class="role-layer-header">
+        <span class="role-tag designer">Designer</span>
+        <span class="role-layer-title">Execution Direction</span>
+      </div>
+      <div class="role-grid">
+        <div class="role-block">
+          <div class="block-label"><span class="block-emoji">🧩</span> Layout Style</div>
+          <div class="block-value" id="dLayout"></div>
+        </div>
+        <div class="role-block">
+          <div class="block-label"><span class="block-emoji">🔤</span> Typography Feel</div>
+          <div class="block-value" id="dTypography"></div>
+        </div>
+        <div class="role-block">
+          <div class="block-label"><span class="block-emoji">📐</span> Composition</div>
+          <div class="block-value" id="dComposition"></div>
+        </div>
+        <div class="role-block">
+          <div class="block-label"><span class="block-emoji">✦</span> Visual Mood</div>
+          <div class="block-value" id="dVisualMood"></div>
+        </div>
+      </div>
+      <div class="avoid-block">
+        <span class="avoid-label">🚫 Avoid</span>
+        <div class="avoid-value" id="dAvoid"></div>
+      </div>
+    </div>
+
+    <!-- ROLE LAYER: BRAND -->
+    <div class="role-layer" id="roleBrand">
+      <div class="role-layer-header">
+        <span class="role-tag brand">Brand</span>
+        <span class="role-layer-title">Execution Direction</span>
+      </div>
+      <div class="role-grid">
+        <div class="role-block">
+          <div class="block-label"><span class="block-emoji">💡</span> Positioning Angle</div>
+          <div class="block-value" id="bPositioning"></div>
+        </div>
+        <div class="role-block">
+          <div class="block-label"><span class="block-emoji">🗣️</span> Messaging Tone</div>
+          <div class="block-value" id="bTone"></div>
+        </div>
+        <div class="role-block">
+          <div class="block-label"><span class="block-emoji">🎯</span> Audience Perception</div>
+          <div class="block-value" id="bPerception"></div>
+        </div>
+        <div class="role-block">
+          <div class="block-label"><span class="block-emoji">✦</span> Brand Personality</div>
+          <div class="block-value" id="bPersonality"></div>
+        </div>
+      </div>
+      <div class="avoid-block">
+        <span class="avoid-label">🚫 Avoid</span>
+        <div class="avoid-value" id="bAvoid"></div>
+      </div>
+    </div>
+
+    <!-- VISUAL WORLD -->
+    <div class="section-header" style="margin-top:16px;">
+      <span class="section-title">Visual World</span>
+      <div class="section-divider"></div>
+    </div>
     <div class="world-grid" id="worldGrid"></div>
 
-    <div class="palette-section" id="paletteSection" style="display:none">
+    <div class="palette-row" id="paletteRow" style="display:none">
       <span class="palette-label">Palette</span>
       <div id="paletteSwatches" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
     </div>
@@ -204,6 +330,7 @@
   <script>
     let GROQ_API_KEY = localStorage.getItem('groq_api_key') || '';
     let UNSPLASH_ACCESS_KEY = localStorage.getItem('unsplash_access_key') || '';
+    let selectedRole = 'video';
 
     window.addEventListener('load', () => {
       updateKeyStatuses();
@@ -229,30 +356,53 @@
       document.getElementById('groqStatus').className = 'key-status' + (GROQ_API_KEY ? ' set' : '');
       document.getElementById('unsplashStatus').className = 'key-status' + (UNSPLASH_ACCESS_KEY ? ' set' : '');
     }
+    function selectRole(role) {
+      selectedRole = role;
+      document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`[data-role="${role}"]`).classList.add('active');
+    }
 
-    const SYSTEM_PROMPT = `You are a creative direction engine for designers, video editors, and art directors.
+    const SYSTEM_PROMPT = `You are a creative direction engine for professional creatives.
 
-Given a one-line brief, output TWO things:
-
-1. CREATIVE DIRECTION LAYER — specific, actionable guidance. Not poetic. Not generic. Every line helps a creator make an immediate decision.
-
-2. VISUAL ELEMENTS — 8 specific, culturally grounded visual elements that express this world.
+Given a brief and a selected role, output:
+1. A CORE LAYER (always) — universal creative direction
+2. A ROLE LAYER (only for the selected role) — specific execution instructions
 
 STRICT RULES:
-- Never use: "beautiful", "aesthetic", "vibe", "stunning", "amazing"
-- No long paragraphs. Every line = a decision, not a description
-- Visual direction bullets = how to shoot/edit, not how to feel
-- Unsplash queries must be specific and photographic (e.g. "Japanese ceramic bowl steam closeup" not "matcha tea")
-- direction_label = 2-3 words, action-oriented (e.g. "Slow movement", "Tight frame", "Raw texture")
+- Never use: "beautiful", "aesthetic", "vibe", "stunning", "amazing", "feel free"
+- No long paragraphs. Every line = a decision
+- Make it feel like a creative director giving instructions, not an AI describing visuals
+- Start from meaning, then execution
+- Unsplash queries must be specific and photographic
 
-Return ONLY valid JSON. No markdown. No preamble:
+Return ONLY valid JSON:
 {
-  "creative_direction": {
-    "core_feeling": "One sharp line — the dominant experience, not an emotion list",
-    "human_insight": "1-2 lines — a real behavioral truth behind why this exists",
-    "visual_direction": ["how to shoot/edit bullet 1", "bullet 2", "bullet 3", "bullet 4", "bullet 5"],
-    "color_texture": "Short — mood of colors and material feel, no hex codes",
-    "sound_direction": "Short — type of audio experience"
+  "core": {
+    "core_feeling": "One sharp line — dominant experience, not an emotion list",
+    "human_insight": "1-2 lines — real behavioral truth behind why this exists",
+    "color_texture": "Mood of colors and materials — short",
+    "sound_direction": "Type of audio experience — short"
+  },
+  "video_editor": {
+    "visual_direction": ["shot type / movement bullet", "bullet 2", "bullet 3"],
+    "pacing": "Speed, rhythm, cut frequency",
+    "framing": "Composition, negative space guidance",
+    "color_grade": "Grade style and mood",
+    "avoid": "What NOT to do — specific"
+  },
+  "designer": {
+    "layout_style": "Clean/dense/minimal/chaotic — with reasoning",
+    "typography_feel": "Font personality and weight guidance",
+    "composition": "Spacing, hierarchy, grid approach",
+    "visual_mood": "Specific visual references or qualities",
+    "avoid": "Visual mistakes to avoid — specific"
+  },
+  "brand": {
+    "positioning_angle": "How to frame the idea in the market",
+    "messaging_tone": "Formal/emotional/playful — with nuance",
+    "audience_perception": "What should people feel about this brand",
+    "brand_personality": "3 sharp personality traits",
+    "avoid": "Messaging mistakes — specific"
   },
   "color_palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"],
   "elements": [
@@ -284,7 +434,7 @@ Return ONLY valid JSON. No markdown. No preamble:
             model: 'llama-3.3-70b-versatile',
             messages: [
               { role: 'system', content: SYSTEM_PROMPT },
-              { role: 'user', content: `Brief: ${brief}` }
+              { role: 'user', content: `Brief: ${brief}\nSelected role: ${selectedRole}` }
             ],
             temperature: 0.8,
             max_tokens: 2500
@@ -298,33 +448,63 @@ Return ONLY valid JSON. No markdown. No preamble:
         const clean = raw.replace(/```json|```/g, '').trim();
         let world;
         try { world = JSON.parse(clean); }
-        catch(e) { throw new Error('JSON parse failed: ' + clean.slice(0, 200)); }
+        catch(e) { throw new Error('Parse failed: ' + clean.slice(0, 200)); }
 
         setStatus('Curating visuals…');
 
-        // Render creative direction
-        const cd = world.creative_direction;
-        document.getElementById('clBriefLabel').textContent = `"${brief}"`;
-        document.getElementById('clCoreFeeling').textContent = cd.core_feeling;
-        document.getElementById('clHumanInsight').textContent = cd.human_insight;
-        const vdList = document.getElementById('clVisualDirection');
-        vdList.innerHTML = '';
-        (cd.visual_direction || []).forEach(b => {
-          const li = document.createElement('li'); li.textContent = b; vdList.appendChild(li);
-        });
-        document.getElementById('clColorTexture').textContent = cd.color_texture;
-        document.getElementById('clSoundDirection').textContent = cd.sound_direction;
+        // CORE LAYER
+        document.getElementById('briefLabel').textContent = `"${brief}"`;
+        document.getElementById('coreFeeling').textContent = world.core.core_feeling;
+        document.getElementById('humanInsight').textContent = world.core.human_insight;
+        document.getElementById('colorTexture').textContent = world.core.color_texture;
+        document.getElementById('soundDirection').textContent = world.core.sound_direction;
 
-        // Render palette
-        if (world.color_palette) {
-          const sw = document.getElementById('paletteSwatches'); sw.innerHTML = '';
-          world.color_palette.forEach(hex => {
-            const s = document.createElement('div'); s.className = 'palette-swatch'; s.style.background = hex; s.title = hex; sw.appendChild(s);
-          });
-          document.getElementById('paletteSection').style.display = 'flex';
+        // ROLE LAYER
+        document.getElementById('roleVideo').classList.remove('visible');
+        document.getElementById('roleDesigner').classList.remove('visible');
+        document.getElementById('roleBrand').classList.remove('visible');
+
+        if (selectedRole === 'video' && world.video_editor) {
+          const v = world.video_editor;
+          const vvd = document.getElementById('vVisualDirection');
+          vvd.innerHTML = '';
+          (v.visual_direction || []).forEach(b => { const li = document.createElement('li'); li.textContent = b; vvd.appendChild(li); });
+          document.getElementById('vPacing').textContent = v.pacing;
+          document.getElementById('vFraming').textContent = v.framing;
+          document.getElementById('vColorGrade').textContent = v.color_grade;
+          document.getElementById('vAvoid').textContent = v.avoid;
+          document.getElementById('roleVideo').classList.add('visible');
+        } else if (selectedRole === 'designer' && world.designer) {
+          const d = world.designer;
+          document.getElementById('dLayout').textContent = d.layout_style;
+          document.getElementById('dTypography').textContent = d.typography_feel;
+          document.getElementById('dComposition').textContent = d.composition;
+          document.getElementById('dVisualMood').textContent = d.visual_mood;
+          document.getElementById('dAvoid').textContent = d.avoid;
+          document.getElementById('roleDesigner').classList.add('visible');
+        } else if (selectedRole === 'brand' && world.brand) {
+          const b = world.brand;
+          document.getElementById('bPositioning').textContent = b.positioning_angle;
+          document.getElementById('bTone').textContent = b.messaging_tone;
+          document.getElementById('bPerception').textContent = b.audience_perception;
+          document.getElementById('bPersonality').textContent = b.brand_personality;
+          document.getElementById('bAvoid').textContent = b.avoid;
+          document.getElementById('roleBrand').classList.add('visible');
         }
 
-        // Render grid
+        // PALETTE
+        if (world.color_palette) {
+          const sw = document.getElementById('paletteSwatches');
+          sw.innerHTML = '';
+          world.color_palette.forEach(hex => {
+            const s = document.createElement('div');
+            s.className = 'palette-swatch'; s.style.background = hex; s.title = hex;
+            sw.appendChild(s);
+          });
+          document.getElementById('paletteRow').style.display = 'flex';
+        }
+
+        // VISUAL GRID
         document.getElementById('worldGrid').innerHTML = '';
         document.getElementById('worldSection').style.display = 'block';
         for (let i = 0; i < world.elements.length; i++) {
@@ -354,7 +534,7 @@ Return ONLY valid JSON. No markdown. No preamble:
         <div class="img-skeleton" id="skeleton-${num}"></div>
         <div class="card-overlay"></div>
         <div class="card-body">
-          <div class="card-number">0${num > 9 ? '' : ''}${num}</div>
+          <div class="card-number">0${num}</div>
           <div class="card-name">${el.element_name}</div>
           <div class="card-insight">${el.insight_line}</div>
           <span class="card-direction-label">${el.direction_label || ''}</span>
