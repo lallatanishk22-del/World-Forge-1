@@ -308,7 +308,7 @@
     }
     function closePanel() { document.getElementById('sidePanel').classList.remove('open'); }
 
-var SYSTEM_PROMPT = 'You are a creative director giving clear, practical direction.\nReturn ONLY valid JSON. No markdown. No extra text.\n\n{\n  "core_feeling": "1 sharp observable line — not an emotion label",\n  "human_insight": "specific observed behavior — slightly uncomfortable — 1-2 lines",\n  "color_texture": "lighting + material + color — specific",\n  "sound_direction": "real-world sounds — name them specifically",\n  "first_step": "subject + duration + camera + environment",\n  "visual_direction": ["shot+subject+camera", "shot 2", "shot 3"],\n  "suggested_sequence": ["Step 1: subject+action+camera", "Step 2", "Step 3", "Step 4"],\n  "pacing": "exact seconds + rhythm",\n  "framing": "placement + tight/wide + depth",\n  "transitions": "exact type",\n  "audio_treatment": "dominant sound + music or not",\n  "avoid": "specific things NOT to do",\n  "positioning": "strategic angle for brand role",\n  "tone": "exact tone behavior",\n  "example_messaging": ["line 1", "line 2"],\n  "layout": "structure + spacing for designer role",\n  "typography": "specific Google Font heading + body + weight",\n  "visual_behavior": "how images and colors behave",\n  "color_palette": ["#hex1","#hex2","#hex3","#hex4","#hex5"],\n  "elements": [{"element_name":"poetic 2-4 word name that is specific to THIS brief world — think like a film director naming a scene — examples for Tokyo 3am: Midnight Snack, Lonely Checkout, Solo Customer — examples for Mumbai train: Sweaty Palm, Frenzied Fingers, Platform Rush — examples for whisky distillery: Amber Sleep, The Long Wait, Oak Memory","insight_line":"sharp human truth behind this element — max 10 words — specific to THIS brief only","direction_label":"2-3 word shooting action","unsplash_query":"precise 4-6 word photographic query — describe the actual thing to shoot — include brief atmosphere — whisky brief: whisky barrel aged dark cellar, amber glass dark background, distillery copper still — leather brief: leather craft hands workshop, raw leather texture dark"}]\n}\n\nRULES:\n- No: aesthetic, vibe, beautiful, cinematic, energy, mood\n- element_name must sound like a film scene title — specific to THIS world\n- unsplash_query describes the actual visual to capture\n- Atmosphere: 3am=night dark, Holi=colorful powder, rush hour=crowded people, whisky=dark amber aged, leather=brown texture workshop\n- Video elements = motion/people/action\n- Designer elements = texture/pattern/close-up/surface\n- Brand elements = symbolic objects representing meaning';
+var SYSTEM_PROMPT = 'You are a Creative Direction Engine.\nYour job is to generate OUTPUT that a creative person can EXECUTE immediately.\nDo NOT generate explanations, storytelling, or inspiration.\nGenerate ACTIONABLE direction only.\n\nCORE RULES:\n- Every line must be usable in real work\n- Keep everything short and scannable\n- No sentence longer than 10 words\n- No paragraphs, no repeated ideas\n- element_name must sound like a film scene title specific to THIS world — like Midnight Snack, Lonely Checkout, Sweaty Palm, Amber Sleep, Red Corner\n- unsplash_query must describe the actual thing to photograph — match brief atmosphere exactly\n- Atmosphere keywords: 3am=night dark, Holi=colorful powder, rush hour=crowded people, whisky=dark amber aged cellar, leather=brown texture workshop\n\nReturn ONLY valid JSON:\n{\n  "core_feeling": "3-5 words only",\n  "human_insight": "one sharp human truth — not poetic",\n  "color_texture": "lighting + material + color — specific",\n  "sound_direction": "real-world sounds — name them",\n  "first_action": {\n    "subject": "who or what",\n    "action": "what is happening",\n    "camera": "shot type",\n    "duration": "seconds",\n    "environment": "where"\n  },\n  "shots": ["close-up: subject", "medium: subject", "wide: subject"],\n  "sequence": ["step 1 — subject + action", "step 2", "step 3"],\n  "pacing": "seconds per shot",\n  "style": "camera + framing in one line",\n  "audio": "what dominates sound",\n  "positioning": "1 line — brand role only",\n  "tone": "2-3 words — brand role only",\n  "example_messaging": ["line 1", "line 2"],\n  "layout": "1 line — designer role only",\n  "typography": "Google Font heading + body + weight — designer role only",\n  "avoid": ["specific thing 1", "specific thing 2", "specific thing 3"],\n  "color_palette": ["#hex1","#hex2","#hex3","#hex4","#hex5"],\n  "elements": [\n    {\n      "element_name": "film scene title — 2-4 words — specific to THIS brief",\n      "insight_line": "sharp human truth — max 10 words",\n      "direction_label": "2-3 word action",\n      "unsplash_query": "4-6 words describing actual visual — match brief atmosphere"\n    }\n  ]\n}';
 
     function generateWorld() {
       var brief = document.getElementById('brief').value.trim();
@@ -413,40 +413,69 @@ var SYSTEM_PROMPT = 'You are a creative director giving clear, practical directi
         return '<ul class="e-list">' + arr.map(function(i){return '<li>'+i+'</li>';}).join('') + '</ul>';
       }
 
+      // First Action block
+      var fa = w.first_action || {};
+      var faHtml = '';
+      if (fa.subject || fa.action) {
+        faHtml = '<div class="e-value" style="line-height:1.9;">' +
+          (fa.subject ? '<span style="color:var(--accent-dim);font-size:9px;letter-spacing:2px;text-transform:uppercase;">Subject</span> ' + fa.subject + '<br>' : '') +
+          (fa.action ? '<span style="color:var(--accent-dim);font-size:9px;letter-spacing:2px;text-transform:uppercase;">Action</span> ' + fa.action + '<br>' : '') +
+          (fa.camera ? '<span style="color:var(--accent-dim);font-size:9px;letter-spacing:2px;text-transform:uppercase;">Camera</span> ' + fa.camera + '<br>' : '') +
+          (fa.duration ? '<span style="color:var(--accent-dim);font-size:9px;letter-spacing:2px;text-transform:uppercase;">Duration</span> ' + fa.duration + '<br>' : '') +
+          (fa.environment ? '<span style="color:var(--accent-dim);font-size:9px;letter-spacing:2px;text-transform:uppercase;">Environment</span> ' + fa.environment : '') +
+        '</div>';
+      }
+
       if (role === 'video') {
+        // Use new field names, fallback to old ones
+        var shots = w.shots || w.visual_direction || [];
+        var seq = w.sequence || w.suggested_sequence || [];
+        var style = w.style || w.framing || '';
+        var audio = w.audio || w.audio_treatment || '';
+
+        if (faHtml) {
+          html += '<div class="exec-row" style="grid-template-columns:1fr;">' +
+            eblock('🚀 First Action', faHtml) +
+          '</div>';
+        }
         html += '<div class="exec-row cols4">' +
-          eblock('🎬 Visual Direction', elist(w.visual_direction)) +
-          eblock('🎞️ Suggested Sequence', elist(w.suggested_sequence)) +
+          eblock('🎬 Shots', elist(shots)) +
+          eblock('🎞️ Sequence', elist(seq)) +
           eblock('⏱️ Pacing', eval_(w.pacing)) +
-          eblock('📐 Framing', eval_(w.framing)) +
+          eblock('🎥 Style', eval_(style)) +
         '</div>';
         html += '<div class="exec-row cols2">' +
-          eblock('🔁 Transitions', eval_(w.transitions)) +
-          eblock('🔊 Audio Treatment', eval_(w.audio_treatment)) +
+          eblock('🔊 Audio', eval_(audio)) +
         '</div>';
       } else if (role === 'designer') {
         html += '<div class="exec-row cols2">' +
           eblock('🧩 Layout', eval_(w.layout)) +
-          eblock('📐 Hierarchy', eval_(w.hierarchy || '')) +
-        '</div>';
-        html += '<div class="exec-row cols2">' +
           eblock('🔤 Typography', eval_(w.typography)) +
-          eblock('🎨 Visual Behavior', eval_(w.visual_behavior)) +
+        '</div>';
+        html += '<div class="exec-row" style="grid-template-columns:1fr;">' +
+          eblock('🎨 Visual Behavior', eval_(w.visual_behavior || w.style || '')) +
         '</div>';
       } else if (role === 'brand') {
+        var msgs = w.example_messaging || [];
         html += '<div class="exec-row cols2">' +
           eblock('💡 Positioning', eval_(w.positioning)) +
           eblock('🗣️ Tone', eval_(w.tone)) +
         '</div>';
-        html += '<div class="exec-row cols1" style="grid-template-columns:1fr;">' +
-          eblock('📢 Example Messaging', elist(w.example_messaging)) +
+        html += '<div class="exec-row" style="grid-template-columns:1fr;">' +
+          eblock('📢 Example Messaging', elist(msgs)) +
         '</div>';
       }
 
-      html += '<div class="avoid-bar"><span class="avoid-label">🚫 Avoid</span><span class="avoid-value">' + (w.avoid||'') + '</span></div>';
+      // Avoid — handle both array and string
+      var avoidVal = '';
+      if (Array.isArray(w.avoid)) {
+        avoidVal = w.avoid.join(' · ');
+      } else {
+        avoidVal = w.avoid || '';
+      }
+      html += '<div class="avoid-bar"><span class="avoid-label">🚫 Avoid</span><span class="avoid-value">' + avoidVal + '</span></div>';
       c.innerHTML = html;
     }
-
     function buildCard(el, index, w) {
       var card = document.createElement('div');
       card.className = 'card';
