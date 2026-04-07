@@ -15,7 +15,7 @@
     body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; min-height: 100vh; overflow-x: hidden; }
     body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9; opacity: 0.3; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); }
 
-    /* ── SETTINGS ── */
+    /* SETTINGS */
     .settings-btn { position: fixed; top: 20px; right: 20px; z-index: 500; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 8px 16px; cursor: pointer; transition: all 0.2s; }
     .settings-btn:hover { border-color: var(--accent-dim); color: var(--accent); }
     .settings-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 600; align-items: center; justify-content: center; }
@@ -34,7 +34,7 @@
     .key-status { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; background: #c0392b; vertical-align: middle; }
     .key-status.set { background: #27ae60; }
 
-    /* ── HERO ── */
+    /* HERO */
     .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; position: relative; }
     .hero::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(201,169,110,0.05) 0%, transparent 70%); pointer-events: none; }
     .logo-mark { font-family: 'Cormorant Garamond', serif; font-size: 11px; font-weight: 300; letter-spacing: 6px; text-transform: uppercase; color: var(--accent); margin-bottom: 48px; opacity: 0.8; }
@@ -62,118 +62,74 @@
     .status { margin-top: 40px; font-size: 12px; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; text-align: center; min-height: 20px; opacity: 0; transition: opacity 0.4s; }
     .status.visible { opacity: 1; }
 
-    /* ── WORLD SCREEN ── */
-    .world-screen { display: none; }
+    /* OUTPUT */
+    .output { display: none; padding-bottom: 80px; }
 
-    /* TOP BAR — minimal */
-    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid var(--border); }
-    .topbar-feeling { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-style: italic; color: var(--text); }
-    .topbar-right { display: flex; align-items: center; gap: 10px; }
-    .intensity-dot { width: 7px; height: 7px; border-radius: 50%; }
-    .intensity-dot.high { background: #ef4444; }
-    .intensity-dot.medium { background: var(--accent); }
-    .intensity-dot.low { background: #34d399; }
-    .topbar-brief { font-size: 11px; color: var(--text-muted); font-family: 'Cormorant Garamond', serif; font-style: italic; }
-    .new-brief-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 6px 14px; cursor: pointer; font-family: 'Syne', sans-serif; transition: all 0.2s; }
-    .new-brief-btn:hover { border-color: var(--accent-dim); color: var(--accent); }
+    /* DIRECTION PANEL — TOP 5 */
+    .direction-panel { max-width: 1200px; margin: 0 auto; padding: 64px 24px 48px; }
 
-    /* FIRST STEP — slim bar */
-    .fs-bar { background: rgba(201,169,110,0.07); border-bottom: 1px solid rgba(201,169,110,0.15); padding: 10px 24px; display: flex; align-items: center; gap: 14px; }
-    .fs-tag { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
-    .fs-text { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); }
+    .panel-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 12px; }
+    .panel-brief { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: var(--text-muted); }
+    .panel-role { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; padding: 4px 12px; border-radius: 2px; font-weight: 700; }
+    .panel-role.video { background: rgba(74,158,255,0.1); color: #4a9eff; border: 1px solid rgba(74,158,255,0.2); }
+    .panel-role.designer { background: rgba(167,139,250,0.1); color: #a78bfa; border: 1px solid rgba(167,139,250,0.2); }
+    .panel-role.brand { background: rgba(52,211,153,0.1); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
 
-    /* ── IMAGE GRID — hero ── */
-    .grid-wrap { padding: 16px 16px 140px; }
-    .world-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 3px; }
+    /* 5 BLOCKS */
+    .five-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; margin-bottom: 2px; }
+    @media(max-width:900px) { .five-grid { grid-template-columns: 1fr 1fr; } }
+    @media(max-width:500px) { .five-grid { grid-template-columns: 1fr; } }
+
+    .block { background: var(--surface); border: 1px solid var(--border); padding: 28px 24px; }
+    .block.span2 { grid-column: span 2; }
+    @media(max-width:900px) { .block.span2 { grid-column: span 1; } }
+
+    .block-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 12px; }
+    .block-value { font-family: 'Cormorant Garamond', serif; font-size: 17px; line-height: 1.6; color: var(--text); }
+    .block-value.big { font-size: 26px; font-style: italic; font-weight: 300; color: #fff; }
+
+    /* FIRST STEP — hero block */
+    .first-step-block { background: var(--accent); padding: 28px 32px; margin-bottom: 2px; }
+    .fs-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: rgba(0,0,0,0.45); margin-bottom: 10px; }
+    .fs-value { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #0a0a0a; line-height: 1.4; }
+
+    /* SEQUENCE */
+    .seq-list { list-style: none; }
+    .seq-list li { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); line-height: 1.7; padding-left: 16px; position: relative; margin-bottom: 4px; }
+    .seq-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 11px; top: 4px; }
+
+    /* VISUAL WORLD */
+    .visual-section { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
+    .section-head { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 16px; }
+    .section-head::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .world-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; }
     @media(max-width:1100px) { .world-grid { grid-template-columns: repeat(3,1fr); } }
-    @media(max-width:700px) { .world-grid { grid-template-columns: repeat(2,1fr); } }
+    @media(max-width:768px) { .world-grid { grid-template-columns: repeat(2,1fr); } }
+    @media(max-width:480px) { .world-grid { grid-template-columns: 1fr; } }
 
-    /* ── CARD ── */
-    .card { position: relative; overflow: hidden; cursor: pointer; opacity: 0; transform: translateY(12px); transition: opacity 0.45s ease, transform 0.45s ease; background: #111; aspect-ratio: 3/4; }
+    /* CARD */
+    .card { position: relative; overflow: hidden; cursor: default; opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; background: #111; }
     .card.visible { opacity: 1; transform: translateY(0); }
-    .card.selected { outline: 2px solid var(--accent); outline-offset: -2px; }
-    .card-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.45s ease; }
-    .card:hover .card-img { transform: scale(1.05); }
-    .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%); pointer-events: none; }
-
-    /* name — always visible at bottom */
-    .card-name { position: absolute; bottom: 14px; left: 14px; right: 14px; }
-    .card-num { font-size: 9px; letter-spacing: 3px; color: var(--accent); margin-bottom: 3px; }
-    .card-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: #fff; line-height: 1.1; }
-
-    /* insight — hidden, slides up on hover */
-    .card-insight-wrap { position: absolute; bottom: 0; left: 0; right: 0; padding: 40px 14px 14px; background: linear-gradient(to top, rgba(0,0,0,0.97) 0%, transparent 100%); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
-    .card:hover .card-insight-wrap { transform: translateY(0); }
-    .card-insight-text { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: rgba(255,255,255,0.6); margin-bottom: 8px; }
-    .card-tap-hint { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
-
-    /* selected check */
-    .card-check { position: absolute; top: 10px; left: 10px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); display: none; align-items: center; justify-content: center; font-size: 10px; color: #0a0a0a; font-weight: 800; z-index: 10; }
-    .card.selected .card-check { display: flex; }
-
-    .card-credit { position: absolute; top: 8px; right: 8px; font-size: 9px; color: rgba(255,255,255,0.3); background: rgba(0,0,0,0.55); padding: 3px 7px; text-decoration: none; border-radius: 2px; z-index: 5; transition: color 0.2s; }
+    .card-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; transition: transform 0.5s ease; }
+    .card:hover .card-img { transform: scale(1.04); }
+    .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.1) 58%, transparent 100%); pointer-events: none; }
+    .card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 22px 18px 18px; }
+    .card-num { font-size: 10px; letter-spacing: 3px; color: var(--accent); margin-bottom: 4px; font-weight: 600; }
+    .card-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #fff; line-height: 1.1; margin-bottom: 6px; }
+    .card-insight { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: rgba(255,255,255,0.55); line-height: 1.5; margin-bottom: 8px; }
+    .card-label { display: inline-block; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); background: rgba(201,169,110,0.1); border: 1px solid rgba(201,169,110,0.2); padding: 3px 8px; }
+    .card-credit { position: absolute; top: 10px; right: 10px; font-size: 9px; color: rgba(255,255,255,0.3); background: rgba(0,0,0,0.55); padding: 3px 7px; text-decoration: none; border-radius: 2px; transition: color 0.2s; }
     .card-credit:hover { color: rgba(255,255,255,0.65); }
 
-    .img-skeleton { width: 100%; height: 100%; position: absolute; inset: 0; background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    .img-skeleton { width: 100%; aspect-ratio: 3/4; background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-    /* ── FLOATING PANEL ── */
-    .float-panel { position: fixed; right: 0; top: 0; bottom: 0; width: 340px; background: #0d0d0d; border-left: 1px solid var(--border); z-index: 400; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; }
-    .float-panel.open { transform: translateX(0); }
-    @media(max-width:500px) { .float-panel { width: 100%; } }
-
-    .panel-top { padding: 20px 20px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-shrink: 0; }
-    .panel-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #fff; line-height: 1.2; }
-    .panel-x { background: transparent; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; padding: 0 4px; line-height: 1; transition: color 0.2s; }
-    .panel-x:hover { color: var(--text); }
-
-    .panel-body { flex: 1; overflow-y: auto; padding: 20px; }
-    .p-insight { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-style: italic; color: var(--text); line-height: 1.5; margin-bottom: 24px; }
-
-    .p-section { margin-bottom: 20px; }
-    .p-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 10px; }
-    .p-list { list-style: none; }
-    .p-list li { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-dim); line-height: 1.7; padding-left: 14px; position: relative; margin-bottom: 2px; }
-    .p-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 10px; top: 4px; }
-    .p-value { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-dim); line-height: 1.7; }
-
-    .panel-footer { padding: 16px 20px; border-top: 1px solid var(--border); flex-shrink: 0; }
-    .use-btn { width: 100%; background: var(--accent); color: #0a0a0a; border: none; padding: 14px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
-    .use-btn:hover { background: #d4b47a; }
-    .use-btn.selected-state { background: transparent; color: var(--accent); border: 1px solid var(--accent-dim); }
-
-    /* ── SHOT BAR ── */
-    .shot-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(8,8,8,0.97); border-top: 1px solid var(--border); padding: 14px 24px; display: none; align-items: center; justify-content: space-between; z-index: 300; gap: 16px; flex-wrap: wrap; backdrop-filter: blur(12px); }
-    .shot-bar.visible { display: flex; }
-    .shot-left { display: flex; align-items: center; gap: 12px; }
-    .shot-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
-    .shot-thumbs { display: flex; gap: 4px; align-items: center; }
-    .shot-thumb { width: 34px; height: 34px; object-fit: cover; border: 1px solid var(--accent-dim); }
-    .shot-right { display: flex; gap: 10px; align-items: center; }
-    .clear-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 8px 14px; cursor: pointer; font-family: 'Syne', sans-serif; transition: all 0.2s; }
-    .clear-btn:hover { border-color: #ef4444; color: #ef4444; }
-    .build-btn { background: var(--accent); color: #0a0a0a; border: none; padding: 10px 22px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
-    .build-btn:hover { background: #d4b47a; }
-
-    /* ── SEQUENCE MODAL ── */
-    .seq-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 700; align-items: center; justify-content: center; padding: 24px; }
-    .seq-modal.open { display: flex; }
-    .seq-box { background: #111; border: 1px solid var(--border); padding: 40px; width: 100%; max-width: 600px; max-height: 80vh; overflow-y: auto; }
-    .seq-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; margin-bottom: 8px; }
-    .seq-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 32px; }
-    .seq-step { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
-    .seq-step:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-    .seq-num { font-size: 11px; letter-spacing: 2px; color: var(--accent); font-weight: 700; white-space: nowrap; padding-top: 3px; }
-    .seq-content { flex: 1; }
-    .seq-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #fff; margin-bottom: 4px; }
-    .seq-insight { font-family: 'Cormorant Garamond', serif; font-size: 13px; font-style: italic; color: var(--text-muted); margin-bottom: 8px; }
-    .seq-direction { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-dim); }
-    .seq-meta { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .seq-meta-item { }
-    .seq-meta-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 6px; }
-    .seq-meta-value { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-dim); }
-    .seq-close { margin-top: 28px; width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-family: 'Syne', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; padding: 14px; cursor: pointer; transition: all 0.2s; }
-    .seq-close:hover { border-color: var(--accent-dim); color: var(--accent); }
+    /* PALETTE */
+    .palette-row { max-width: 1400px; margin: 32px auto 0; padding: 0 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .palette-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); }
+    .swatch { width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.2s; cursor: default; }
+    .swatch:hover { transform: scale(1.2); }
 
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
@@ -205,10 +161,10 @@
   </div>
 
   <!-- HERO -->
-  <section class="hero" id="heroSection">
+  <section class="hero">
     <div class="logo-mark">Creative Intelligence Platform</div>
     <h1>World<em>forge</em></h1>
-    <p class="tagline">Touch before you think.</p>
+    <p class="tagline">One brief. One world. Every creative aligned.</p>
     <div class="input-wrap">
       <label class="input-label" for="brief">Your brief</label>
       <div class="input-row">
@@ -220,90 +176,75 @@
         <button class="role-btn" data-role="designer" onclick="selectRole('designer')">🎨 Designer</button>
         <button class="role-btn" data-role="brand" onclick="selectRole('brand')">💡 Brand</button>
       </div>
-      <p class="hint-text">Click any image to explore. Select shots to build your sequence.</p>
+      <p class="hint-text">Type a brief. Select your role. Start immediately.</p>
       <p class="error-msg" id="errorMsg"></p>
     </div>
     <div class="status" id="status"></div>
   </section>
 
-  <!-- WORLD SCREEN -->
-  <div class="world-screen" id="worldScreen">
+  <!-- OUTPUT -->
+  <div class="output" id="output">
 
-    <!-- TOPBAR -->
-    <div class="topbar">
-      <div style="display:flex;align-items:center;gap:14px;">
-        <div class="topbar-feeling" id="topFeeling"></div>
-        <div class="intensity-dot" id="intensityDot"></div>
+    <!-- TOP 5 DIRECTION PANEL -->
+    <div class="direction-panel">
+      <div class="panel-header">
+        <div class="panel-brief" id="panelBrief"></div>
+        <div class="panel-role" id="panelRole"></div>
       </div>
-      <div class="topbar-right">
-        <div class="topbar-brief" id="topBrief"></div>
-        <button class="new-brief-btn" onclick="newBrief()">↩ New Brief</button>
+
+      <!-- BLOCK 1+2: Core Feeling + Human Insight -->
+      <div class="five-grid" style="margin-bottom:2px;">
+        <div class="block">
+          <div class="block-label">🎯 Core Feeling</div>
+          <div class="block-value big" id="coreFeeling"></div>
+        </div>
+        <div class="block span2">
+          <div class="block-label">🧠 Human Insight</div>
+          <div class="block-value" id="humanInsight"></div>
+        </div>
+      </div>
+
+      <!-- FIRST STEP HERO -->
+      <div class="first-step-block">
+        <div class="fs-label">🚀 First Step — Start here</div>
+        <div class="fs-value" id="firstStep"></div>
+      </div>
+
+      <!-- BLOCK 4+5: Visual Direction + Sequence -->
+      <div class="five-grid">
+        <div class="block">
+          <div class="block-label">🎬 Visual Direction</div>
+          <ul class="seq-list" id="visualDirection"></ul>
+        </div>
+        <div class="block span2">
+          <div class="block-label">🎞️ Sequence</div>
+          <ul class="seq-list" id="sequence"></ul>
+        </div>
       </div>
     </div>
 
-    <!-- FIRST STEP BAR -->
-    <div class="fs-bar">
-      <span class="fs-tag">🚀 Start here</span>
-      <span class="fs-text" id="fsText"></span>
-    </div>
-
-    <!-- IMAGE GRID -->
-    <div class="grid-wrap">
+    <!-- VISUAL WORLD -->
+    <div class="visual-section">
+      <div class="section-head">Visual World</div>
       <div class="world-grid" id="worldGrid"></div>
+      <div class="palette-row" id="paletteRow" style="display:none">
+        <span class="palette-label">Palette</span>
+        <div id="paletteSwatches" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
+      </div>
     </div>
 
-  </div>
-
-  <!-- FLOATING PANEL -->
-  <div class="float-panel" id="floatPanel">
-    <div class="panel-top">
-      <div class="panel-title" id="panelTitle"></div>
-      <button class="panel-x" onclick="closePanel()">✕</button>
-    </div>
-    <div class="panel-body" id="panelBody"></div>
-    <div class="panel-footer">
-      <button class="use-btn" id="useBtn" onclick="toggleShot()">+ Use This Shot</button>
-    </div>
-  </div>
-
-  <!-- SHOT BAR -->
-  <div class="shot-bar" id="shotBar">
-    <div class="shot-left">
-      <span class="shot-label" id="shotLabel">0 shots</span>
-      <div class="shot-thumbs" id="shotThumbs"></div>
-    </div>
-    <div class="shot-right">
-      <button class="clear-btn" onclick="clearShots()">Clear</button>
-      <button class="build-btn" onclick="buildSequence()">Build Sequence →</button>
-    </div>
-  </div>
-
-  <!-- SEQUENCE MODAL -->
-  <div class="seq-modal" id="seqModal" onclick="closeSeqOnBg(event)">
-    <div class="seq-box" id="seqBox">
-      <div class="seq-title">Your Edit Sequence</div>
-      <div class="seq-sub" id="seqSub"></div>
-      <div id="seqSteps"></div>
-      <div class="seq-meta" id="seqMeta"></div>
-      <button class="seq-close" onclick="closeSeq()">Close</button>
-    </div>
   </div>
 
   <script>
     let GROQ_API_KEY = localStorage.getItem('groq_api_key') || '';
     let UNSPLASH_ACCESS_KEY = localStorage.getItem('unsplash_access_key') || '';
     let selectedRole = 'video';
-    let currentExecution = {};
-    let worldElements = [];
-    let selectedShots = [];
-    let activePanelIndex = null;
 
     window.addEventListener('load', () => {
       updateKeyStatuses();
       if (!GROQ_API_KEY || !UNSPLASH_ACCESS_KEY) openSettings();
     });
 
-    // ── SETTINGS ──
     function openSettings() { document.getElementById('groqKeyInput').value = GROQ_API_KEY; document.getElementById('unsplashKeyInput').value = UNSPLASH_ACCESS_KEY; document.getElementById('settingsOverlay').classList.add('open'); }
     function closeSettings() { document.getElementById('settingsOverlay').classList.remove('open'); }
     function closeSettingsOnBg(e) { if (e.target === document.getElementById('settingsOverlay')) closeSettings(); }
@@ -323,14 +264,7 @@
       document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
       document.querySelector(`[data-role="${role}"]`).classList.add('active');
     }
-    function newBrief() {
-      document.getElementById('worldScreen').style.display = 'none';
-      document.getElementById('heroSection').style.display = 'flex';
-      closePanel();
-      window.scrollTo({ top: 0 });
-    }
 
-    // ── SYSTEM PROMPT ──
     const SYSTEM_PROMPT = `You are a creative director giving clear, practical direction.
 Focus on helping the user START immediately.
 Avoid generic or poetic language.
@@ -338,39 +272,31 @@ Avoid generic or poetic language.
 Return ONLY valid JSON. No markdown. No extra text.
 
 {
-  "core": {
-    "core_feeling": "1 sharp observable line",
-    "human_insight": "specific observed behavior — slightly uncomfortable truth",
-    "intensity": "low OR medium OR high",
-    "first_step": "subject + duration + camera + environment"
-  },
-  "execution": {
-    "visual_direction": ["shot+subject+camera", "shot 2"],
-    "sequence": ["Step 1: subject+action+camera", "Step 2", "Step 3"],
-    "pacing": "exact seconds + rhythm",
-    "transitions": "exact type"
-  },
+  "core_feeling": "1 sharp observable line — not an emotion label",
+  "human_insight": "specific observed behavior — slightly uncomfortable truth — 1-2 lines",
+  "first_step": "subject + duration + camera + environment — immediately actionable",
+  "visual_direction": ["shot+subject+camera", "shot 2", "shot 3"],
+  "sequence": ["Step 1: subject+action+camera", "Step 2", "Step 3"],
   "color_palette": ["#hex1","#hex2","#hex3","#hex4","#hex5"],
   "elements": [
     {
       "element_name": "evocative 2-4 word name — NOT literal",
-      "insight_line": "emotional truth — max 10 words",
+      "insight_line": "emotional truth behind this — max 10 words",
       "direction_label": "2-3 word action",
-      "unsplash_query": "4-6 word photographic query — match brief atmosphere"
+      "unsplash_query": "4-6 word photographic query — match brief atmosphere exactly"
     }
   ]
 }
 
 RULES:
-- No: aesthetic, vibe, beautiful, cinematic, energy
-- Observable actions only
-- element_name must be evocative NOT literal (NOT "Laughing Faces", "Colorful Hands")
+- No: aesthetic, vibe, beautiful, cinematic, energy, mood
+- Observable actions only. Numbers where possible.
+- element_name must be evocative NOT literal (NOT "Laughing Faces", "Colorful Hands", "Rush Hour Crowd")
 - Unsplash queries: 3am=night dark, Holi=colorful powder, rush hour=crowded people, snow=winter cold
-- Video role: elements = motion/people/action
-- Designer role: elements = texture/pattern/surface/close-up
-- Brand role: elements = symbolic objects, NOT literal subject`;
+- Video role elements = motion/people/action focused
+- Designer role elements = texture/pattern/surface/close-up details
+- Brand role elements = symbolic objects representing meaning, NOT literal subject`;
 
-    // ── GENERATE ──
     async function generateWorld() {
       const brief = document.getElementById('brief').value.trim();
       if (!brief) return;
@@ -380,10 +306,7 @@ RULES:
       const errorMsg = document.getElementById('errorMsg');
       btn.disabled = true;
       errorMsg.style.display = 'none';
-      setStatus('Building your world…');
-      selectedShots = [];
-      activePanelIndex = null;
-      updateShotBar();
+      setStatus('Building creative direction…');
 
       try {
         const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -405,168 +328,83 @@ RULES:
         catch(e) { throw new Error('Parse failed'); }
 
         setStatus('Curating visuals…');
-        const core = world.core || {};
-        currentExecution = world.execution || {};
-        worldElements = world.elements || [];
 
-        // TOPBAR
-        document.getElementById('topFeeling').textContent = core.core_feeling || '';
-        document.getElementById('topBrief').textContent = `"${brief}"`;
-        const intensity = (core.intensity || 'medium').toLowerCase();
-        document.getElementById('intensityDot').className = 'intensity-dot ' + intensity;
-        document.getElementById('fsText').textContent = core.first_step || currentExecution.first_step || '';
+        // PANEL HEADER
+        document.getElementById('panelBrief').textContent = `"${brief}"`;
+        const roleLabels = { video: 'Video Editor', designer: 'Designer', brand: 'Brand' };
+        const roleEl = document.getElementById('panelRole');
+        roleEl.textContent = roleLabels[selectedRole];
+        roleEl.className = 'panel-role ' + selectedRole;
+
+        // TOP 5
+        document.getElementById('coreFeeling').textContent = world.core_feeling || '';
+        document.getElementById('humanInsight').textContent = world.human_insight || '';
+        document.getElementById('firstStep').textContent = world.first_step || '';
+
+        const vd = document.getElementById('visualDirection');
+        vd.innerHTML = '';
+        (world.visual_direction || []).slice(0,3).forEach(item => {
+          const li = document.createElement('li'); li.textContent = item; vd.appendChild(li);
+        });
+
+        const seq = document.getElementById('sequence');
+        seq.innerHTML = '';
+        (world.sequence || []).slice(0,3).forEach(item => {
+          const li = document.createElement('li'); li.textContent = item; seq.appendChild(li);
+        });
+
+        // PALETTE
+        if (world.color_palette) {
+          const sw = document.getElementById('paletteSwatches');
+          sw.innerHTML = '';
+          world.color_palette.forEach(hex => {
+            const s = document.createElement('div');
+            s.className = 'swatch'; s.style.background = hex; s.title = hex;
+            sw.appendChild(s);
+          });
+          document.getElementById('paletteRow').style.display = 'flex';
+        }
 
         // GRID
         const grid = document.getElementById('worldGrid');
         grid.innerHTML = '';
+        document.getElementById('output').style.display = 'block';
         const usedIds = new Set();
-        for (let i = 0; i < worldElements.length; i++) {
-          const el = worldElements[i];
+        for (let i = 0; i < (world.elements || []).length; i++) {
+          const el = world.elements[i];
           const card = buildCard(el, i);
           grid.appendChild(card);
           fetchImage(el.unsplash_query, card, el, usedIds, brief);
-          setTimeout(() => card.classList.add('visible'), i * 65);
+          setTimeout(() => card.classList.add('visible'), i * 70);
         }
 
-        // SHOW WORLD
-        document.getElementById('heroSection').style.display = 'none';
-        document.getElementById('worldScreen').style.display = 'block';
-        closePanel();
-        window.scrollTo({ top: 0 });
         setStatus('');
+        document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
 
       } catch(err) {
         console.error(err);
         setStatus('');
-        document.getElementById('errorMsg').textContent = 'Error: ' + err.message;
-        document.getElementById('errorMsg').style.display = 'block';
+        errorMsg.textContent = 'Error: ' + err.message;
+        errorMsg.style.display = 'block';
       }
       btn.disabled = false;
     }
 
-    // ── BUILD CARD ──
     function buildCard(el, index) {
       const card = document.createElement('div');
       card.className = 'card';
-      card.dataset.index = index;
       card.innerHTML = `
         <div class="img-skeleton skeleton-ph"></div>
         <div class="card-overlay"></div>
-        <div class="card-check">✓</div>
-        <div class="card-name">
+        <div class="card-body">
           <div class="card-num">${index+1 < 10 ? '0'+(index+1) : index+1}</div>
-          <div class="card-title">${el.element_name}</div>
-        </div>
-        <div class="card-insight-wrap">
-          <div class="card-insight-text">${el.insight_line}</div>
-          <div class="card-tap-hint">Tap to explore →</div>
+          <div class="card-name">${el.element_name}</div>
+          <div class="card-insight">${el.insight_line}</div>
+          <span class="card-label">${el.direction_label||''}</span>
         </div>`;
-      card.addEventListener('click', (e) => {
-        if (e.target.classList.contains('card-credit')) return;
-        openPanel(index);
-      });
       return card;
     }
 
-    // ── PANEL ──
-    function openPanel(index) {
-      activePanelIndex = index;
-      const el = worldElements[index];
-      const ex = currentExecution;
-      const isSelected = selectedShots.some(s => s.index === index);
-
-      document.getElementById('panelTitle').textContent = el.element_name;
-
-      const vd = (ex.visual_direction || []).slice(0,2).map(i=>`<li>${i}</li>`).join('');
-      const seq = (ex.sequence || []).slice(0,3).map(i=>`<li>${i}</li>`).join('');
-      const pacing = ex.pacing || '';
-
-      document.getElementById('panelBody').innerHTML = `
-        <div class="p-insight">${el.insight_line}</div>
-        ${vd ? `<div class="p-section"><div class="p-label">Visual Direction</div><ul class="p-list">${vd}</ul></div>` : ''}
-        ${seq ? `<div class="p-section"><div class="p-label">Sequence</div><ul class="p-list">${seq}</ul></div>` : ''}
-        ${pacing ? `<div class="p-section"><div class="p-label">Pacing</div><div class="p-value">${pacing}</div></div>` : ''}`;
-
-      const useBtn = document.getElementById('useBtn');
-      if (isSelected) {
-        useBtn.textContent = '✓ Shot Selected';
-        useBtn.classList.add('selected-state');
-      } else {
-        useBtn.textContent = '+ Use This Shot';
-        useBtn.classList.remove('selected-state');
-      }
-
-      document.getElementById('floatPanel').classList.add('open');
-    }
-
-    function closePanel() { document.getElementById('floatPanel').classList.remove('open'); }
-
-    // ── SHOT SELECTION ──
-    function toggleShot() {
-      if (activePanelIndex === null) return;
-      const index = activePanelIndex;
-      const el = worldElements[index];
-      const card = document.querySelector(`.card[data-index="${index}"]`);
-      const existing = selectedShots.findIndex(s => s.index === index);
-      const img = card ? card.querySelector('img') : null;
-
-      if (existing >= 0) {
-        selectedShots.splice(existing, 1);
-        if (card) card.classList.remove('selected');
-        document.getElementById('useBtn').textContent = '+ Use This Shot';
-        document.getElementById('useBtn').classList.remove('selected-state');
-      } else {
-        selectedShots.push({ index, el, imgSrc: img ? img.src : '' });
-        if (card) card.classList.add('selected');
-        document.getElementById('useBtn').textContent = '✓ Shot Selected';
-        document.getElementById('useBtn').classList.add('selected-state');
-      }
-      updateShotBar();
-    }
-
-    function updateShotBar() {
-      const bar = document.getElementById('shotBar');
-      if (selectedShots.length === 0) { bar.classList.remove('visible'); return; }
-      bar.classList.add('visible');
-      document.getElementById('shotLabel').textContent = `${selectedShots.length} shot${selectedShots.length > 1 ? 's' : ''}`;
-      document.getElementById('shotThumbs').innerHTML = selectedShots.map(s =>
-        s.imgSrc ? `<img class="shot-thumb" src="${s.imgSrc}" title="${s.el.element_name}">` : ''
-      ).join('');
-    }
-
-    function clearShots() {
-      selectedShots = [];
-      document.querySelectorAll('.card.selected').forEach(c => c.classList.remove('selected'));
-      updateShotBar();
-      if (activePanelIndex !== null) {
-        document.getElementById('useBtn').textContent = '+ Use This Shot';
-        document.getElementById('useBtn').classList.remove('selected-state');
-      }
-    }
-
-    function buildSequence() {
-      if (selectedShots.length === 0) return;
-      const ex = currentExecution;
-      document.getElementById('seqSub').textContent = `${selectedShots.length} shot${selectedShots.length > 1 ? 's' : ''} · ${ex.pacing || ''} · ${ex.transitions || ''}`;
-      document.getElementById('seqSteps').innerHTML = selectedShots.map((s,i) => `
-        <div class="seq-step">
-          <div class="seq-num">SHOT ${i+1}</div>
-          <div class="seq-content">
-            <div class="seq-name">${s.el.element_name}</div>
-            <div class="seq-insight">${s.el.insight_line}</div>
-            <div class="seq-direction">${s.el.direction_label}</div>
-          </div>
-        </div>`).join('');
-      document.getElementById('seqMeta').innerHTML = `
-        <div class="seq-meta-item"><div class="seq-meta-label">Pacing</div><div class="seq-meta-value">${ex.pacing||'—'}</div></div>
-        <div class="seq-meta-item"><div class="seq-meta-label">Transitions</div><div class="seq-meta-value">${ex.transitions||'—'}</div></div>`;
-      document.getElementById('seqModal').classList.add('open');
-    }
-
-    function closeSeq() { document.getElementById('seqModal').classList.remove('open'); }
-    function closeSeqOnBg(e) { if (e.target === document.getElementById('seqModal')) closeSeq(); }
-
-    // ── FETCH IMAGE ──
     function fetchImage(query, card, el, usedIds, brief) {
       const b = brief.toLowerCase();
       let boost = '';
