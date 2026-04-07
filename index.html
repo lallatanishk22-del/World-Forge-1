@@ -214,9 +214,22 @@
   <!-- OUTPUT -->
   <div class="output" id="output">
 
-    <div class="dir-section">
+    <!-- VISUAL WORLD FIRST -->
+    <div class="visual-section" style="padding-top:48px;">
+      <div class="section-head">
+        Visual World
+        <span class="section-hint">Click any image to explore</span>
+        <div style="flex:1"></div>
+      </div>
+      <div class="world-grid" id="worldGrid"></div>
+      <div class="palette-row" id="paletteRow" style="display:none">
+        <span class="palette-label">Palette</span>
+        <div id="paletteSwatches" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
+      </div>
+    </div>
 
-      <!-- CORE DIRECTION -->
+    <!-- DIRECTION BELOW -->
+    <div class="dir-section">
       <div class="dir-header">
         <span class="dir-title">Core Direction</span>
         <span class="dir-brief" id="dirBrief"></span>
@@ -239,29 +252,12 @@
           <div class="c-value" id="soundDirection"></div>
         </div>
       </div>
-
-      <!-- EXECUTION -->
       <div class="exec-wrap">
         <div class="exec-header">
           <span class="role-tag" id="roleTag"></span>
           <span class="exec-header-label">Execution Direction</span>
         </div>
         <div id="execContent"></div>
-      </div>
-
-    </div>
-
-    <!-- VISUAL WORLD -->
-    <div class="visual-section">
-      <div class="section-head">
-        Visual World
-        <span class="section-hint">Click any image to explore</span>
-        <div style="flex:1"></div>
-      </div>
-      <div class="world-grid" id="worldGrid"></div>
-      <div class="palette-row" id="paletteRow" style="display:none">
-        <span class="palette-label">Palette</span>
-        <div id="paletteSwatches" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
       </div>
     </div>
 
@@ -380,6 +376,7 @@ var SYSTEM_PROMPT = 'You are a creative director giving clear, practical directi
         var grid = document.getElementById('worldGrid');
         grid.innerHTML = '';
         document.getElementById('output').style.display = 'block';
+        document.querySelector('.visual-section').scrollIntoView({ behavior: 'smooth' });
         var usedIds = new Set();
         (w.elements || []).forEach(function(el, i) {
           var card = buildCard(el, i, w);
