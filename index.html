@@ -204,7 +204,7 @@
       <div class="section-divider"></div>
       <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--text-muted);font-size:14px;white-space:nowrap;" id="briefLabel"></span>
     </div>
-    <div class="core-layer">
+    <div class="core-layer" style="grid-template-columns:repeat(5,1fr)">
       <div class="core-block">
         <div class="block-label"><span class="block-emoji">🎯</span> Core Feeling</div>
         <div class="block-value large" id="coreFeeling"></div>
@@ -221,6 +221,14 @@
         <div class="block-label"><span class="block-emoji">🔊</span> Sound Direction</div>
         <div class="block-value" id="soundDirection"></div>
       </div>
+      <div class="core-block" style="border-right:none;">
+        <div class="block-label"><span class="block-emoji">⚡</span> Intensity</div>
+        <div class="block-value large" id="coreIntensity"></div>
+      </div>
+    </div>
+    <div style="padding:14px 28px;border:1px solid var(--border);border-top:none;margin-bottom:48px;display:flex;align-items:center;gap:12px;">
+      <span style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#c0392b;white-space:nowrap;">⛔ Constraint</span>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--text-dim);" id="coreConstraint"></span>
     </div>
 
     <!-- ROLE LAYER: VIDEO EDITOR -->
@@ -438,18 +446,20 @@ Return ONLY valid JSON. No markdown. No preamble. Ensure JSON is COMPLETE and pr
     "core_feeling": "Clear sharp emotional state — 1 line, no adjectives",
     "human_insight": "Non-obvious behavioral truth — max 2 lines, specific",
     "color_texture": "Lighting + material + color behavior — specific",
-    "sound_direction": "Real-world sounds — specific, not music genres"
+    "sound_direction": "Real-world sounds — specific, not music genres",
+    "intensity": "low OR medium OR high"
   },
+  "constraint": "One line defining what must NEVER happen in this output",
   "role": "video_editor OR designer OR brand",
   "execution": {
     "visual_direction": ["Specific shot + subject physical behavior + camera", "second", "third"],
-    "sequence": ["Step 1: exact visible shot", "Step 2", "Step 3", "Step 4", "Step 5"],
+    "sequence": ["Step 1: subject + action + camera", "Step 2: subject + action + camera", "Step 3", "Step 4", "Step 5"],
     "pacing": "exact seconds per shot + rhythm",
     "framing": "subject placement + tight/wide + shallow/deep",
     "transitions": "hard cut / no dissolve — exact",
     "audio": "what sound dominates + music or not",
-    "first_step": "exact first shot: shot type + subject + duration + camera",
-    "avoid": ["specific mistake", "specific mistake", "specific mistake", "specific mistake"]
+    "first_step": "subject + duration in seconds + camera type + environment",
+    "avoid": ["concrete mistake 1", "concrete mistake 2", "concrete mistake 3", "concrete mistake 4"]
   },
   "color_palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"],
   "elements": [
@@ -462,8 +472,17 @@ Return ONLY valid JSON. No markdown. No preamble. Ensure JSON is COMPLETE and pr
   ]
 }
 
+ADDITIONAL RULES:
+- Human Insight must describe a specific OBSERVED behavior, not a theory
+- Each sequence step must include: subject + action + camera
+- FIRST STEP must include: subject + duration + camera + environment
+- Visual descriptions must describe what is VISIBLE, not concepts
+- Avoid must have minimum 4 concrete mistakes
+- Intensity = low (slow/quiet), medium (balanced), high (fast/overwhelming)
+- Constraint = one hard rule specific to this brief (e.g. "Never show an empty train")
+
 For Designer role, execution contains: layout_system, hierarchy, typography, grid, visual_behavior, first_step, avoid
-For Brand role, execution contains: positioning, audience_insight, messaging_tone, brand_perception, example_messaging (array), first_step, avoid`;
+For Brand role, execution contains: positioning, audience_insight, messaging_tone, brand_perception, example_messaging (array), first_step, avoid
 
     async function generateWorld() {
       const brief = document.getElementById('brief').value.trim();
@@ -508,6 +527,8 @@ For Brand role, execution contains: positioning, audience_insight, messaging_ton
         document.getElementById('humanInsight').textContent = world.core.human_insight;
         document.getElementById('colorTexture').textContent = world.core.color_texture;
         document.getElementById('soundDirection').textContent = world.core.sound_direction;
+        document.getElementById('coreIntensity').textContent = (world.core.intensity || '').toUpperCase();
+        document.getElementById('coreConstraint').textContent = world.constraint || '';
 
         // ROLE LAYER — support both new execution wrapper and old structure
         document.getElementById('roleVideo').classList.remove('visible');
