@@ -531,10 +531,10 @@ Return ONLY valid JSON:
       const card = document.createElement('div');
       card.className = 'card';
       card.innerHTML = `
-        <div class="img-skeleton" id="skeleton-${num}"></div>
+        <div class="img-skeleton skeleton-placeholder"></div>
         <div class="card-overlay"></div>
         <div class="card-body">
-          <div class="card-number">0${num}</div>
+          <div class="card-number">${num < 10 ? '0' + num : num}</div>
           <div class="card-name">${el.element_name}</div>
           <div class="card-insight">${el.insight_line}</div>
           <span class="card-direction-label">${el.direction_label || ''}</span>
@@ -555,7 +555,7 @@ Return ONLY valid JSON:
           img.src = photo.urls.regular;
           img.alt = el.element_name;
           img.onload = () => {
-            const sk = card.querySelector('[id^="skeleton"]');
+            const sk = card.querySelector('.skeleton-placeholder');
             if (sk) sk.replaceWith(img);
             const credit = document.createElement('a');
             credit.className = 'card-credit';
@@ -564,12 +564,14 @@ Return ONLY valid JSON:
             credit.textContent = '📷 ' + photo.user.name;
             card.appendChild(credit);
           };
-          img.onerror = () => { const sk = card.querySelector('[id^="skeleton"]'); if (sk) sk.style.background = '#1a1a1a'; };
+          img.onerror = () => {
+            const sk = card.querySelector('.skeleton-placeholder');
+            if (sk) sk.style.background = '#1a1a1a';
+          };
         }
       })
       .catch(err => console.error('Unsplash error:', err));
     }
-
     function setStatus(msg) {
       const s = document.getElementById('status');
       s.textContent = msg;
