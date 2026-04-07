@@ -384,7 +384,9 @@
         (w.elements || []).forEach(function(el, i) {
           var card = buildCard(el, i, w);
           grid.appendChild(card);
-          fetchImage(el.unsplash_query, card, el, usedIds, brief);
+          setTimeout(function() {
+            fetchImage(el.unsplash_query, card, el, usedIds, brief);
+          }, i * 200);
           setTimeout(function() { card.classList.add('visible'); }, i * 70);
         });
 
@@ -503,7 +505,7 @@
       else if (b.indexOf('snow') > -1 || b.indexOf('winter') > -1 || b.indexOf('cold') > -1) boost = ' winter snow';
       else if (b.indexOf('rush hour') > -1 || b.indexOf('crowd') > -1) boost = ' crowded people';
 
-      fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(query+boost) + '&per_page=10&orientation=portrait', {
+      fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(query+boost) + '&per_page=5&orientation=portrait', {
         headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
       })
       .then(function(r) { return r.json(); })
