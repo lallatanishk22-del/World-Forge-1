@@ -527,15 +527,13 @@ var SYSTEM_PROMPT = 'You are not an assistant. You are a decisive creative direc
 
     function fetchImage(query, card, el, usedIds, brief) {
       var b = brief.toLowerCase();
-
-      // Atmosphere boost from brief
       var boost = '';
       if (b.indexOf('3am') > -1 || b.indexOf('night') > -1 || b.indexOf('midnight') > -1) boost = ' night dark';
-      else if (b.indexOf('holi') > -1 || b.indexOf('festival') > -1) boost = ' colorful powder vibrant';
       else if (b.indexOf('snow') > -1 || b.indexOf('winter') > -1 || b.indexOf('cold') > -1) boost = ' winter snow';
       else if (b.indexOf('rush hour') > -1 || b.indexOf('crowd') > -1) boost = ' crowded people';
       else if (b.indexOf('whisky') > -1 || b.indexOf('distillery') > -1) boost = ' dark amber aged';
       else if (b.indexOf('leather') > -1 || b.indexOf('craft') > -1) boost = ' brown texture workshop';
+      // Note: holi/festival boost removed — translation layer already handles color keywords
 
       // Hyperlocal to universal translation
       var translations = {
@@ -587,17 +585,13 @@ var SYSTEM_PROMPT = 'You are not an assistant. You are a decisive creative direc
 
         // Replace skeleton immediately with img
         var sk = card.querySelector('.skeleton-ph');
-        var sk = card.querySelector('.skeleton-ph');
         if (sk) {
-          sk.style.backgroundImage = 'url(' + (photo.urls.small || photo.urls.regular) + ')';
-          sk.style.backgroundSize = 'cover';
-          sk.style.backgroundPosition = 'center';
-          sk.style.animation = 'none';
-          sk.style.background = 'none';
-          sk.style.backgroundImage = 'url(' + (photo.urls.small || photo.urls.regular) + ')';
-          sk.style.backgroundSize = 'cover';
-          sk.style.backgroundPosition = 'center';
-          sk.className = 'card-img';
+          var imgUrl = photo.urls.small_s3 || photo.urls.small || photo.urls.regular;
+          var img = document.createElement('img');
+          img.className = 'card-img';
+          img.alt = el.element_name;
+          img.src = imgUrl;
+          sk.replaceWith(img);
         }
 
         // Add credit
