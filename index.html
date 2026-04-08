@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Worldforge</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -41,6 +42,15 @@
     h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(64px,10vw,120px); font-weight: 300; line-height: 0.9; letter-spacing: -2px; text-align: center; margin-bottom: 24px; }
     h1 em { font-style: italic; color: var(--accent); }
     .tagline { font-size: 13px; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 64px; text-align: center; }
+    
+    /* GENERATION HISTORY */
+    .gen-history { margin-bottom: 24px; display: none; }
+    .gen-history-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 12px; }
+    .gen-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .gen-tab { padding: 8px 16px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-family: 'Syne', sans-serif; cursor: pointer; transition: all 0.2s; }
+    .gen-tab:hover { border-color: var(--accent-dim); color: var(--text-dim); }
+    .gen-tab.active { background: var(--accent); color: #0a0a0a; border-color: var(--accent); }
+    
     .input-wrap { width: 100%; max-width: 680px; position: relative; z-index: 1; }
     .input-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 12px; display: block; }
     .input-row { display: flex; border: 1px solid var(--border); background: var(--surface); transition: border-color 0.3s; }
@@ -62,6 +72,10 @@
     .status { margin-top: 40px; font-size: 12px; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; text-align: center; min-height: 20px; opacity: 0; transition: opacity 0.4s; }
     .status.visible { opacity: 1; }
 
+    /* EXPORT BUTTON */
+    .export-btn { position: fixed; bottom: 24px; right: 24px; z-index: 500; background: var(--accent); color: #0a0a0a; border: none; padding: 12px 24px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.2s; display: none; }
+    .export-btn:hover { background: #d4b47a; }
+
     /* OUTPUT */
     .output { display: none; padding-bottom: 80px; }
 
@@ -71,7 +85,7 @@
     .dir-title { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); }
     .dir-brief { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: var(--text-muted); }
 
-    /* CORE ROW — 4 cols */
+    /* CORE ROW */
     .core-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; margin-bottom: 24px; }
     @media(max-width:900px) { .core-row { grid-template-columns: repeat(2,1fr); } }
     @media(max-width:500px) { .core-row { grid-template-columns: 1fr; } }
@@ -169,6 +183,7 @@
 <body>
 
   <button class="settings-btn" onclick="openSettings()">⚙ API Keys</button>
+  <button class="export-btn" id="exportBtn" onclick="exportPDF()">📄 Export PDF</button>
 
   <div class="settings-overlay" id="settingsOverlay" onclick="closeSettingsOnBg(event)">
     <div class="settings-modal">
@@ -189,11 +204,16 @@
     </div>
   </div>
 
-  <!-- HERO -->
   <section class="hero">
     <div class="logo-mark">Creative Intelligence Platform</div>
     <h1>World<em>forge</em></h1>
     <p class="tagline">One brief. One world. Every creative aligned.</p>
+    
+    <div id="generationHistory" class="gen-history" style="width:100%;max-width:680px;">
+      <div class="gen-history-label">Generation History</div>
+      <div id="generationTabs" class="gen-tabs"></div>
+    </div>
+    
     <div class="input-wrap">
       <label class="input-label" for="brief">Your brief</label>
       <div class="input-row">
@@ -211,10 +231,7 @@
     <div class="status" id="status"></div>
   </section>
 
-  <!-- OUTPUT -->
   <div class="output" id="output">
-
-    <!-- VISUAL WORLD FIRST -->
     <div class="visual-section" style="padding-top:48px;">
       <div class="section-head">
         Visual World
@@ -228,7 +245,6 @@
       </div>
     </div>
 
-    <!-- DIRECTION BELOW -->
     <div class="dir-section">
       <div class="dir-header">
         <span class="dir-title">Core Direction</span>
@@ -244,7 +260,7 @@
           <div class="c-value" id="humanInsight"></div>
         </div>
         <div class="c-block">
-          <div class="c-label">🎨 Color &amp; Texture</div>
+          <div class="c-label">🎨 Color & Texture</div>
           <div class="c-value" id="colorTexture"></div>
         </div>
         <div class="c-block">
@@ -260,10 +276,8 @@
         <div id="execContent"></div>
       </div>
     </div>
-
   </div>
 
-  <!-- SIDE PANEL -->
   <div class="panel" id="sidePanel">
     <div class="panel-head">
       <div class="panel-name" id="panelName"></div>
@@ -277,6 +291,8 @@
     var UNSPLASH_ACCESS_KEY = localStorage.getItem('unsplash_access_key') || '';
     var selectedRole = 'video';
     var worldData = null;
+    var generations = [];
+    var currentGenerationIndex = -1;
 
     window.addEventListener('load', function() {
       updateKeyStatuses();
@@ -475,35 +491,28 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
         var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
         var w;
         try { w = JSON.parse(raw); } catch(e) { throw new Error('Parse failed'); }
+        
+        // Store generation
+        var generation = {
+          id: Date.now(),
+          brief: brief,
+          role: selectedRole,
+          data: w,
+          timestamp: new Date().toLocaleString(),
+          images: []
+        };
+        
+        generations.push(generation);
+        currentGenerationIndex = generations.length - 1;
         worldData = w;
+        
+        updateGenerationHistory();
+        document.getElementById('exportBtn').style.display = 'block';
+        
         setStatus('Curating visuals…');
 
         // CORE
-        document.getElementById('dirBrief').textContent = '"' + brief + '"';
-        document.getElementById('coreFeeling').textContent = w.core_feeling || '';
-        document.getElementById('humanInsight').textContent = w.human_insight || '';
-        document.getElementById('colorTexture').textContent = w.color_texture || '';
-        document.getElementById('soundDirection').textContent = w.sound_direction || '';
-
-        // ROLE TAG
-        var rt = document.getElementById('roleTag');
-        rt.textContent = { video: 'Video Editor', designer: 'Designer', brand: 'Brand' }[selectedRole];
-        rt.className = 'role-tag ' + selectedRole;
-
-        // EXECUTION
-        renderExecution(w, selectedRole);
-
-        // PALETTE
-        if (w.color_palette) {
-          var sw = document.getElementById('paletteSwatches');
-          sw.innerHTML = '';
-          w.color_palette.forEach(function(hex) {
-            var s = document.createElement('div');
-            s.className = 'swatch'; s.style.background = hex; s.title = hex;
-            sw.appendChild(s);
-          });
-          document.getElementById('paletteRow').style.display = 'flex';
-        }
+        renderGeneration(w, brief);
 
         // GRID
         var grid = document.getElementById('worldGrid');
@@ -515,14 +524,13 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
           grid.appendChild(card);
           (function(element, cardEl, idx) {
             setTimeout(function() {
-              fetchImage(element.unsplash_query, cardEl, element, brief);
+              fetchImage(element.unsplash_query, cardEl, element, brief, idx);
             }, idx * 400);
             setTimeout(function() { cardEl.classList.add('visible'); }, idx * 70);
           })(el, card, i);
         });
 
         setStatus('');
-        document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
         btn.disabled = false;
       })
       .catch(function(err) {
@@ -531,6 +539,99 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
         document.getElementById('errorMsg').textContent = 'Error: ' + err.message;
         document.getElementById('errorMsg').style.display = 'block';
         btn.disabled = false;
+      });
+    }
+
+    function updateGenerationHistory() {
+      var historyDiv = document.getElementById('generationHistory');
+      var tabsDiv = document.getElementById('generationTabs');
+      
+      if (generations.length === 0) {
+        historyDiv.style.display = 'none';
+        return;
+      }
+      
+      historyDiv.style.display = 'block';
+      tabsDiv.innerHTML = '';
+      
+      generations.forEach(function(gen, index) {
+        var tab = document.createElement('button');
+        tab.textContent = 'Gen ' + (index + 1);
+        tab.className = 'gen-tab' + (index === currentGenerationIndex ? ' active' : '');
+        tab.onclick = function() { loadGeneration(index); };
+        tabsDiv.appendChild(tab);
+      });
+    }
+
+    function loadGeneration(index) {
+      if (index < 0 || index >= generations.length) return;
+      
+      currentGenerationIndex = index;
+      var gen = generations[index];
+      worldData = gen.data;
+      selectedRole = gen.role;
+      
+      document.getElementById('brief').value = gen.brief;
+      document.querySelectorAll('.role-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelector('[data-role="' + gen.role + '"]').classList.add('active');
+      
+      renderGeneration(gen.data, gen.brief);
+      updateGenerationHistory();
+      
+      document.querySelector('.visual-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function renderGeneration(w, brief) {
+      document.getElementById('dirBrief').textContent = '"' + brief + '"';
+      document.getElementById('coreFeeling').textContent = w.core_feeling || '';
+      document.getElementById('humanInsight').textContent = w.human_insight || '';
+      document.getElementById('colorTexture').textContent = w.color_texture || '';
+      document.getElementById('soundDirection').textContent = w.sound_direction || '';
+
+      var rt = document.getElementById('roleTag');
+      rt.textContent = { video: 'Video Editor', designer: 'Designer', brand: 'Brand' }[selectedRole];
+      rt.className = 'role-tag ' + selectedRole;
+
+      renderExecution(w, selectedRole);
+
+      if (w.color_palette) {
+        var sw = document.getElementById('paletteSwatches');
+        sw.innerHTML = '';
+        w.color_palette.forEach(function(hex) {
+          var s = document.createElement('div');
+          s.className = 'swatch'; s.style.background = hex; s.title = hex;
+          sw.appendChild(s);
+        });
+        document.getElementById('paletteRow').style.display = 'flex';
+      }
+
+      var grid = document.getElementById('worldGrid');
+      grid.innerHTML = '';
+      document.getElementById('output').style.display = 'block';
+      
+      (w.elements || []).forEach(function(el, i) {
+        var card = buildCard(el, i, w);
+        grid.appendChild(card);
+        setTimeout(function() { card.classList.add('visible'); }, i * 70);
+        
+        var gen = generations[currentGenerationIndex];
+        if (gen && gen.images[i]) {
+          var sk = card.querySelector('.skeleton-ph');
+          if (sk) {
+            var img = document.createElement('img');
+            img.className = 'card-img';
+            img.alt = el.element_name;
+            img.src = gen.images[i].url;
+            sk.replaceWith(img);
+            
+            var credit = document.createElement('a');
+            credit.className = 'card-credit';
+            credit.href = gen.images[i].credit_url;
+            credit.target = '_blank'; credit.rel = 'noopener';
+            credit.textContent = gen.images[i].credit_name;
+            card.appendChild(credit);
+          }
+        }
       });
     }
 
@@ -547,7 +648,6 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
         return '<ul class="e-list">' + arr.map(function(i){return '<li>'+i+'</li>';}).join('') + '</ul>';
       }
 
-      // First Action block
       var fa = w.first_action || {};
       var faHtml = '';
       if (fa.subject || fa.action) {
@@ -561,7 +661,6 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
       }
 
       if (role === 'video') {
-        // Use new field names, fallback to old ones
         var shots = w.shots || w.visual_direction || [];
         var seq = w.sequence || w.suggested_sequence || [];
         var style = w.style || w.framing || '';
@@ -600,7 +699,6 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
         '</div>';
       }
 
-      // Avoid — handle both array and string
       var avoidVal = '';
       if (Array.isArray(w.avoid)) {
         avoidVal = w.avoid.join(' · ');
@@ -610,6 +708,7 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
       html += '<div class="avoid-bar"><span class="avoid-label">🚫 Avoid</span><span class="avoid-value">' + avoidVal + '</span></div>';
       c.innerHTML = html;
     }
+
     function buildCard(el, index, w) {
       var card = document.createElement('div');
       card.className = 'card';
@@ -632,20 +731,19 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
       var content = '<div class="p-insight">' + el.insight_line + '</div>';
 
       if (selectedRole === 'video') {
-        var vd = (w.visual_direction||[]).map(function(i){return '<li>'+i+'</li>';}).join('');
-        var seq = (w.suggested_sequence||[]).slice(0,3).map(function(i){return '<li>'+i+'</li>';}).join('');
+        var vd = (w.shots || w.visual_direction||[]).map(function(i){return '<li>'+i+'</li>';}).join('');
+        var seq = (w.sequence || w.suggested_sequence||[]).slice(0,3).map(function(i){return '<li>'+i+'</li>';}).join('');
         content +=
           '<div class="p-section"><div class="p-label">Visual Direction</div><ul class="p-list">' + vd + '</ul></div>' +
           '<div class="p-section"><div class="p-label">Sequence</div><ul class="p-list">' + seq + '</ul></div>' +
           '<div class="p-section"><div class="p-label">Pacing</div><div class="p-value">' + (w.pacing||'') + '</div></div>' +
-          '<div class="p-section"><div class="p-label">Transitions</div><div class="p-value">' + (w.transitions||'') + '</div></div>' +
-          '<div class="p-section"><div class="p-label">Audio</div><div class="p-value">' + (w.audio_treatment||'') + '</div></div>';
+          '<div class="p-section"><div class="p-label">Audio</div><div class="p-value">' + (w.audio || w.audio_treatment||'') + '</div></div>';
       } else if (selectedRole === 'designer') {
         content +=
           '<div class="p-section"><div class="p-label">Layout</div><div class="p-value">' + (w.layout||'') + '</div></div>' +
           '<div class="p-section"><div class="p-label">Typography</div><div class="p-value">' + (w.typography||'') + '</div></div>' +
           '<div class="p-section"><div class="p-label">Visual Behavior</div><div class="p-value">' + (w.visual_behavior||'') + '</div></div>';
-      } else if (selectedRole === 'brand') {
+      } else if (role === 'brand') {
         var msgs = (w.example_messaging||[]).map(function(i){return '<li>'+i+'</li>';}).join('');
         content +=
           '<div class="p-section"><div class="p-label">Positioning</div><div class="p-value">' + (w.positioning||'') + '</div></div>' +
@@ -657,10 +755,8 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
       document.getElementById('sidePanel').classList.add('open');
     }
 
-    function fetchImage(query, card, el, brief) {
+    function fetchImage(query, card, el, brief, imageIndex) {
       var finalQuery = query.trim() || "creative abstract";
-      
-      // Trim to max 6 words
       finalQuery = finalQuery.split(' ').slice(0, 6).join(' ');
 
       fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(finalQuery) + '&per_page=1&orientation=portrait', {
@@ -671,15 +767,9 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
         return r.json();
       })
       .then(function(data) {
-        console.log("UNSPLASH DATA:", data);
-        if (!data.results || data.results.length === 0) {
-          console.warn("No images for:", finalQuery);
-          throw new Error("No results");
-        }
+        if (!data.results || data.results.length === 0) throw new Error("No results");
         
         var photo = data.results[0];
-
-        // Replace skeleton with image
         var sk = card.querySelector('.skeleton-ph');
         if (sk) {
           var imgUrl = photo.urls.regular || photo.urls.small;
@@ -690,18 +780,25 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
           sk.replaceWith(img);
         }
 
-        // Add credit
         var credit = document.createElement('a');
         credit.className = 'card-credit';
         credit.href = photo.links.html + '?utm_source=worldforge&utm_medium=referral';
         credit.target = '_blank'; credit.rel = 'noopener';
         credit.textContent = photo.user.name + ' / Unsplash';
         card.appendChild(credit);
+        
+        // Store image in generation
+        var gen = generations[currentGenerationIndex];
+        if (gen) {
+          gen.images[imageIndex] = {
+            url: imgUrl,
+            credit_url: credit.href,
+            credit_name: credit.textContent
+          };
+        }
       })
       .catch(function(err) {
         console.error('Unsplash error:', err);
-        
-        // Fallback image when API fails
         var sk = card.querySelector('.skeleton-ph');
         if (sk) {
           var img = document.createElement('img');
@@ -712,13 +809,21 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
         }
       });
     }
-      .catch(function(err) { console.error('Unsplash:', err); });
-    }
 
     function setStatus(msg) {
       var s = document.getElementById('status');
       s.textContent = msg;
       s.classList.toggle('visible', !!msg);
+    }
+
+    function exportPDF() {
+      if (!worldData || currentGenerationIndex < 0) {
+        alert('No generation to export');
+        return;
+      }
+
+      var gen = generations[currentGenerationIndex];
+      alert('PDF export feature: Coming soon! For now, you can screenshot this page.\n\nGeneration: ' + gen.brief);
     }
 
     document.getElementById('brief').addEventListener('keydown', function(e) {
