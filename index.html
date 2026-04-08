@@ -525,13 +525,51 @@ var SYSTEM_PROMPT = 'You are not an assistant. You are a decisive creative direc
 
     function fetchImage(query, card, el, usedIds, brief) {
       var b = brief.toLowerCase();
+
+      // Atmosphere boost from brief
       var boost = '';
       if (b.indexOf('3am') > -1 || b.indexOf('night') > -1 || b.indexOf('midnight') > -1) boost = ' night dark';
-      else if (b.indexOf('holi') > -1 || b.indexOf('color') > -1 || b.indexOf('festival') > -1) boost = ' colorful vibrant';
+      else if (b.indexOf('holi') > -1 || b.indexOf('festival') > -1) boost = ' colorful powder vibrant';
       else if (b.indexOf('snow') > -1 || b.indexOf('winter') > -1 || b.indexOf('cold') > -1) boost = ' winter snow';
       else if (b.indexOf('rush hour') > -1 || b.indexOf('crowd') > -1) boost = ' crowded people';
+      else if (b.indexOf('whisky') > -1 || b.indexOf('distillery') > -1) boost = ' dark amber aged';
+      else if (b.indexOf('leather') > -1 || b.indexOf('craft') > -1) boost = ' brown texture workshop';
 
-      fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(query+boost) + '&per_page=5&orientation=portrait', {
+      // Hyperlocal to universal translation
+      var translations = {
+        'vada pav': 'street food vendor fast hands crowded',
+        'misal pav': 'street food stall steam bowl morning',
+        'pav bhaji': 'street food stall butter sizzle crowded',
+        'mumbai local': 'crowded train commuters pushing rush hour',
+        'local train': 'crowded train commuters pushing rush hour',
+        'autorickshaw': 'three wheel taxi street traffic city',
+        'rickshaw': 'small vehicle street traffic asia',
+        'dhaba': 'roadside food stall outdoor eating india',
+        'chai': 'tea glass steam hands morning',
+        'chai stall': 'tea stall vendor pouring steam',
+        'ganesh': 'festival crowd street celebration procession',
+        'visarjan': 'festival crowd ocean immersion celebration',
+        'diwali': 'lights candles celebration night festive',
+        'navratri': 'dance celebration colorful night festival',
+        'biryani': 'rice dish food close-up restaurant kitchen',
+        'tandoor': 'clay oven fire cooking bread hands',
+        'lassi': 'yogurt drink glass creamy market',
+        'thali': 'round plate food variety meal',
+        'gully': 'narrow alley street urban india',
+        'chawl': 'dense urban housing crowded building',
+        'dabba': 'tiffin box food container lunch',
+        'jugaad': 'improvised solution makeshift repair hands'
+      };
+
+      // Check if query contains hyperlocal terms and translate
+      var finalQuery = query;
+      Object.keys(translations).forEach(function(term) {
+        if (finalQuery.toLowerCase().indexOf(term) > -1) {
+          finalQuery = translations[term];
+        }
+      });
+
+      fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(finalQuery + boost) + '&per_page=5&orientation=portrait', {
         headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
       })
       .then(function(r) { return r.json(); })
