@@ -308,98 +308,73 @@
     }
     function closePanel() { document.getElementById('sidePanel').classList.remove('open'); }
 
-var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
-'You generate ONE cohesive creative direction from a brief.\n\n' +
-'THINKING:\n' +
-'- Find the core emotional tension\n' +
-'- Build a single world (not multiple ideas)\n' +
-'- Think in scenes, not concepts\n\n' +
-'OUTPUT QUALITY:\n\n' +
-'Core Feeling:\n' +
-'- Must include contrast or tension\n' +
-'- Avoid generic phrases\n\n' +
-'Human Insight:\n' +
-'- Must be non-obvious human behavior\n' +
-'- Avoid obvious truths\n\n' +
-'VIDEO:\n\n' +
-'First Action:\n' +
-'- Clear subject + action + environment\n' +
-'- Must be immediately shootable\n\n' +
-'Shots:\n' +
-'- Cinematic, sensory, not literal\n' +
-'- Use light, motion, texture\n' +
-'- Avoid generic descriptions\n' +
-'- SHOT STRUCTURE: Always generate shots with variation:\n' +
-'  - 1 wide (environment)\n' +
-'  - 2 medium (human/action)\n' +
-'  - 1 close-up (detail/texture)\n' +
-'- Avoid repeating same type of shot\n' +
-'- Avoid pure empty landscapes unless necessary\n\n' +
-'Pacing:\n' +
-'- Short and clear\n\n' +
-'Camera:\n' +
-'- Simple and shootable\n\n' +
-'DESIGN:\n\n' +
-'Layout:\n' +
-'- Clear spatial direction\n\n' +
-'Typography:\n' +
-'- Return format: "Font A + Font B — short feeling"\n' +
-'- Example: "Cormorant Garamond + Inter — elegant contrast"\n' +
-'- Do not explain too much\n' +
-'- Keep it one clean line\n\n' +
-'BRAND:\n\n' +
-'Positioning:\n' +
-'- Sharp, specific\n\n' +
-'Messaging:\n' +
-'- Feels like a real line, not a slogan generator\n\n' +
-'SOUND:\n' +
-'Return 1–2 lines only.\n' +
-'Format:\n' +
-'- background sound type\n' +
-'- optional texture detail\n' +
-'Examples:\n' +
-'"Low ambient hum, distant traffic"\n' +
-'"Silence with occasional sharp footsteps"\n' +
-'Avoid music genres.\n' +
-'Focus on atmosphere.\n\n' +
-'ELEMENTS:\n\n' +
-'- Each element = a scene\n' +
+var SYSTEM_PROMPT = 'You are a Creative Director generating a visual world for a given brief.\n' +
+'Your job is NOT to generate random ideas.\n' +
+'Your job is to create a SINGLE COHESIVE STORY WORLD.\n\n' +
+
+'CORE PRINCIPLES:\n\n' +
+
+'1. ONE WORLD, ONE STORY\n' +
+'All outputs must feel like they belong to the same moment, same place, same emotional state.\n' +
+'Do NOT generate disconnected ideas.\n' +
+'Every element should feel like the next frame of the same film.\n\n' +
+
+'2. STORY FLOW (MANDATORY)\n' +
+'Structure all elements as a progression:\n' +
+'- Beginning (setup / environment / context)\n' +
+'- Middle (action / tension / movement)\n' +
+'- End (resolution / outcome / aftermath)\n' +
+'Even if not explicitly labeled, the sequence must feel continuous.\n\n' +
+
+'3. HUMAN-CENTERED VISUALS\n' +
+'Prioritize human presence, behavior, or implied human activity.\n' +
+'Avoid pure environment shots unless:\n' +
+'- It is the FIRST establishing frame\n' +
+'- Or it adds emotional weight to the story\n\n' +
+
+'4. SPECIFIC > GENERIC\n' +
+'Avoid generic words like: "peace", "beauty", "nature", "urban life"\n' +
+'Instead use:\n' +
+'- precise actions (running, assembling, waiting, staring)\n' +
+'- specific situations (late-night checkout, pre-fight ritual, missed call moment)\n\n' +
+
+'5. CINEMATIC NAMING\n' +
+'Each element name should feel like:\n' +
+'- a film scene title\n' +
 '- 2–4 words max\n' +
-'- No generic words (moment, vibe, energy)\n\n' +
-'IMAGE RULE:\n\n' +
-'IMAGE QUERY GENERATION:\n' +
-'Convert ideas into real visuals.\n' +
-'Use: [environment] + [human/action] + [time/mood]\n' +
-'Examples:\n' +
-'"street food vendor fast hands night"\n' +
-'"lonely person convenience store neon"\n' +
-'"crowded train commuters rush hour"\n' +
-'Avoid:\n' +
-'- brand names\n' +
-'- hyperlocal terms (vada pav, dhaba)\n' +
-'- abstract words (hustle, energy)\n' +
-'If query feels too abstract → simplify\n\n' +
-'For every element generate a search-friendly query:\n' +
-'- 4–6 words\n' +
-'- Must be real-world visual\n' +
-'- Avoid abstract words\n\n' +
-'ANTI-GENERIC FILTER:\n' +
-'Avoid words like:\n' +
-'- beautiful, aesthetic, modern, creative, vibrant\n' +
-'Replace with:\n' +
-'- specific behavior\n' +
-'- physical detail\n' +
-'- emotional tension\n' +
-'Test: Can this be filmed?\n' +
-'If no → rewrite\n\n' +
-'FINAL CHECK:\n' +
-'Before returning output ask:\n' +
-'"Does this feel like a real shoot plan or generic content?"\n' +
-'If generic → improve once\n' +
-'Then return\n\n' +
-'If output feels generic → rewrite\n' +
-'If it feels cinematic → return\n\n' +
+'- emotionally loaded\n' +
+'Examples: "Midnight Snack", "Final Stare", "Red Corner", "Last Train Home"\n' +
+'Avoid abstract labels like: "Growth", "Energy", "Modern Life"\n\n' +
+
+'6. ACTION-DRIVEN LABELS\n' +
+'Each element must imply action or behavior.\n' +
+'Bad: "Forest View"\n' +
+'Good: "Jungle Pursuit", "Crossing the River", "Hiding in Silence"\n\n' +
+
+'7. VISUAL CLARITY FOR IMAGES\n' +
+'Each element must be visually searchable.\n' +
+'That means: clear subject, clear action, clear environment.\n' +
+'So that an image API can retrieve relevant results.\n\n' +
+
+'8. CONSISTENCY IN MOOD\n' +
+'Maintain the SAME: time of day, lighting style, emotional tone.\n' +
+'Do NOT mix: day + night, calm + chaos, comedy + tension\n\n' +
+
+'9. LIMIT RANDOMNESS\n' +
+'Do NOT introduce new concepts mid-sequence.\n' +
+'Everything must feel like:\n' +
+'→ same location\n' +
+'→ same character (or same type of people)\n' +
+'→ same situation evolving\n\n' +
+
+'10. OUTPUT COMPATIBILITY (IMPORTANT)\n' +
+'Keep output structure EXACTLY as required by the system.\n' +
+'Do NOT add extra fields.\n' +
+'Do NOT change format.\n' +
+'Only improve the QUALITY of content inside fields.\n\n' +
+
 'CRITICAL: Always return exactly 8 elements in the elements array. Never fewer.\n\n' +
+
 'Return ONLY valid JSON:\n' +
 '{\n' +
 '  "core_feeling": "3-5 words",\n' +
@@ -408,7 +383,7 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
 '  "sound_direction": "real-world sounds",\n' +
 '  "first_action": {\n' +
 '    "subject": "who or what",\n' +
-'    "action": "command form",\n' +
+'    "action": "command form — pull wrap tight",\n' +
 '    "camera": "shot type",\n' +
 '    "duration": "seconds",\n' +
 '    "environment": "where"\n' +
@@ -441,7 +416,13 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
 '      "unsplash_query": "4-6 words describing actual visual — match brief atmosphere"\n' +
 '    }\n' +
 '  ]\n' +
-'}';
+'}\n\n' +
+
+'ATMOSPHERE RULES:\n' +
+'3am=night dark, Holi=colorful powder, rush hour=crowded people, whisky=dark amber aged cellar, leather=brown texture workshop\n' +
+'Video elements = motion/people/action\n' +
+'Designer elements = texture/pattern/close-up/surface\n' +
+'Brand elements = symbolic objects representing meaning NOT literal subject';
 
     function generateWorld() {
       var brief = document.getElementById('brief').value.trim();
@@ -510,12 +491,13 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
         grid.innerHTML = '';
         document.getElementById('output').style.display = 'block';
         document.querySelector('.visual-section').scrollIntoView({ behavior: 'smooth' });
+        var usedIds = new Set();
         (w.elements || []).forEach(function(el, i) {
           var card = buildCard(el, i, w);
           grid.appendChild(card);
           (function(element, cardEl, idx) {
             setTimeout(function() {
-              fetchImage(element.unsplash_query, cardEl, element, brief);
+              fetchImage(element.unsplash_query, cardEl, element, usedIds, brief);
             }, idx * 400);
             setTimeout(function() { cardEl.classList.add('visible'); }, idx * 70);
           })(el, card, i);
@@ -561,10 +543,11 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
       }
 
       if (role === 'video') {
-        var shots = w.shots || [];
-        var seq = w.sequence || [];
-        var style = w.style || '';
-        var audio = w.audio || '';
+        // Use new field names, fallback to old ones
+        var shots = w.shots || w.visual_direction || [];
+        var seq = w.sequence || w.suggested_sequence || [];
+        var style = w.style || w.framing || '';
+        var audio = w.audio || w.audio_treatment || '';
 
         if (faHtml) {
           html += '<div class="exec-row" style="grid-template-columns:1fr;">' +
@@ -585,6 +568,9 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
           eblock('🧩 Layout', eval_(w.layout)) +
           eblock('🔤 Typography', eval_(w.typography)) +
         '</div>';
+        html += '<div class="exec-row" style="grid-template-columns:1fr;">' +
+          eblock('🎨 Visual Behavior', eval_(w.visual_behavior || w.style || '')) +
+        '</div>';
       } else if (role === 'brand') {
         var msgs = w.example_messaging || [];
         html += '<div class="exec-row cols2">' +
@@ -596,6 +582,7 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
         '</div>';
       }
 
+      // Avoid — handle both array and string
       var avoidVal = '';
       if (Array.isArray(w.avoid)) {
         avoidVal = w.avoid.join(' · ');
@@ -605,7 +592,6 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
       html += '<div class="avoid-bar"><span class="avoid-label">🚫 Avoid</span><span class="avoid-value">' + avoidVal + '</span></div>';
       c.innerHTML = html;
     }
-
     function buildCard(el, index, w) {
       var card = document.createElement('div');
       card.className = 'card';
@@ -628,17 +614,19 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
       var content = '<div class="p-insight">' + el.insight_line + '</div>';
 
       if (selectedRole === 'video') {
-        var shots = (w.shots||[]).map(function(i){return '<li>'+i+'</li>';}).join('');
-        var seq = (w.sequence||[]).slice(0,3).map(function(i){return '<li>'+i+'</li>';}).join('');
+        var vd = (w.visual_direction||[]).map(function(i){return '<li>'+i+'</li>';}).join('');
+        var seq = (w.suggested_sequence||[]).slice(0,3).map(function(i){return '<li>'+i+'</li>';}).join('');
         content +=
-          '<div class="p-section"><div class="p-label">Shots</div><ul class="p-list">' + shots + '</ul></div>' +
+          '<div class="p-section"><div class="p-label">Visual Direction</div><ul class="p-list">' + vd + '</ul></div>' +
           '<div class="p-section"><div class="p-label">Sequence</div><ul class="p-list">' + seq + '</ul></div>' +
           '<div class="p-section"><div class="p-label">Pacing</div><div class="p-value">' + (w.pacing||'') + '</div></div>' +
-          '<div class="p-section"><div class="p-label">Audio</div><div class="p-value">' + (w.audio||'') + '</div></div>';
+          '<div class="p-section"><div class="p-label">Transitions</div><div class="p-value">' + (w.transitions||'') + '</div></div>' +
+          '<div class="p-section"><div class="p-label">Audio</div><div class="p-value">' + (w.audio_treatment||'') + '</div></div>';
       } else if (selectedRole === 'designer') {
         content +=
           '<div class="p-section"><div class="p-label">Layout</div><div class="p-value">' + (w.layout||'') + '</div></div>' +
-          '<div class="p-section"><div class="p-label">Typography</div><div class="p-value">' + (w.typography||'') + '</div></div>';
+          '<div class="p-section"><div class="p-label">Typography</div><div class="p-value">' + (w.typography||'') + '</div></div>' +
+          '<div class="p-section"><div class="p-label">Visual Behavior</div><div class="p-value">' + (w.visual_behavior||'') + '</div></div>';
       } else if (selectedRole === 'brand') {
         var msgs = (w.example_messaging||[]).map(function(i){return '<li>'+i+'</li>';}).join('');
         content +=
@@ -651,29 +639,68 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
       document.getElementById('sidePanel').classList.add('open');
     }
 
-    function fetchImage(query, card, el, brief) {
-      var finalQuery = query.trim() || "creative abstract";
-      
-      // Trim to max 6 words
-      finalQuery = finalQuery.split(' ').slice(0, 6).join(' ');
+    function fetchImage(query, card, el, usedIds, brief) {
+      var b = brief.toLowerCase();
+      var boost = '';
+      if (b.indexOf('3am') > -1 || b.indexOf('night') > -1 || b.indexOf('midnight') > -1) boost = ' night dark';
+      else if (b.indexOf('snow') > -1 || b.indexOf('winter') > -1 || b.indexOf('cold') > -1) boost = ' winter snow';
+      else if (b.indexOf('rush hour') > -1 || b.indexOf('crowd') > -1) boost = ' crowded people';
+      else if (b.indexOf('whisky') > -1 || b.indexOf('distillery') > -1) boost = ' dark amber aged';
+      else if (b.indexOf('leather') > -1 || b.indexOf('craft') > -1) boost = ' brown texture workshop';
+      // Note: holi/festival boost removed — translation layer already handles color keywords
 
-      fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(finalQuery) + '&per_page=1&orientation=portrait', {
+      // Hyperlocal to universal translation
+      var translations = {
+        'vada pav': 'street food vendor fast hands crowded',
+        'misal pav': 'street food stall steam bowl morning',
+        'pav bhaji': 'street food stall butter sizzle crowded',
+        'mumbai local': 'crowded train commuters pushing rush hour',
+        'local train': 'crowded train commuters pushing rush hour',
+        'autorickshaw': 'three wheel taxi street traffic city',
+        'rickshaw': 'small vehicle street traffic asia',
+        'dhaba': 'roadside food stall outdoor eating india',
+        'chai': 'tea glass steam hands morning',
+        'chai stall': 'tea stall vendor pouring steam',
+        'ganesh': 'festival crowd street celebration procession',
+        'visarjan': 'festival crowd ocean immersion celebration',
+        'diwali': 'lights candles celebration night festive',
+        'navratri': 'dance celebration colorful night festival',
+        'biryani': 'rice dish food close-up restaurant kitchen',
+        'tandoor': 'clay oven fire cooking bread hands',
+        'lassi': 'yogurt drink glass creamy market',
+        'thali': 'round plate food variety meal',
+        'gully': 'narrow alley street urban india',
+        'chawl': 'dense urban housing crowded building',
+        'dabba': 'tiffin box food container lunch',
+        'jugaad': 'improvised solution makeshift repair hands'
+      };
+
+      // Check if query contains hyperlocal terms and translate
+      var finalQuery = query;
+      Object.keys(translations).forEach(function(term) {
+        if (finalQuery.toLowerCase().indexOf(term) > -1) {
+          finalQuery = translations[term];
+        }
+      });
+
+      fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(finalQuery + boost) + '&per_page=5&orientation=portrait', {
         headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
       })
-      .then(function(r) {
-        if (!r.ok) throw new Error("Unsplash failed " + r.status);
-        return r.json();
-      })
+      .then(function(r) { return r.json(); })
       .then(function(data) {
-        console.log("UNSPLASH DATA:", data);
+        console.log("UNSPLASH DATA:", data);  // 🔍 Debug log
         if (!data.results || data.results.length === 0) {
           console.warn("No images for:", finalQuery);
-          throw new Error("No results");
+          return;
         }
-        
-        var photo = data.results[0];
+        var photo = null;
+        for (var i = 0; i < data.results.length; i++) {
+          if (!usedIds.has(data.results[i].id)) { photo = data.results[i]; break; }
+        }
+        if (!photo) photo = data.results[0];
+        usedIds.add(photo.id);
 
-        // Replace skeleton with image
+        // Replace skeleton immediately with img
         var sk = card.querySelector('.skeleton-ph');
         if (sk) {
           var imgUrl = photo.urls.regular || photo.urls.small;
@@ -692,19 +719,7 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
         credit.textContent = photo.user.name + ' / Unsplash';
         card.appendChild(credit);
       })
-      .catch(function(err) {
-        console.error('Unsplash error:', err);
-        
-        // Fallback image when API fails
-        var sk = card.querySelector('.skeleton-ph');
-        if (sk) {
-          var img = document.createElement('img');
-          img.className = 'card-img';
-          img.alt = el.element_name;
-          img.src = 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800';
-          sk.replaceWith(img);
-        }
-      });
+      .catch(function(err) { console.error('Unsplash:', err); });
     }
 
     function setStatus(msg) {
