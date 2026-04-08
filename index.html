@@ -308,84 +308,70 @@
     }
     function closePanel() { document.getElementById('sidePanel').classList.remove('open'); }
 
-var SYSTEM_PROMPT = 'You are a Creative Director generating a visual world from a brief.\n\n' +
+var SYSTEM_PROMPT = 'You are a Creative Director generating a visual world for a given brief.\n' +
+'Your job is NOT to generate random ideas.\n' +
+'Your job is to create a SINGLE COHESIVE STORY WORLD.\n\n' +
 
-'Your goal is to create a COHESIVE and CINEMATIC set of elements,\n' +
-'while ensuring each element can be easily matched with real-world images.\n\n' +
+'CORE PRINCIPLES:\n\n' +
 
-'1. ONE WORLD, FLEXIBLE STORY\n\n' +
-'All elements should feel like they belong to the same world:\n' +
-'- similar environment\n' +
-'- similar mood\n' +
-'- similar time of day (loosely consistent)\n\n' +
-'However, slight variation is allowed if it improves visual richness.\n\n' +
+'1. ONE WORLD, ONE STORY\n' +
+'All outputs must feel like they belong to the same moment, same place, same emotional state.\n' +
+'Do NOT generate disconnected ideas.\n' +
+'Every element should feel like the next frame of the same film.\n\n' +
 
-'2. LIGHT STORY FLOW (NOT STRICT)\n\n' +
-'The sequence should loosely feel like:\n' +
-'- beginning (setup / context)\n' +
-'- middle (action / interaction)\n' +
-'- end (resolution / reflection)\n\n' +
-'BUT: Do NOT force a strict story if it reduces image quality or relevance.\n\n' +
+'2. STORY FLOW (MANDATORY)\n' +
+'Structure all elements as a progression:\n' +
+'- Beginning (setup / environment / context)\n' +
+'- Middle (action / tension / movement)\n' +
+'- End (resolution / outcome / aftermath)\n' +
+'Even if not explicitly labeled, the sequence must feel continuous.\n\n' +
 
-'3. MIX OF MOMENTS + VISUAL ANCHORS\n\n' +
-'Each element can be:\n' +
-'- a human moment (preferred)\n' +
-'- OR a strong visual anchor (environment / object)\n\n' +
-'Balance both.\n\n' +
-'Avoid:\n' +
-'- too many abstract concepts\n' +
-'- too many empty environments\n\n' +
+'3. HUMAN-CENTERED VISUALS\n' +
+'Prioritize human presence, behavior, or implied human activity.\n' +
+'Avoid pure environment shots unless:\n' +
+'- It is the FIRST establishing frame\n' +
+'- Or it adds emotional weight to the story\n\n' +
 
-'4. IMAGE-FIRST THINKING (VERY IMPORTANT)\n\n' +
-'Every element must be:\n' +
-'- easily searchable\n' +
-'- visually recognizable\n' +
-'- commonly photographed\n\n' +
-'Prefer:\n' +
-'- people doing actions\n' +
-'- real places (street, room, café, market)\n' +
-'- tangible objects (food, tools, products)\n\n' +
-'Avoid:\n' +
-'- overly niche or rare scenarios\n' +
-'- highly specific local references that may not exist in image datasets\n\n' +
+'4. SPECIFIC > GENERIC\n' +
+'Avoid generic words like: "peace", "beauty", "nature", "urban life"\n' +
+'Instead use:\n' +
+'- precise actions (running, assembling, waiting, staring)\n' +
+'- specific situations (late-night checkout, pre-fight ritual, missed call moment)\n\n' +
 
-'5. CINEMATIC BUT SEARCHABLE NAMES\n\n' +
-'Element names should feel like film scenes, but still map to real visuals.\n\n' +
-'Good: "Morning Matcha", "Street Rush", "Final Stare"\n' +
-'Avoid: vague abstract terms (Peace, Energy, Growth), overly poetic phrases that don\'t map to visuals\n\n' +
+'5. CINEMATIC NAMING\n' +
+'Each element name should feel like:\n' +
+'- a film scene title\n' +
+'- 2–4 words max\n' +
+'- emotionally loaded\n' +
+'Examples: "Midnight Snack", "Final Stare", "Red Corner", "Last Train Home"\n' +
+'Avoid abstract labels like: "Growth", "Energy", "Modern Life"\n\n' +
 
-'6. ACTION IS GOOD, BUT NOT MANDATORY\n\n' +
-'Prefer action (running, cooking, assembling, walking),\n' +
-'BUT allow still moments (sitting, holding, waiting, empty space) if they add mood.\n\n' +
+'6. ACTION-DRIVEN LABELS\n' +
+'Each element must imply action or behavior.\n' +
+'Bad: "Forest View"\n' +
+'Good: "Jungle Pursuit", "Crossing the River", "Hiding in Silence"\n\n' +
 
-'7. CONSISTENCY OVER PERFECTION\n\n' +
-'Maintain general consistency in:\n' +
-'- lighting (warm / cool / night / day)\n' +
-'- tone (calm / chaotic / tense)\n\n' +
-'But do not over-restrict if it hurts image diversity.\n\n' +
+'7. VISUAL CLARITY FOR IMAGES\n' +
+'Each element must be visually searchable.\n' +
+'That means: clear subject, clear action, clear environment.\n' +
+'So that an image API can retrieve relevant results.\n\n' +
 
-'8. CONTROL RANDOMNESS\n\n' +
-'Do not introduce completely unrelated elements.\n\n' +
-'However, allow slight variation if:\n' +
-'- it still fits the emotional world\n' +
-'- it improves visual richness\n\n' +
+'8. CONSISTENCY IN MOOD\n' +
+'Maintain the SAME: time of day, lighting style, emotional tone.\n' +
+'Do NOT mix: day + night, calm + chaos, comedy + tension\n\n' +
 
-'9. PRACTICAL SEARCH OPTIMIZATION\n\n' +
-'When thinking about visuals, prefer combinations like:\n' +
-'[subject] + [action] + [environment]\n\n' +
-'Examples:\n' +
-'- person drinking tea in café\n' +
-'- vendor cooking street food\n' +
-'- person walking alone at night\n\n' +
-'This ensures better image retrieval.\n\n' +
+'9. LIMIT RANDOMNESS\n' +
+'Do NOT introduce new concepts mid-sequence.\n' +
+'Everything must feel like:\n' +
+'→ same location\n' +
+'→ same character (or same type of people)\n' +
+'→ same situation evolving\n\n' +
 
-'10. OUTPUT SAFETY\n\n' +
-'Do NOT change output structure.\n' +
-'Do NOT add new fields.\n' +
-'Only improve the quality of generated content.\n\n' +
-
-'FINAL CHECK:\n' +
-'If an element feels too abstract, simplify it into something that can be photographed easily.\n\n' +
+'10. OUTPUT COMPATIBILITY (IMPORTANT)\n' +
+'Keep output structure EXACTLY as required by the system.\n' +
+'Do NOT add extra fields.\n' +
+'Do NOT change format.\n' +
+'Only improve the QUALITY of content inside fields.\n\n' +
 
 'CRITICAL: Always return exactly 8 elements in the elements array. Never fewer.\n\n' +
 
@@ -505,12 +491,13 @@ var SYSTEM_PROMPT = 'You are a Creative Director generating a visual world from 
         grid.innerHTML = '';
         document.getElementById('output').style.display = 'block';
         document.querySelector('.visual-section').scrollIntoView({ behavior: 'smooth' });
+        var usedIds = new Set();
         (w.elements || []).forEach(function(el, i) {
           var card = buildCard(el, i, w);
           grid.appendChild(card);
           (function(element, cardEl, idx) {
             setTimeout(function() {
-              fetchImage(element.unsplash_query, cardEl, element, brief);
+              fetchImage(element.unsplash_query, cardEl, element, usedIds, brief);
             }, idx * 400);
             setTimeout(function() { cardEl.classList.add('visible'); }, idx * 70);
           })(el, card, i);
@@ -652,7 +639,7 @@ var SYSTEM_PROMPT = 'You are a Creative Director generating a visual world from 
       document.getElementById('sidePanel').classList.add('open');
     }
 
-    function fetchImage(query, card, el, brief) {
+    function fetchImage(query, card, el, usedIds, brief) {
       var b = brief.toLowerCase();
       var boost = '';
       if (b.indexOf('3am') > -1 || b.indexOf('night') > -1 || b.indexOf('midnight') > -1) boost = ' night dark';
@@ -696,26 +683,24 @@ var SYSTEM_PROMPT = 'You are a Creative Director generating a visual world from 
         }
       });
 
-      // Trim query to max 6 words to avoid messy redundant searches
-      finalQuery = finalQuery.split(' ').slice(0, 6).join(' ');
-
-      fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(finalQuery + boost) + '&per_page=1&orientation=portrait', {
+      fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(finalQuery + boost) + '&per_page=5&orientation=portrait', {
         headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
       })
-      .then(function(r) {
-        if (!r.ok) throw new Error("Unsplash failed " + r.status);
-        return r.json();
-      })
+      .then(function(r) { return r.json(); })
       .then(function(data) {
-        console.log("UNSPLASH DATA:", data);
+        console.log("UNSPLASH DATA:", data);  // 🔍 Debug log
         if (!data.results || data.results.length === 0) {
           console.warn("No images for:", finalQuery);
-          throw new Error("No results");
+          return;
         }
-        
-        var photo = data.results[0];
+        var photo = null;
+        for (var i = 0; i < data.results.length; i++) {
+          if (!usedIds.has(data.results[i].id)) { photo = data.results[i]; break; }
+        }
+        if (!photo) photo = data.results[0];
+        usedIds.add(photo.id);
 
-        // Replace skeleton with image
+        // Replace skeleton immediately with img
         var sk = card.querySelector('.skeleton-ph');
         if (sk) {
           var imgUrl = photo.urls.regular || photo.urls.small;
@@ -734,19 +719,7 @@ var SYSTEM_PROMPT = 'You are a Creative Director generating a visual world from 
         credit.textContent = photo.user.name + ' / Unsplash';
         card.appendChild(credit);
       })
-      .catch(function(err) {
-        console.error('Unsplash error:', err);
-        
-        // Fallback image when API fails
-        var sk = card.querySelector('.skeleton-ph');
-        if (sk) {
-          var img = document.createElement('img');
-          img.className = 'card-img';
-          img.alt = el.element_name;
-          img.src = 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800';
-          sk.replaceWith(img);
-        }
-      });
+      .catch(function(err) { console.error('Unsplash:', err); });
     }
 
     function setStatus(msg) {
