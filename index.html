@@ -577,31 +577,31 @@ var SYSTEM_PROMPT = 'You are not an assistant. You are a decisive creative direc
       .then(function(r) { return r.json(); })
       .then(function(r) { return r.json(); })
       .then(function(data) {
-        if (!data.results || !data.results.length) return;
+        if (!data.results || data.results.length === 0) return;
         var photo = null;
         for (var i = 0; i < data.results.length; i++) {
           if (!usedIds.has(data.results[i].id)) { photo = data.results[i]; break; }
         }
         if (!photo) photo = data.results[0];
         usedIds.add(photo.id);
-        var img = document.createElement('img');
-        img.className = 'card-img';
-        img.src = photo.urls.regular;
-        img.alt = el.element_name;
-        img.onload = function() {
-          var sk = card.querySelector('.skeleton-ph');
-          if (sk) sk.replaceWith(img);
-          var credit = document.createElement('a');
-          credit.className = 'card-credit';
-          credit.href = photo.links.html + '?utm_source=worldforge&utm_medium=referral';
-          credit.target = '_blank'; credit.rel = 'noopener';
-          credit.textContent = photo.user.name + ' / Unsplash';
-          card.appendChild(credit);
-        };
-        img.onerror = function() {
-          var sk = card.querySelector('.skeleton-ph');
-          if (sk) sk.style.background = '#1a1a1a';
-        };
+
+        // Replace skeleton immediately with img
+        var sk = card.querySelector('.skeleton-ph');
+        if (sk) {
+          var img = document.createElement('img');
+          img.className = 'card-img';
+          img.alt = el.element_name;
+          img.src = photo.urls.regular;
+          sk.replaceWith(img);
+        }
+
+        // Add credit
+        var credit = document.createElement('a');
+        credit.className = 'card-credit';
+        credit.href = photo.links.html + '?utm_source=worldforge&utm_medium=referral';
+        credit.target = '_blank'; credit.rel = 'noopener';
+        credit.textContent = photo.user.name + ' / Unsplash';
+        card.appendChild(credit);
       })
       .catch(function(err) { console.error('Unsplash:', err); });
     }
