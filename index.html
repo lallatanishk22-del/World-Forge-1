@@ -505,13 +505,12 @@ var SYSTEM_PROMPT = 'You are a Creative Director generating a visual world from 
         grid.innerHTML = '';
         document.getElementById('output').style.display = 'block';
         document.querySelector('.visual-section').scrollIntoView({ behavior: 'smooth' });
-        var usedIds = new Set();
         (w.elements || []).forEach(function(el, i) {
           var card = buildCard(el, i, w);
           grid.appendChild(card);
           (function(element, cardEl, idx) {
             setTimeout(function() {
-              fetchImage(element.unsplash_query, cardEl, element, usedIds, brief);
+              fetchImage(element.unsplash_query, cardEl, element, brief);
             }, idx * 400);
             setTimeout(function() { cardEl.classList.add('visible'); }, idx * 70);
           })(el, card, i);
@@ -653,7 +652,7 @@ var SYSTEM_PROMPT = 'You are a Creative Director generating a visual world from 
       document.getElementById('sidePanel').classList.add('open');
     }
 
-    function fetchImage(query, card, el, usedIds, brief) {
+    function fetchImage(query, card, el, brief) {
       var b = brief.toLowerCase();
       var boost = '';
       if (b.indexOf('3am') > -1 || b.indexOf('night') > -1 || b.indexOf('midnight') > -1) boost = ' night dark';
@@ -697,24 +696,26 @@ var SYSTEM_PROMPT = 'You are a Creative Director generating a visual world from 
         }
       });
 
-      fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(finalQuery + boost) + '&per_page=5&orientation=portrait', {
+      // Trim query to max 6 words to avoid messy redundant searches
+      finalQuery = finalQuery.split(' ').slice(0, 6).join(' ');
+
+      fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(finalQuery + boost) + '&per_page=1&orientation=portrait', {
         headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
       })
-      .then(function(r) { return r.json(); })
+      .then(function(r) {
+        if (!r.ok) throw new Error("Unsplash failed " + r.status);
+        return r.json();
+      })
       .then(function(data) {
-        console.log("UNSPLASH DATA:", data);  // 🔍 Debug log
+        console.log("UNSPLASH DATA:", data);
         if (!data.results || data.results.length === 0) {
           console.warn("No images for:", finalQuery);
-          return;
+          throw new Error("No results");
         }
-        var photo = null;
-        for (var i = 0; i < data.results.length; i++) {
-          if (!usedIds.has(data.results[i].id)) { photo = data.results[i]; break; }
-        }
-        if (!photo) photo = data.results[0];
-        usedIds.add(photo.id);
+        
+        var photo = data.results[0];
 
-        // Replace skeleton immediately with img
+        // Replace skeleton with image
         var sk = card.querySelector('.skeleton-ph');
         if (sk) {
           var imgUrl = photo.urls.regular || photo.urls.small;
@@ -733,7 +734,19 @@ var SYSTEM_PROMPT = 'You are a Creative Director generating a visual world from 
         credit.textContent = photo.user.name + ' / Unsplash';
         card.appendChild(credit);
       })
-      .catch(function(err) { console.error('Unsplash:', err); });
+      .catch(function(err) {
+        console.error('Unsplash error:', err);
+        
+        // Fallback image when API fails
+        var sk = card.querySelector('.skeleton-ph');
+        if (sk) {
+          var img = document.createElement('img');
+          img.className = 'card-img';
+          img.alt = el.element_name;
+          img.src = 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800';
+          sk.replaceWith(img);
+        }
+      });
     }
 
     function setStatus(msg) {
