@@ -381,10 +381,12 @@ var SYSTEM_PROMPT = 'You are not an assistant. You are a decisive creative direc
         (w.elements || []).forEach(function(el, i) {
           var card = buildCard(el, i, w);
           grid.appendChild(card);
-          setTimeout(function() {
-            fetchImage(el.unsplash_query, card, el, usedIds, brief);
-          }, i * 400);
-          setTimeout(function() { card.classList.add('visible'); }, i * 70);
+          (function(element, cardEl, idx) {
+            setTimeout(function() {
+              fetchImage(element.unsplash_query, cardEl, element, usedIds, brief);
+            }, idx * 400);
+            setTimeout(function() { cardEl.classList.add('visible'); }, idx * 70);
+          })(el, card, i);
         });
 
         setStatus('');
@@ -571,6 +573,17 @@ var SYSTEM_PROMPT = 'You are not an assistant. You are a decisive creative direc
 
       fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(finalQuery + boost) + '&per_page=5&orientation=portrait', {
         headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        // If no results, try broader fallback query
+        if (!data.results || data.results.length === 0) {
+          var fallback = query.split(' ').slice(0, 3).join(' ') + boost;
+          return fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(fallback) + '&per_page=5&orientation=portrait', {
+            headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
+          }).then(function(r) { return r.json(); });
+        }
+        return data;
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
