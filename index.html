@@ -587,12 +587,17 @@ var SYSTEM_PROMPT = 'You are not an assistant. You are a decisive creative direc
 
         // Replace skeleton immediately with img
         var sk = card.querySelector('.skeleton-ph');
+        var sk = card.querySelector('.skeleton-ph');
         if (sk) {
-          var img = document.createElement('img');
-          img.className = 'card-img';
-          img.alt = el.element_name;
-          img.src = photo.urls.regular;
-          sk.replaceWith(img);
+          sk.style.backgroundImage = 'url(' + (photo.urls.small || photo.urls.regular) + ')';
+          sk.style.backgroundSize = 'cover';
+          sk.style.backgroundPosition = 'center';
+          sk.style.animation = 'none';
+          sk.style.background = 'none';
+          sk.style.backgroundImage = 'url(' + (photo.urls.small || photo.urls.regular) + ')';
+          sk.style.backgroundSize = 'cover';
+          sk.style.backgroundPosition = 'center';
+          sk.className = 'card-img';
         }
 
         // Add credit
