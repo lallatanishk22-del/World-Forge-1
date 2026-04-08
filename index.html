@@ -573,9 +573,12 @@ var SYSTEM_PROMPT = 'You are not an assistant. You are a decisive creative direc
         headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
       })
       .then(function(r) { return r.json(); })
-      .then(function(r) { return r.json(); })
       .then(function(data) {
-        if (!data.results || data.results.length === 0) return;
+        console.log("UNSPLASH DATA:", data);  // 🔍 Debug log
+        if (!data.results || data.results.length === 0) {
+          console.warn("No images for:", finalQuery);
+          return;
+        }
         var photo = null;
         for (var i = 0; i < data.results.length; i++) {
           if (!usedIds.has(data.results[i].id)) { photo = data.results[i]; break; }
@@ -586,7 +589,7 @@ var SYSTEM_PROMPT = 'You are not an assistant. You are a decisive creative direc
         // Replace skeleton immediately with img
         var sk = card.querySelector('.skeleton-ph');
         if (sk) {
-          var imgUrl = photo.urls.small_s3 || photo.urls.small || photo.urls.regular;
+          var imgUrl = photo.urls.regular || photo.urls.small;
           var img = document.createElement('img');
           img.className = 'card-img';
           img.alt = el.element_name;
