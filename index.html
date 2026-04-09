@@ -62,6 +62,14 @@
     .output-content { font-family: 'Cormorant Garamond', serif; font-size: 17px; line-height: 1.8; color: var(--text); }
     .output-content.large { font-size: 24px; font-weight: 300; font-style: italic; line-height: 1.4; }
     
+    .visual-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 24px; }
+    @media(max-width: 768px) { .visual-grid { grid-template-columns: repeat(2, 1fr); } }
+    .visual-card { position: relative; aspect-ratio: 3/4; overflow: hidden; background: #1a1a1a; }
+    .visual-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+    .visual-card:hover .visual-img { transform: scale(1.05); }
+    .img-skeleton { width: 100%; height: 100%; background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    
     .shoot-list { list-style: none; }
     .shoot-list li { padding-left: 24px; position: relative; margin-bottom: 16px; font-family: 'Cormorant Garamond', serif; font-size: 16px; line-height: 1.7; color: var(--text); }
     .shoot-list li::before { content: attr(data-num); position: absolute; left: 0; color: var(--accent); font-weight: 600; font-size: 14px; }
@@ -130,6 +138,13 @@
         <button class="copy-btn" onclick="copyText('whatToShoot')">COPY</button>
       </div>
       <ol class="shoot-list" id="whatToShoot"></ol>
+    </div>
+
+    <div class="output-section">
+      <div class="output-label">
+        <span>📸 VISUAL INSPIRATION</span>
+      </div>
+      <div class="visual-grid" id="visualGrid"></div>
     </div>
 
     <div class="output-section">
@@ -312,9 +327,75 @@ var SYSTEM_PROMPT = 'You are a creative director who gives SHOOTABLE directions.
         howList.appendChild(li);
       });
       
+      // Fetch visual inspiration
+      fetchVisualInspiration(data.what_to_shoot || []);
+      
       var output = document.getElementById('output');
       output.classList.add('visible');
       output.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function fetchVisualInspiration(shots) {
+      if (!UNSPLASH_ACCESS_KEY) return;
+      
+      var grid = document.getElementById('visualGrid');
+      grid.innerHTML = '';
+      
+      // Take first 6 shots for images
+      var shotsToVisualize = shots.slice(0, 6);
+      
+      shotsToVisualize.forEach(function(shot, index) {
+        var card = document.createElement('div');
+        card.className = 'visual-card';
+        card.innerHTML = '<div class="img-skeleton"></div>';
+        grid.appendChild(card);
+        
+        // Extract keywords from shot description
+        var query = extractImageQuery(shot);
+        
+        setTimeout(function() {
+          fetchUnsplashImage(query, card);
+        }, index * 300);
+      });
+    }
+
+    function extractImageQuery(shot) {
+      // Remove camera terms and extract key visual words
+      var cleaned = shot.toLowerCase()
+        .replace(/close-up:|medium:|wide:|pan:|cut:|shot:|→/gi, '')
+        .trim();
+      
+      // Take first 6 words
+      var words = cleaned.split(' ').slice(0, 6).join(' ');
+      return words;
+    }
+
+    function fetchUnsplashImage(query, card) {
+      fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(query) + '&per_page=1&orientation=portrait', {
+        headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
+      })
+      .then(function(r) {
+        if (!r.ok) throw new Error('Unsplash failed');
+        return r.json();
+      })
+      .then(function(data) {
+        if (!data.results || data.results.length === 0) throw new Error('No results');
+        
+        var photo = data.results[0];
+        var skeleton = card.querySelector('.img-skeleton');
+        
+        if (skeleton) {
+          var img = document.createElement('img');
+          img.className = 'visual-img';
+          img.src = photo.urls.regular || photo.urls.small;
+          img.alt = 'Visual reference';
+          skeleton.replaceWith(img);
+        }
+      })
+      .catch(function(err) {
+        console.error('Image fetch error:', err);
+        // Leave skeleton if fetch fails
+      });
     }
 
     function setStatus(msg) {
