@@ -193,6 +193,7 @@
 var SYSTEM_PROMPT = 'You are a creative director who gives SHOOTABLE directions.\n\n' +
 'INPUT: An idea\n' +
 'OUTPUT: Exact instructions for shooting it\n\n' +
+'CRITICAL: Return ONLY valid JSON. No explanation. No preamble. Just the JSON object.\n\n' +
 'RULES:\n' +
 '- No abstract words (nostalgia, escape, etc.)\n' +
 '- No genre labels (Bollywood, K-pop)\n' +
@@ -215,7 +216,8 @@ var SYSTEM_PROMPT = 'You are a creative director who gives SHOOTABLE directions.
 'FINAL CHECK:\n' +
 '"Can a normal person shoot this today with their phone?"\n' +
 'If NO → simplify\n\n' +
-'Return ONLY valid JSON:\n' +
+'RESPONSE FORMAT (CRITICAL):\n' +
+'Return ONLY this JSON structure with no additional text:\n' +
 '{\n' +
 '  "idea": "one line concept",\n' +
 '  "hook": "strong opening",\n' +
@@ -253,9 +255,26 @@ var SYSTEM_PROMPT = 'You are a creative director who gives SHOOTABLE directions.
         return res.json();
       })
       .then(function(data) {
-        var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
+        var raw = data.choices[0].message.content;
+        
+        // Remove markdown code blocks
+        raw = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+        
+        // Try to extract JSON if wrapped in text
+        var jsonMatch = raw.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          raw = jsonMatch[0];
+        }
+        
+        raw = raw.trim();
+        
         var result;
-        try { result = JSON.parse(raw); } catch(e) { throw new Error('Parse failed'); }
+        try { 
+          result = JSON.parse(raw); 
+        } catch(e) { 
+          console.error('Parse error. Raw response:', raw);
+          throw new Error('Could not parse response. Please try again.'); 
+        }
         
         renderOutput(result);
         
