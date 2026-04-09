@@ -74,6 +74,21 @@
     /* OUTPUT */
     .output { display: none; padding-bottom: 80px; }
 
+    /* USE THIS BUTTON */
+    .use-this-section { max-width: 1400px; margin: 48px auto 0; padding: 0 24px; text-align: center; }
+    .use-this-btn { background: var(--accent); color: #0a0a0a; border: none; padding: 16px 48px; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+    .use-this-btn:hover { background: #d4b47a; }
+    
+    /* COPY-PASTE OUTPUT */
+    .copy-output { max-width: 900px; margin: 40px auto 0; padding: 32px; background: var(--surface); border: 1px solid var(--border); display: none; }
+    .copy-output.visible { display: block; }
+    .copy-section { margin-bottom: 32px; }
+    .copy-section:last-child { margin-bottom: 0; }
+    .copy-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+    .copy-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 4px 12px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; font-family: 'Syne', sans-serif; }
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .copy-content { background: #0a0a0a; border: 1px solid var(--border); padding: 20px; font-family: 'Cormorant Garamond', serif; font-size: 15px; line-height: 1.8; color: var(--text-dim); white-space: pre-wrap; }
+
     /* DIRECTION SECTION */
     .dir-section { max-width: 1400px; margin: 0 auto; padding: 64px 24px 48px; }
     .dir-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
@@ -270,6 +285,47 @@
         <div id="execContent"></div>
       </div>
     </div>
+
+    <!-- USE THIS BUTTON -->
+    <div class="use-this-section">
+      <button class="use-this-btn" onclick="toggleCopyOutput()">Use This</button>
+    </div>
+
+    <!-- COPY-PASTE OUTPUT (Hidden by default) -->
+    <div class="copy-output" id="copyOutput">
+      <div class="copy-section">
+        <div class="copy-label">
+          <span>📹 REEL SCRIPT</span>
+          <button class="copy-btn" onclick="copyText('reelScript')">COPY</button>
+        </div>
+        <div class="copy-content" id="reelScript"></div>
+      </div>
+
+      <div class="copy-section">
+        <div class="copy-label">
+          <span>📝 CAPTION</span>
+          <button class="copy-btn" onclick="copyText('caption')">COPY</button>
+        </div>
+        <div class="copy-content" id="caption"></div>
+      </div>
+
+      <div class="copy-section">
+        <div class="copy-label">
+          <span>#️⃣ HASHTAGS</span>
+          <button class="copy-btn" onclick="copyText('hashtags')">COPY</button>
+        </div>
+        <div class="copy-content" id="hashtags"></div>
+      </div>
+
+      <div class="copy-section">
+        <div class="copy-label">
+          <span>🎬 SHOT LIST</span>
+          <button class="copy-btn" onclick="copyText('shotList')">COPY</button>
+        </div>
+        <div class="copy-content" id="shotList"></div>
+      </div>
+    </div>
+
   </div>
 
   <div class="panel" id="sidePanel">
@@ -803,6 +859,110 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
       var s = document.getElementById('status');
       s.textContent = msg;
       s.classList.toggle('visible', !!msg);
+    }
+
+    function toggleCopyOutput() {
+      var output = document.getElementById('copyOutput');
+      var isVisible = output.classList.contains('visible');
+      
+      if (!isVisible && worldData) {
+        generateCopyContent();
+      }
+      
+      output.classList.toggle('visible');
+      
+      if (!isVisible) {
+        output.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function generateCopyContent() {
+      if (!worldData || !worldData.elements) return;
+      
+      var brief = generations[currentGenerationIndex]?.brief || '';
+      var elements = worldData.elements || [];
+      
+      // REEL SCRIPT
+      var script = '';
+      elements.forEach(function(el, i) {
+        if (i === 0) script += el.insight_line + '...\n\n';
+        else script += el.element_name + '.\n';
+      });
+      script += '\n' + (worldData.human_insight || '');
+      document.getElementById('reelScript').textContent = script.trim();
+      
+      // CAPTION
+      var caption = worldData.human_insight || worldData.core_feeling || '';
+      document.getElementById('caption').textContent = caption;
+      
+      // HASHTAGS
+      var hashtags = generateHashtags(brief, elements);
+      document.getElementById('hashtags').textContent = hashtags;
+      
+      // SHOT LIST
+      var shotList = '';
+      elements.forEach(function(el, i) {
+        shotList += '• ' + el.element_name + '\n';
+      });
+      document.getElementById('shotList').textContent = shotList.trim();
+    }
+
+    function generateHashtags(brief, elements) {
+      var tags = [];
+      var words = brief.toLowerCase().split(' ');
+      
+      // Extract key words from brief
+      var keywords = words.filter(function(w) {
+        return w.length > 4 && 
+               !['about', 'should', 'would', 'could', 'their', 'there', 'these', 'those'].includes(w);
+      }).slice(0, 3);
+      
+      keywords.forEach(function(k) {
+        tags.push('#' + k.replace(/[^a-z0-9]/g, ''));
+      });
+      
+      // Add generic relevant tags
+      tags.push('#realmoments');
+      tags.push('#authentic');
+      
+      return tags.join(' ');
+    }
+
+    function copyText(elementId) {
+      var text = document.getElementById(elementId).textContent;
+      
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+          showCopyFeedback(elementId);
+        }).catch(function(err) {
+          console.error('Copy failed:', err);
+        });
+      } else {
+        // Fallback for older browsers
+        var textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showCopyFeedback(elementId);
+      }
+    }
+
+    function showCopyFeedback(elementId) {
+      var btn = event.target;
+      var originalText = btn.textContent;
+      btn.textContent = 'COPIED!';
+      btn.style.color = 'var(--accent)';
+      btn.style.borderColor = 'var(--accent)';
+      
+      setTimeout(function() {
+        btn.textContent = originalText;
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      }, 1500);
     }
 
     document.getElementById('brief').addEventListener('keydown', function(e) {
