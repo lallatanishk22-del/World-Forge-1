@@ -394,6 +394,67 @@
   </div>
 
   <script>
+    // SYSTEM PROMPTS - Must be defined first
+    var SYSTEM_PROMPT_EXPLORE = 'You are a creative director generating VISUAL EXPLORATION OPTIONS.\n\n' +
+    'EXPLORE MODE (NOT A STORY):\n' +
+    'Generate 8–12 diverse visual ideas around the brief.\n' +
+    'Each idea = different angle/perspective/moment.\n\n' +
+    'DO NOT force continuity.\n' +
+    'DO NOT create a story sequence.\n' +
+    'DO create variety.\n\n' +
+    'VARIETY RULES:\n' +
+    '→ Different subjects (man, woman, child, elderly)\n' +
+    '→ Different environments (bedroom, office, street, cafe)\n' +
+    '→ Different emotions (calm, panic, joy, tension)\n' +
+    '→ Different times (morning, night, afternoon)\n' +
+    '→ Different camera angles (close-up, wide, medium)\n\n' +
+    'Each element should stand alone as a potential direction.\n\n' +
+    'Return 8–12 elements exploring different aspects of the brief.\n' +
+    'User will select favorites to build story from.\n\n' +
+    'KEEP:\n' +
+    '→ Physical actions (not concepts)\n' +
+    '→ Shootable moments\n' +
+    '→ Brand context when relevant\n\n' +
+    'AVOID:\n' +
+    '→ Sequential storytelling\n' +
+    '→ Forced progression\n' +
+    '→ Same subject repeated\n\n' +
+    'Return ONLY valid JSON with 8-12 elements.';
+
+    var SYSTEM_PROMPT_FILM = 'You are a creative director building a SHOOTABLE SEQUENCE.\n\n' +
+    'FILMING MODE (BUILD THE STORY):\n' +
+    'User has selected 2-4 images from exploration.\n' +
+    'Use these to infer:\n' +
+    '→ Subject type (who)\n' +
+    '→ Environment (where)\n' +
+    '→ Tone (mood/emotion)\n\n' +
+    'Now generate 6-8 shot sequence with STRICT CONTINUITY:\n\n' +
+    'MANDATORY STRUCTURE:\n' +
+    'Shots 1-2: SETUP (introduce character, environment)\n' +
+    'Shots 3-4: PROBLEM/TENSION (show struggle, need)\n' +
+    'Shots 5-6: TRANSITION (change begins)\n' +
+    'Shots 7-8: RESOLUTION (brand visible, problem solved)\n\n' +
+    'CONTINUITY RULES (CRITICAL):\n' +
+    '→ Same person throughout all shots\n' +
+    '→ Same primary location (bedroom, office, home)\n' +
+    '→ Logical time flow (each shot follows previous)\n' +
+    '→ Show what changed between shots\n\n' +
+    'NO RANDOM IMAGES:\n' +
+    '❌ Empty landscapes, roads, mountains\n' +
+    '❌ Abstract visuals without people\n' +
+    '❌ Stock imagery feel\n' +
+    '✅ Human performing action in specific location\n' +
+    '✅ Indoor scenes with person present\n' +
+    '✅ Objects person interacts with\n\n' +
+    'BRAND INTEGRATION:\n' +
+    'Brand must appear in shots 7-8 and:\n' +
+    '→ Cause the resolution OR\n' +
+    '→ Resolve the tension\n' +
+    'If brand removed → story incomplete\n\n' +
+    'Return ONLY valid JSON with 6-8 elements showing clear progression.';
+
+    var SYSTEM_PROMPT = SYSTEM_PROMPT_EXPLORE;
+    
     var GROQ_API_KEY = localStorage.getItem('groq_api_key') || '';
     var UNSPLASH_ACCESS_KEY = localStorage.getItem('unsplash_access_key') || '';
     var selectedRole = 'video';
@@ -608,185 +669,7 @@
       }
     });
 
-var SYSTEM_PROMPT_EXPLORE = 'You are a creative director generating VISUAL EXPLORATION OPTIONS.\n\n' +
-'EXPLORE MODE (NOT A STORY):\n' +
-'Generate 8–12 diverse visual ideas around the brief.\n' +
-'Each idea = different angle/perspective/moment.\n\n' +
-'DO NOT force continuity.\n' +
-'DO NOT create a story sequence.\n' +
-'DO create variety.\n\n' +
-'VARIETY RULES:\n' +
-'→ Different subjects (man, woman, child, elderly)\n' +
-'→ Different environments (bedroom, office, street, cafe)\n' +
-'→ Different emotions (calm, panic, joy, tension)\n' +
-'→ Different times (morning, night, afternoon)\n' +
-'→ Different camera angles (close-up, wide, medium)\n\n' +
-'Each element should stand alone as a potential direction.\n\n' +
-'Return 8–12 elements exploring different aspects of the brief.\n' +
-'User will select favorites to build story from.\n\n' +
-'KEEP:\n' +
-'→ Physical actions (not concepts)\n' +
-'→ Shootable moments\n' +
-'→ Brand context when relevant\n\n' +
-'AVOID:\n' +
-'→ Sequential storytelling\n' +
-'→ Forced progression\n' +
-'→ Same subject repeated\n\n' +
-'Return ONLY valid JSON with 8-12 elements.';\n\n' +
-'var SYSTEM_PROMPT_FILM = 'You are a creative director building a SHOOTABLE SEQUENCE.\n\n' +
-'FILMING MODE (BUILD THE STORY):\n' +
-'User has selected 2-4 images from exploration.\n' +
-'Use these to infer:\n' +
-'→ Subject type (who)\n' +
-'→ Environment (where)\n' +
-'→ Tone (mood/emotion)\n\n' +
-'Now generate 6-8 shot sequence with STRICT CONTINUITY:\n\n' +
-'MANDATORY STRUCTURE:\n' +
-'Shots 1-2: SETUP (introduce character, environment)\n' +
-'Shots 3-4: PROBLEM/TENSION (show struggle, need)\n' +
-'Shots 5-6: TRANSITION (change begins)\n' +
-'Shots 7-8: RESOLUTION (brand visible, problem solved)\n\n' +
-'CONTINUITY RULES (CRITICAL):\n' +
-'→ Same person throughout all shots\n' +
-'→ Same primary location (bedroom, office, home)\n' +
-'→ Logical time flow (each shot follows previous)\n' +
-'→ Show what changed between shots\n\n' +
-'NO RANDOM IMAGES:\n' +
-'❌ Empty landscapes, roads, mountains\n' +
-'❌ Abstract visuals without people\n' +
-'❌ Stock imagery feel\n' +
-'✅ Human performing action in specific location\n' +
-'✅ Indoor scenes with person present\n' +
-'✅ Objects person interacts with\n\n' +
-'BRAND INTEGRATION:\n' +
-'Brand must appear in shots 7-8 and:\n' +
-'→ Cause the resolution OR\n' +
-'→ Resolve the tension\n' +
-'If brand removed → story incomplete\n\n' +
-'Return ONLY valid JSON with 6-8 elements showing clear progression.';\n\n' +
-'var SYSTEM_PROMPT = SYSTEM_PROMPT_EXPLORE;\n\n' +
-'You generate ONE cohesive creative direction from a brief.\n\n' +
-'PROMPT NORMALIZATION LAYER (CRITICAL — RUN FIRST):\n\n' +
-'BEFORE generating anything, process the brief:\n\n' +
-'Step 1: IDENTIFY THE BRAND\n' +
-'Extract brand name from brief.\n' +
-'If brand is a product name (Paper Boat, Fevicol, Bournvita):\n' +
-'→ Treat as BRAND, not literal object\n' +
-'→ Paper Boat = beverage brand (NOT actual paper boat)\n' +
-'→ Fevicol = glue brand (NOT just adhesive)\n' +
-'→ Bournvita = health drink (NOT just powder)\n\n' +
-'Step 2: CONVERT ABSTRACT → CONCRETE\n' +
-'Replace abstract words with physical behaviors:\n' +
-'❌ "nostalgia" → ✅ "person pauses while holding old object"\n' +
-'❌ "emotional" → ✅ "eyes close for 2 seconds"\n' +
-'❌ "relatable" → ✅ "everyday action most people do"\n' +
-'❌ "authentic" → ✅ "small natural movements, no performance"\n' +
-'❌ "real" → ✅ "pauses, hesitations, micro-expressions"\n\n' +
-'Step 3: CONVERT NEGATIVE → POSITIVE\n' +
-'If brief says "not X", convert to "do Y":\n' +
-'❌ "not fake" → ✅ "subtle reactions, restrained"\n' +
-'❌ "not overly emotional" → ✅ "quiet pauses, small gestures"\n' +
-'❌ "not cringe" → ✅ "minimal expression, natural timing"\n' +
-'❌ "not dramatic" → ✅ "underplayed, brief moments"\n\n' +
-'Step 4: FORCE BRAND INTEGRATION\n' +
-'Brand MUST be:\n' +
-'→ Trigger (causes the moment) OR\n' +
-'→ Decision point OR\n' +
-'→ Behavior change\n\n' +
-'Example:\n' +
-'Bad: "person feels nostalgic"\n' +
-'Good: "person sips Paper Boat drink → pauses → memory triggered"\n\n' +
-'Step 5: RECONSTRUCT BRIEF INTERNALLY\n' +
-'Transform into: [Brand] + [Human Situation] + [Physical Behavior] + [Trigger]\n\n' +
-'Example transformation:\n' +
-'Input: "Paper Boat nostalgia campaign, not fake"\n' +
-'Internal: "Person drinks Paper Boat beverage. Taste triggers childhood memory. Small pause. Eyes unfocus briefly. Returns to present. Subtle smile. Brand causes moment through sensory trigger."\n\n' +
-'STORY STRUCTURE (MANDATORY):\n\n' +
-'Every generation MUST follow ONE character through ONE story.\n\n' +
-'STRICT RULES:\n' +
-'1. SINGLE CHARACTER FOCUS\n' +
-'   → Follow one person throughout all 8 shots\n' +
-'   → Show their journey/transformation\n' +
-'   → No random different people\n\n' +
-'2. LOCATION CONTINUITY\n' +
-'   → Start in ONE location (room, office, home)\n' +
-'   → Stay there unless story requires movement\n' +
-'   → No random location jumps\n\n' +
-'3. CLEAR PROGRESSION\n' +
-'   → Shots 1-4: PROBLEM (show struggle/need)\n' +
-'   → Shots 5-6: TRANSITION (change happens)\n' +
-'   → Shots 7-8: RESOLUTION (brand visible, change complete)\n\n' +
-'4. LOGICAL TIME FLOW\n' +
-'   → Each shot flows into next\n' +
-'   → Show what changed from previous shot\n' +
-'   → No time jumps without reason\n\n' +
-'NO RANDOM IMAGES RULE (CRITICAL):\n\n' +
-'❌ NEVER use:\n' +
-'→ Empty landscapes (roads, mountains, deserts)\n' +
-'→ Abstract visuals (sky, water, nature alone)\n' +
-'→ Stock imagery feel (generic beauty shots)\n' +
-'→ Locations without the character\n\n' +
-'✅ ONLY use:\n' +
-'→ Human performing specific action\n' +
-'→ Indoor scenes (bedroom, kitchen, office, living room)\n' +
-'→ Objects person is interacting with\n' +
-'→ Close-ups of hands/face doing something\n\n' +
-'SHOOTABILITY REQUIREMENT:\n' +
-'Each shot must describe:\n' +
-'→ What person is doing (verb + body part)\n' +
-'→ Where they are (specific room/space)\n' +
-'→ What changed from previous shot\n\n' +
-'Example sequence:\n' +
-'Shot 1: "person wakes in bed, rubs eyes" (bedroom, tired)\n' +
-'Shot 2: "same person stumbles to bathroom mirror" (bathroom, groggy)\n' +
-'Shot 3: "hands shake while pouring coffee, spills" (kitchen, unfocused)\n' +
-'Shot 4: "sits at desk, head in hands" (home office, struggling)\n' +
-'Shot 5: "looks at messy unmade bed" (back to bedroom, realization)\n' +
-'Shot 6: "new mattress being delivered" (doorway, solution arriving)\n' +
-'Shot 7: "person sleeping peacefully on new bed, brand visible" (bedroom, problem solved)\n' +
-'Shot 8: "wakes refreshed, stretches, smiles" (same bedroom, transformation complete)\n\n' +
-'BRAND INTEGRATION RULE:\n' +
-'Brand must be:\n' +
-'→ Part of the change (causes resolution)\n' +
-'→ Visible in shots 7-8 minimum\n' +
-'→ Natural to the story (not decoration)\n' +
-'→ If removed, story feels incomplete\n\n' +
-'IMAGE QUERY IMPROVEMENT:\n\n' +
-'❌ DO NOT use vague words:\n' +
-'→ journey, life, vibe, mood, energy, aesthetic\n\n' +
-'✅ USE specific physical descriptions:\n' +
-'→ "person rubbing eyes bedroom morning light"\n' +
-'→ "man spilling coffee shaking hands kitchen"\n' +
-'→ "woman lying awake bed night ceiling"\n' +
-'→ "hands gripping steering wheel tight close up"\n\n' +
-'BRAND CONTEXT ISOLATION (CRITICAL):\n' +
-'- Each generation is INDEPENDENT\n' +
-'- ONLY reference the brand mentioned in THIS brief\n' +
-'- NEVER carry over brand names from previous briefs\n' +
-'- If brief mentions "Nike", ONLY show Nike (not Adidas, not Amazon, not anything else)\n' +
-'- If brief mentions "CEAT", ONLY show CEAT (not MRF, not Apollo, not anything else)\n' +
-'- VALIDATION: Before finalizing output, check ALL elements:\n' +
-'  → Does any element reference a brand NOT in this brief?\n' +
-'  → If YES: Remove that reference immediately\n' +
-'  → If NO: Proceed\n\n' +
-'BRAND KNOWLEDGE DATABASE:\n' +
-'Recognize these as BRANDS (not literal objects):\n' +
-'→ Paper Boat = Indian beverage brand (flavored drinks, nostalgia marketing)\n' +
-'→ Fevicol = Indian adhesive brand (glue, bonding)\n' +
-'→ Bournvita = Health drink brand (nutrition, energy)\n' +
-'→ Cadbury Dairy Milk = Chocolate brand\n' +
-'→ Surf Excel = Detergent brand\n' +
-'→ Milton = Water bottle/flask brand\n' +
-'→ Urban Company = Home services app\n' +
-'→ Swiggy = Food delivery app\n' +
-'→ Amazon Prime = E-commerce/streaming service\n' +
-'→ CEAT = Tire brand\n' +
-'→ Boost = Health drink brand\n' +
-'→ Tide = Detergent brand\n\n' +
-'When brand appears in brief:\n' +
-'→ Use product in scene (person using/interacting with it)\n' +
-'→ NOT literal interpretation (Paper Boat ≠ origami boat)\n\n' +
-'BRAND MEMORY RESET:\n' +
+    function generateWorld() {
 'Forget all previous briefs.\n' +
 'This brief is the ONLY context.\n' +
 'Previous brands = irrelevant.\n' +
