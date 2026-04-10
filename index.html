@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -152,15 +150,16 @@
     .card:hover .card-img { transform: scale(1.05); }
     .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.94) 0%, rgba(0,0,0,0.1) 55%, transparent 100%); pointer-events: none; transition: background 0.3s; }
     .card:hover .card-overlay { background: linear-gradient(to top, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.05) 100%); }
-    .card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 16px 16px; }
+    .card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 16px 36px; }
     .card-num { font-size: 10px; letter-spacing: 3px; color: var(--accent); margin-bottom: 4px; font-weight: 600; }
     .card-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #fff; line-height: 1.1; margin-bottom: 6px; }
     .card-insight { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: rgba(255,255,255,0.55); line-height: 1.5; margin-bottom: 8px; }
     .card-label { display: inline-block; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); background: rgba(201,169,110,0.1); border: 1px solid rgba(201,169,110,0.2); padding: 3px 8px; }
     .card-click-hint { position: absolute; top: 12px; left: 12px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.5); background: rgba(0,0,0,0.6); padding: 4px 10px; opacity: 0; transition: opacity 0.3s; border: 1px solid rgba(255,255,255,0.1); }
     .card:hover .card-click-hint { opacity: 1; }
-    .card-credit { position: absolute; bottom: 6px; right: 8px; font-size: 8px; color: rgba(255,255,255,0.18); text-decoration: none; }
-    .card-credit:hover { color: rgba(255,255,255,0.35); }
+    .card-credit { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); padding: 6px 10px; font-size: 9px; color: rgba(255,255,255,0.85); line-height: 1.3; z-index: 10; }
+    .card-credit a { color: rgba(255,255,255,0.95); text-decoration: none; transition: color 0.2s; }
+    .card-credit a:hover { color: #fff; text-decoration: underline; }
     .img-skeleton { width: 100%; aspect-ratio: 3/4; background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
@@ -672,12 +671,13 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
             img.src = gen.images[i].url;
             sk.replaceWith(img);
             
-            var credit = document.createElement('a');
-            credit.className = 'card-credit';
-            credit.href = gen.images[i].credit_url;
-            credit.target = '_blank'; credit.rel = 'noopener';
-            credit.textContent = gen.images[i].credit_name;
-            card.appendChild(credit);
+            // Add Unsplash attribution
+            var creditDiv = document.createElement('div');
+            creditDiv.className = 'card-credit';
+            creditDiv.innerHTML = 'Photo by <a href="' + gen.images[i].photographer_url + '" target="_blank" rel="noopener">' + 
+              gen.images[i].photographer_name + 
+              '</a> on <a href="https://unsplash.com/?utm_source=worldforge&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a>';
+            card.appendChild(creditDiv);
           }
         }
       });
@@ -791,7 +791,7 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
           '<div class="p-section"><div class="p-label">Layout</div><div class="p-value">' + (w.layout||'') + '</div></div>' +
           '<div class="p-section"><div class="p-label">Typography</div><div class="p-value">' + (w.typography||'') + '</div></div>' +
           '<div class="p-section"><div class="p-label">Visual Behavior</div><div class="p-value">' + (w.visual_behavior||'') + '</div></div>';
-      } else if (selectedRole === 'brand') {
+      } else if (role === 'brand') {
         var msgs = (w.example_messaging||[]).map(function(i){return '<li>'+i+'</li>';}).join('');
         content +=
           '<div class="p-section"><div class="p-label">Positioning</div><div class="p-value">' + (w.positioning||'') + '</div></div>' +
@@ -828,19 +828,26 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
           sk.replaceWith(img);
         }
 
-        var credit = document.createElement('a');
-        credit.className = 'card-credit';
-        credit.href = photo.links.html + '?utm_source=worldforge&utm_medium=referral';
-        credit.target = '_blank'; credit.rel = 'noopener';
-        credit.textContent = photo.user.name + ' / Unsplash';
-        card.appendChild(credit);
+        // Add proper Unsplash attribution with UTM links
+        var creditDiv = document.createElement('div');
+        creditDiv.className = 'card-credit';
+        creditDiv.innerHTML = 'Photo by <a href="' + photo.user.links.html + '?utm_source=worldforge&utm_medium=referral" target="_blank" rel="noopener">' + 
+          photo.user.name + 
+          '</a> on <a href="https://unsplash.com/?utm_source=worldforge&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a>';
+        card.appendChild(creditDiv);
+        
+        // Trigger download endpoint (required by Unsplash API guidelines)
+        if (photo.links && photo.links.download_location) {
+          fetch(photo.links.download_location + '?client_id=' + UNSPLASH_ACCESS_KEY)
+            .catch(function(err) { console.error('Download trigger failed:', err); });
+        }
         
         var gen = generations[currentGenerationIndex];
         if (gen) {
           gen.images[imageIndex] = {
             url: imgUrl,
-            credit_url: credit.href,
-            credit_name: credit.textContent
+            photographer_name: photo.user.name,
+            photographer_url: photo.user.links.html + '?utm_source=worldforge&utm_medium=referral'
           };
         }
       })
