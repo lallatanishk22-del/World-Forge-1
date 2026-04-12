@@ -684,7 +684,7 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
 'MENTAL MODEL:\n' +
 'Thought → Scene → Image\n' +
 'If it can\'t be filmed, it can\'t be searched.\n\n' +
-'QUERY LENGTH: 8-12 words (with micro-details)\n\n' +
+'QUERY LENGTH: 10-14 words (MUST include: person + action + location + lighting + emotion)\n\n' +
 'ANTI-GENERIC FILTER:\n' +
 'Avoid words like:\n' +
 '- beautiful, aesthetic, modern, creative, vibrant\n' +
@@ -1042,10 +1042,17 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
     }
 
     function fetchImage(query, card, el, brief, imageIndex) {
+      // FIX #1: Remove 6-word limit - keep full query richness
       var finalQuery = query.trim() || "creative abstract";
-      finalQuery = finalQuery.split(' ').slice(0, 6).join(' ');
-
-      fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(finalQuery) + '&per_page=1&orientation=portrait', {
+      
+      // FIX #5: Add style consistency from global color/texture
+      var globalStyle = worldData.color_texture || "";
+      if (globalStyle) {
+        finalQuery = finalQuery + " " + globalStyle;
+      }
+      
+      // FIX #3: Fetch 5 images instead of 1 for better selection
+      fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(finalQuery) + '&per_page=5&orientation=portrait', {
         headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
       })
       .then(function(r) {
@@ -1053,9 +1060,24 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
         return r.json();
       })
       .then(function(data) {
-        if (!data.results || data.results.length === 0) throw new Error("No results");
+        // FIX #4: Intelligent fallback - retry with simplified query if no results
+        if (!data.results || data.results.length === 0) {
+          // Simplify query by removing last 3 words and retry once
+          var simplified = finalQuery.split(' ').slice(0, -3).join(' ');
+          if (simplified.split(' ').length >= 4) {
+            return fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(simplified) + '&per_page=5&orientation=portrait', {
+              headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
+            }).then(function(r) { return r.json(); });
+          }
+          throw new Error("No results");
+        }
+        return data;
+      })
+      .then(function(data) {
+        if (!data.results || data.results.length === 0) throw new Error("No results after retry");
         
-        var photo = data.results[0];
+        // FIX #3: Pick best result (random from top 5 for variety)
+        var photo = data.results[Math.floor(Math.random() * Math.min(data.results.length, 3))];
         var sk = card.querySelector('.skeleton-ph');
         if (sk) {
           var imgUrl = photo.urls.regular || photo.urls.small;
@@ -1066,20 +1088,27 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
           sk.replaceWith(img);
         }
 
-        var credit = document.createElement('a');
-        credit.className = 'card-credit';
-        credit.href = photo.links.html + '?utm_source=worldforge&utm_medium=referral';
-        credit.target = '_blank'; credit.rel = 'noopener';
-        credit.textContent = photo.user.name + ' / Unsplash';
-        card.appendChild(credit);
+        // Proper Unsplash attribution with UTM links
+        var creditDiv = document.createElement('div');
+        creditDiv.className = 'card-credit';
+        creditDiv.innerHTML = 'Photo by <a href="' + photo.user.links.html + '?utm_source=worldforge&utm_medium=referral" target="_blank" rel="noopener">' + 
+          photo.user.name + 
+          '</a> on <a href="https://unsplash.com/?utm_source=worldforge&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a>';
+        card.appendChild(creditDiv);
+        
+        // Trigger download endpoint (required by Unsplash API guidelines)
+        if (photo.links && photo.links.download_location) {
+          fetch(photo.links.download_location + '?client_id=' + UNSPLASH_ACCESS_KEY)
+            .catch(function(err) { console.error('Download trigger failed:', err); });
+        }
         
         // Store image in generation
         var gen = generations[currentGenerationIndex];
         if (gen) {
           gen.images[imageIndex] = {
             url: imgUrl,
-            credit_url: credit.href,
-            credit_name: credit.textContent
+            photographer_name: photo.user.name,
+            photographer_url: photo.user.links.html + '?utm_source=worldforge&utm_medium=referral'
           };
         }
       })
