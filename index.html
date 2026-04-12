@@ -511,73 +511,144 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
 '- Each element = a scene\n' +
 '- 2–4 words max\n' +
 '- No generic words (moment, vibe, energy)\n\n' +
-'IMAGE RULE (UNIVERSAL FIX):\n\n' +
-'CRITICAL: Every unsplash_query must show a HUMAN doing a SPECIFIC ACTION in a SPECIFIC LOCATION.\n\n' +
-'IMAGE QUERY TRANSLATION LAYER:\n\n' +
-'Step 1: Identify the human\n' +
-'Who is visible? (person, man, woman, student, office worker)\n\n' +
-'Step 2: Identify the physical action\n' +
-'What are they doing?\n' +
-'- holding phone\n' +
-'- staring at screen\n' +
-'- sitting on floor\n' +
-'- lying in bed awake\n' +
-'- opening fridge\n' +
-'- looking at ceiling\n\n' +
-'Step 3: Identify the location\n' +
-'Where?\n' +
-'- bedroom\n' +
-'- kitchen\n' +
-'- living room\n' +
-'- office\n' +
-'- bathroom\n\n' +
-'Step 4: Add emotional detail (optional)\n' +
+'IMAGE RULE (SCENE TRANSLATION LAYER v1):\n\n' +
+'CORE PRINCIPLE:\n' +
+'Every idea must become a PHYSICAL SCENE.\n\n' +
+'SYSTEM ARCHITECTURE:\n\n' +
+'Step 1: BREAK THE IDEA\n' +
+'Extract:\n' +
+'- emotion (regret, panic, hesitation, loss)\n' +
+'- behavior (delay, rushing, freezing)\n' +
+'- context (what was missed, what went wrong)\n\n' +
+'Step 2: MAP TO HUMAN ACTION\n' +
+'Convert abstract → physical:\n\n' +
+'EMOTION → ACTION MAPPING:\n' +
+'regret → sitting still, staring, holding phone\n' +
+'panic → fast movement, wide eyes, rushing\n' +
+'hesitation → paused hand, frozen posture\n' +
+'delay → looking at clock, scrolling\n' +
+'loss → empty space, closed door\n' +
+'stress → rubbing temples, sitting hunched\n' +
+'disappointment → opening empty thing, shoulders dropped\n' +
+'realization → hand covering mouth, eyes wide\n\n' +
+'Step 3: ADD ENVIRONMENT\n' +
+'Force specific location:\n' +
+'- bedroom (night, morning, unmade bed)\n' +
+'- kitchen (empty fridge, counter, sink)\n' +
+'- living room (couch, window, doorway)\n' +
+'- office (desk, laptop, dark)\n' +
+'- doorway (threshold, leaving, entering)\n' +
+'- bathroom (mirror, sink, alone)\n' +
+'- hallway (corridor, running, walking away)\n\n' +
+'Step 4: ADD MICRO-DETAILS (CRITICAL)\n' +
+'This improves Unsplash results MASSIVELY:\n' +
+'- lighting (dim light, night, phone glow, morning sun)\n' +
+'- time (night, 3am, early morning, late evening)\n' +
+'- object interaction (holding phone, empty fridge, closed door)\n' +
+'- emotional detail (sad, frustrated, tired, disappointed)\n\n' +
+'FINAL QUERY FORMULA:\n' +
+'[person] + [physical action] + [object] + [location] + [lighting/time] + [emotion]\n\n' +
+'TRANSLATION EXAMPLES:\n\n' +
+'Input: "missed moment"\n' +
+'❌ Current: "missed moment"\n' +
+'✅ Translated: "person standing alone doorway watching others leave dim light"\n\n' +
+'Input: "regret after delay"\n' +
+'❌ Current: "regret"\n' +
+'✅ Translated: "man sitting bed night phone glow looking down regret"\n\n' +
+'Input: "last chance gone"\n' +
+'❌ Current: "last chance"\n' +
+'✅ Translated: "woman running hallway reaching toward closed door"\n\n' +
+'Input: "empty consequence"\n' +
+'❌ Current: "consequence"\n' +
+'✅ Translated: "person opening empty fridge kitchen disappointed night"\n\n' +
+'Input: "hesitation moment"\n' +
+'❌ Current: "hesitation"\n' +
+'✅ Translated: "person hand hovering over phone screen bedroom paused"\n\n' +
+'Input: "panic sets in"\n' +
+'❌ Current: "panic"\n' +
+'✅ Translated: "person rushing through hallway fast movement wide eyes"\n\n' +
+'Input: "quiet stress"\n' +
+'❌ Current: "stress"\n' +
+'✅ Translated: "person sitting alone dark room head in hands office"\n\n' +
+'Input: "realization hits"\n' +
+'❌ Current: "realization"\n' +
+'✅ Translated: "person hand covering mouth eyes wide bedroom shocked"\n\n' +
+'ACTION VOCABULARY BANK:\n\n' +
+'For REGRET scenes:\n' +
+'- sitting alone bed looking at phone\n' +
+'- staring at ceiling lying down\n' +
+'- holding phone not using it\n' +
+'- looking down shoulders slumped\n\n' +
+'For HESITATION scenes:\n' +
+'- hand hovering over phone screen\n' +
+'- standing frozen doorway\n' +
+'- finger paused over button\n' +
+'- looking uncertain at object\n\n' +
+'For PANIC scenes:\n' +
+'- running through hallway fast\n' +
+'- checking time frantically phone\n' +
+'- rushing with wide eyes\n' +
+'- fast walking looking stressed\n\n' +
+'For DELAY scenes:\n' +
+'- scrolling phone lying bed\n' +
+'- checking time repeatedly\n' +
+'- staring at screen doing nothing\n' +
+'- sitting still not acting\n\n' +
+'For LOSS scenes:\n' +
+'- opening empty fridge kitchen\n' +
+'- watching door close\n' +
+'- standing at closed door\n' +
+'- empty room alone\n\n' +
+'For STRESS scenes:\n' +
+'- rubbing temples sitting desk\n' +
+'- head in hands dark room\n' +
+'- sitting hunched over laptop\n' +
+'- covering face with hands\n\n' +
+'For DISAPPOINTMENT scenes:\n' +
+'- shoulders dropped standing\n' +
+'- looking at empty thing\n' +
+'- sitting on floor alone\n' +
+'- staring at failed result\n\n' +
+'MICRO-DETAIL VOCABULARY:\n\n' +
+'Lighting:\n' +
+'- dim light\n' +
+'- phone glow\n' +
+'- night\n' +
+'- morning sun\n' +
+'- dark room\n' +
+'- single lamp\n' +
+'- window light\n\n' +
+'Time markers:\n' +
+'- 3am\n' +
+'- late night\n' +
+'- early morning\n' +
+'- midnight\n\n' +
+'Emotional states:\n' +
+'- sad\n' +
+'- disappointed\n' +
 '- frustrated\n' +
 '- tired\n' +
-'- stressed\n' +
-'- sad\n\n' +
-'QUERY FORMAT:\n' +
-'[person] + [action] + [location] + [emotion]\n\n' +
-'TRANSLATION EXAMPLES:\n\n' +
-'Element name: "Last chance"\n' +
-'❌ "last chance" → returns cliff/nature\n' +
-'✅ "person holding phone bed night stressed" → returns exact match\n\n' +
-'Element name: "Emergency room"\n' +
-'❌ "emergency room" → returns hospital\n' +
-'✅ "person eating instant noodles floor kitchen sad" → returns exact match\n\n' +
-'Element name: "Clock ticking"\n' +
-'❌ "clock ticking" → returns object only\n' +
-'✅ "person checking time phone anxious bedroom" → returns exact match\n\n' +
-'Element name: "Irreversible"\n' +
-'❌ "irreversible sunset" → returns landscape\n' +
-'✅ "person staring at phone regret face close up" → returns exact match\n\n' +
-'Element name: "Missed moment"\n' +
-'❌ "missed moment" → returns random\n' +
-'✅ "person looking at empty doorway alone room" → returns exact match\n\n' +
-'BANNED FROM QUERIES:\n' +
-'- Abstract nouns (chance, moment, energy, vibe, aesthetic)\n' +
-'- Landscapes without humans (sunset, mountain, ocean, road)\n' +
-'- Objects alone (clock, phone, door, car)\n' +
-'- Emotions without action (anxiety, regret, sadness)\n' +
-'- Brand names (Swiggy, Zomato, Amazon, Nike)\n' +
-'- Metaphors (crossroads, journey, transformation)\n\n' +
-'MANDATORY IN EVERY QUERY:\n' +
-'1. A human subject\n' +
-'2. A physical action or pose\n' +
-'3. An indoor location (preferred) or specific outdoor context\n\n' +
-'QUERY LENGTH: 6-10 words\n\n' +
-'FINAL VALIDATION:\n' +
-'Before generating, ask:\n' +
-'"If I search this exact phrase on Unsplash, will I see a HUMAN doing THIS ACTION in THIS PLACE?"\n' +
-'If NO → rewrite query\n' +
-'If YES → use it\n\n' +
-'TEST YOUR QUERY:\n' +
-'Does it include:\n' +
-'✓ Person/human?\n' +
-'✓ Physical action?\n' +
-'✓ Specific location?\n' +
+'- shocked\n' +
+'- regret\n\n' +
+'STRICT RULES:\n' +
+'- ALWAYS include human\n' +
+'- ALWAYS include action\n' +
+'- NEVER use abstract words alone\n' +
+'- NEVER use only emotion\n' +
+'- NEVER use landscape-only queries\n' +
+'- ALWAYS add micro-details (lighting/time)\n\n' +
+'VALIDATION CHECK:\n' +
+'Before finalizing query, ask:\n' +
+'1. Is there a human? (person, man, woman)\n' +
+'2. Is there a physical action? (sitting, running, holding)\n' +
+'3. Is there a location? (bedroom, kitchen, hallway)\n' +
+'4. Are there micro-details? (night, dim light, phone glow)\n' +
 'If all YES → good query\n' +
 'If any NO → rewrite\n\n' +
+'MENTAL MODEL:\n' +
+'Thought → Scene → Image\n' +
+'If it can\'t be filmed, it can\'t be searched.\n\n' +
+'QUERY LENGTH: 8-12 words (with micro-details)\n\n' +
 'ANTI-GENERIC FILTER:\n' +
 'Avoid words like:\n' +
 '- beautiful, aesthetic, modern, creative, vibrant\n' +
