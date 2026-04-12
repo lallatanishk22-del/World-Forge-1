@@ -511,23 +511,73 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
 '- Each element = a scene\n' +
 '- 2–4 words max\n' +
 '- No generic words (moment, vibe, energy)\n\n' +
-'IMAGE RULE:\n\n' +
-'IMAGE QUERY GENERATION:\n' +
-'Convert ideas into real visuals.\n' +
-'Use: [environment] + [human/action] + [time/mood]\n' +
-'Examples:\n' +
-'"street food vendor fast hands night"\n' +
-'"lonely person convenience store neon"\n' +
-'"crowded train commuters rush hour"\n' +
-'Avoid:\n' +
-'- brand names\n' +
-'- hyperlocal terms (vada pav, dhaba)\n' +
-'- abstract words (hustle, energy)\n' +
-'If query feels too abstract → simplify\n\n' +
-'For every element generate a search-friendly query:\n' +
-'- 4–6 words\n' +
-'- Must be real-world visual\n' +
-'- Avoid abstract words\n\n' +
+'IMAGE RULE (UNIVERSAL FIX):\n\n' +
+'CRITICAL: Every unsplash_query must show a HUMAN doing a SPECIFIC ACTION in a SPECIFIC LOCATION.\n\n' +
+'IMAGE QUERY TRANSLATION LAYER:\n\n' +
+'Step 1: Identify the human\n' +
+'Who is visible? (person, man, woman, student, office worker)\n\n' +
+'Step 2: Identify the physical action\n' +
+'What are they doing?\n' +
+'- holding phone\n' +
+'- staring at screen\n' +
+'- sitting on floor\n' +
+'- lying in bed awake\n' +
+'- opening fridge\n' +
+'- looking at ceiling\n\n' +
+'Step 3: Identify the location\n' +
+'Where?\n' +
+'- bedroom\n' +
+'- kitchen\n' +
+'- living room\n' +
+'- office\n' +
+'- bathroom\n\n' +
+'Step 4: Add emotional detail (optional)\n' +
+'- frustrated\n' +
+'- tired\n' +
+'- stressed\n' +
+'- sad\n\n' +
+'QUERY FORMAT:\n' +
+'[person] + [action] + [location] + [emotion]\n\n' +
+'TRANSLATION EXAMPLES:\n\n' +
+'Element name: "Last chance"\n' +
+'❌ "last chance" → returns cliff/nature\n' +
+'✅ "person holding phone bed night stressed" → returns exact match\n\n' +
+'Element name: "Emergency room"\n' +
+'❌ "emergency room" → returns hospital\n' +
+'✅ "person eating instant noodles floor kitchen sad" → returns exact match\n\n' +
+'Element name: "Clock ticking"\n' +
+'❌ "clock ticking" → returns object only\n' +
+'✅ "person checking time phone anxious bedroom" → returns exact match\n\n' +
+'Element name: "Irreversible"\n' +
+'❌ "irreversible sunset" → returns landscape\n' +
+'✅ "person staring at phone regret face close up" → returns exact match\n\n' +
+'Element name: "Missed moment"\n' +
+'❌ "missed moment" → returns random\n' +
+'✅ "person looking at empty doorway alone room" → returns exact match\n\n' +
+'BANNED FROM QUERIES:\n' +
+'- Abstract nouns (chance, moment, energy, vibe, aesthetic)\n' +
+'- Landscapes without humans (sunset, mountain, ocean, road)\n' +
+'- Objects alone (clock, phone, door, car)\n' +
+'- Emotions without action (anxiety, regret, sadness)\n' +
+'- Brand names (Swiggy, Zomato, Amazon, Nike)\n' +
+'- Metaphors (crossroads, journey, transformation)\n\n' +
+'MANDATORY IN EVERY QUERY:\n' +
+'1. A human subject\n' +
+'2. A physical action or pose\n' +
+'3. An indoor location (preferred) or specific outdoor context\n\n' +
+'QUERY LENGTH: 6-10 words\n\n' +
+'FINAL VALIDATION:\n' +
+'Before generating, ask:\n' +
+'"If I search this exact phrase on Unsplash, will I see a HUMAN doing THIS ACTION in THIS PLACE?"\n' +
+'If NO → rewrite query\n' +
+'If YES → use it\n\n' +
+'TEST YOUR QUERY:\n' +
+'Does it include:\n' +
+'✓ Person/human?\n' +
+'✓ Physical action?\n' +
+'✓ Specific location?\n' +
+'If all YES → good query\n' +
+'If any NO → rewrite\n\n' +
 'ANTI-GENERIC FILTER:\n' +
 'Avoid words like:\n' +
 '- beautiful, aesthetic, modern, creative, vibrant\n' +
