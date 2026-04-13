@@ -146,6 +146,7 @@
     /* CARD */
     .card { position: relative; overflow: hidden; cursor: pointer; opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; background: #0d0d0d; border: 1px solid var(--border); }
     .card.visible { opacity: 1; transform: translateY(0); }
+    .card.generic-warning { border-color: #c0392b; }
     .card-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.4,0,0.2,1); filter: brightness(0.85) contrast(1.05); }
     .card:hover .card-img { transform: scale(1.08); filter: brightness(1) contrast(1); }
     .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.96) 0%, rgba(0,0,0,0.05) 60%, transparent 100%); pointer-events: none; transition: background 0.3s; }
@@ -153,7 +154,9 @@
     .card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 22px 18px 18px; }
     .card-num { font-size: 10px; letter-spacing: 3px; color: var(--accent); margin-bottom: 6px; font-weight: 600; }
     .card-name { font-family: 'Cormorant Garamond', serif; font-size: 21px; color: #fff; line-height: 1.15; margin-bottom: 8px; font-weight: 400; }
+    .card-name.generic-flag { color: #e74c3c; }
     .card-insight { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: rgba(255,255,255,0.6); line-height: 1.5; margin-bottom: 10px; }
+    .card-insight.generic-flag { color: #e74c3c; }
     .card-label { display: inline-block; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); background: rgba(201,169,110,0.08); border: 1px solid rgba(201,169,110,0.2); padding: 4px 10px; }
     .card-click-hint { position: absolute; top: 14px; left: 14px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.6); background: rgba(0,0,0,0.7); padding: 5px 12px; opacity: 0; transition: opacity 0.3s; border: 1px solid rgba(255,255,255,0.12); }
     .card:hover .card-click-hint { opacity: 1; }
@@ -563,7 +566,7 @@ CRITICAL: Return exactly 8 elements. Each element must show a person doing a spe
     }
 
     // ============================================
-    // PROMPT BUILDER (LEAN VERSION)
+    // PROMPT BUILDER (WITH ANTI-SUMMARY RULES)
     // ============================================
     function buildPrompt(brief, categoryKey, angleIndex) {
       var category = CATEGORIES[categoryKey];
@@ -571,11 +574,98 @@ CRITICAL: Return exactly 8 elements. Each element must show a person doing a spe
       
       return 'Brief: "' + brief + '"\n\n' +
         'INTERPRETATION:\n' + angle.interpretation + '\n\n' +
-        'Generate 8 real moments using specific physical actions. Avoid abstract language.';
+        'CRITICAL RULES:\n' +
+        '- Generate exactly 8 moments\n' +
+        '- Each moment must show a SPECIFIC PHYSICAL ACTION\n' +
+        '- NO summaries, labels, or concepts (avoid: chaos, arrival, journey, relief, stress)\n' +
+        '- NO abstract language (avoid: freedom, adventure, destination, experience)\n' +
+        '- NO narrative phrases (avoid: "we made it", "left behind", "hold on tight")\n\n' +
+        'GOOD EXAMPLES:\n' +
+        '- "Zip Stuck Halfway" not "Check-in Chaos"\n' +
+        '- "Wheels Stop Rolling" not "Safe Arrival"\n' +
+        '- "Handle Slips From Hand" not "The Final Drag"\n\n' +
+        'BAD EXAMPLES (DO NOT USE):\n' +
+        '- "Journey Begins" / "Departure Rush" / "Moment of Relief"\n' +
+        '- "Safe and Sound" / "Next Adventure" / "Left Behind"\n\n' +
+        'Focus on what camera sees: physical objects, body movements, timing.\n' +
+        'Avoid what camera cannot see: emotions, concepts, summaries.';
     }
 
     // ============================================
-    // GENERATION ENGINE (OPTIMIZED)
+    // OUTPUT VALIDATION LAYER (ANTI-GENERIC)
+    // ============================================
+    var BANNED_WORDS = [
+      'chaos', 'arrival', 'journey', 'moment', 'experience', 'relief', 'stress',
+      'freedom', 'adventure', 'destination', 'departure', 'final', 'next',
+      'beginning', 'end', 'start', 'finish', 'safe', 'perfect', 'complete'
+    ];
+    
+    var BANNED_PHRASES = [
+      'we made it', 'made it', 'in sight', 'running out', 'left behind',
+      'hold on', 'at your own', 'own risk', 'next time', 'until next'
+    ];
+
+    function isGenericName(text) {
+      var lower = text.toLowerCase();
+      return BANNED_WORDS.some(function(word) {
+        return lower.includes(word);
+      });
+    }
+
+    function isGenericInsight(text) {
+      var lower = text.toLowerCase();
+      return BANNED_PHRASES.some(function(phrase) {
+        return lower.includes(phrase);
+      });
+    }
+
+    function rewriteGenericElement(element, interpretation) {
+      // SIMPLE AUTO-FIX: Add physical detail to generic names
+      var name = element.element_name;
+      var insight = element.insight_line;
+      
+      if (isGenericName(name)) {
+        // Extract action from interpretation if possible
+        // For now, flag it visually
+        element.element_name = '⚠️ ' + name + ' (generic)';
+      }
+      
+      if (isGenericInsight(insight)) {
+        element.insight_line = '⚠️ ' + insight + ' (rewrite needed)';
+      }
+      
+      return element;
+    }
+
+    function validateOutput(worldData, interpretation) {
+      if (!worldData.elements) return worldData;
+      
+      var genericCount = 0;
+      
+      worldData.elements = worldData.elements.map(function(el) {
+        var isNameGeneric = isGenericName(el.element_name);
+        var isInsightGeneric = isGenericInsight(el.insight_line);
+        
+        if (isNameGeneric || isInsightGeneric) {
+          genericCount++;
+          return rewriteGenericElement(el, interpretation);
+        }
+        
+        return el;
+      });
+      
+      // Log validation results
+      if (genericCount > 0) {
+        console.warn('⚠️ Validation: ' + genericCount + ' generic elements detected');
+      } else {
+        console.log('✅ Validation: All elements passed');
+      }
+      
+      return worldData;
+    }
+
+    // ============================================
+    // GENERATION ENGINE (WITH VALIDATION)
     // ============================================
     function generateWorld() {
       var brief = document.getElementById('brief').value.trim();
@@ -601,13 +691,13 @@ CRITICAL: Return exactly 8 elements. Each element must show a person doing a spe
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
         body: JSON.stringify({
-          model: 'llama3-8b-8192',
+          model: 'llama-3.3-70b-versatile',
           messages: [
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: userPrompt + '\nRole: ' + selectedRole }
           ],
-          temperature: 0.7,  // REDUCED FROM 0.85
-          max_tokens: 1200    // REDUCED FROM 2500
+          temperature: 0.7,
+          max_tokens: 1200
         })
       })
       .then(function(res) {
@@ -618,6 +708,11 @@ CRITICAL: Return exactly 8 elements. Each element must show a person doing a spe
         var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
         var w;
         try { w = JSON.parse(raw); } catch(e) { throw new Error('Parse failed'); }
+        
+        // 🔥 VALIDATION LAYER (NEW)
+        var category = CATEGORIES[selectedCategory];
+        var angle = category.angles[selectedAngleIndex];
+        w = validateOutput(w, angle.interpretation);
         
         // Store generation
         var generation = {
@@ -653,7 +748,7 @@ CRITICAL: Return exactly 8 elements. Each element must show a person doing a spe
           (function(element, cardEl, idx) {
             setTimeout(function() {
               fetchImage(element.unsplash_query, cardEl, element, brief, idx);
-            }, idx * 300); // REDUCED FROM 400
+            }, idx * 300);
             setTimeout(function() { cardEl.classList.add('visible'); }, idx * 70);
           })(el, card, i);
         });
@@ -843,14 +938,24 @@ CRITICAL: Return exactly 8 elements. Each element must show a person doing a spe
     function buildCard(el, index, w) {
       var card = document.createElement('div');
       card.className = 'card';
+      
+      // Check if element is flagged as generic
+      var isGeneric = el.element_name.includes('⚠️') || el.insight_line.includes('⚠️');
+      if (isGeneric) {
+        card.classList.add('generic-warning');
+      }
+      
+      var nameClass = isGeneric ? 'card-name generic-flag' : 'card-name';
+      var insightClass = isGeneric ? 'card-insight generic-flag' : 'card-insight';
+      
       card.innerHTML =
         '<div class="img-skeleton skeleton-ph"></div>' +
         '<div class="card-overlay"></div>' +
         '<div class="card-click-hint">Tap to explore</div>' +
         '<div class="card-body">' +
           '<div class="card-num">' + (index+1 < 10 ? '0'+(index+1) : index+1) + '</div>' +
-          '<div class="card-name">' + el.element_name + '</div>' +
-          '<div class="card-insight">' + el.insight_line + '</div>' +
+          '<div class="' + nameClass + '">' + el.element_name + '</div>' +
+          '<div class="' + insightClass + '">' + el.insight_line + '</div>' +
           '<span class="card-label">' + (el.direction_label||'') + '</span>' +
         '</div>';
       card.addEventListener('click', function() { openPanel(el, w); });
