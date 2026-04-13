@@ -43,6 +43,16 @@
     h1 em { font-style: italic; color: var(--accent); }
     .tagline { font-size: 13px; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 64px; text-align: center; }
     
+    /* ANGLE SELECTOR */
+    .angle-selector { width: 100%; max-width: 680px; margin-bottom: 20px; display: none; background: var(--surface); border: 1px solid var(--border); padding: 16px 20px; }
+    .angle-selector.visible { display: block; }
+    .angle-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 10px; }
+    .angle-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .angle-pill { padding: 7px 14px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 10px; letter-spacing: 1px; font-family: 'Syne', sans-serif; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .angle-pill:hover { border-color: var(--accent-dim); color: var(--text-dim); }
+    .angle-pill.active { background: var(--accent); color: #0a0a0a; border-color: var(--accent); font-weight: 600; }
+    .angle-description { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: var(--text-muted); margin-top: 10px; line-height: 1.5; }
+    
     /* GENERATION HISTORY */
     .gen-history { margin-bottom: 24px; display: none; }
     .gen-history-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 12px; }
@@ -128,27 +138,27 @@
     .section-head::after { content: ''; flex: 1; height: 1px; background: var(--border); }
     .section-hint { font-size: 11px; color: var(--text-muted); font-family: 'Cormorant Garamond', serif; font-style: italic; text-transform: none; letter-spacing: 0; }
 
-    .world-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; }
+    .world-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 3px; }
     @media(max-width:1100px) { .world-grid { grid-template-columns: repeat(3,1fr); } }
     @media(max-width:768px) { .world-grid { grid-template-columns: repeat(2,1fr); } }
     @media(max-width:480px) { .world-grid { grid-template-columns: 1fr; } }
 
     /* CARD */
-    .card { position: relative; overflow: hidden; cursor: pointer; opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; background: #111; }
+    .card { position: relative; overflow: hidden; cursor: pointer; opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; background: #0d0d0d; border: 1px solid var(--border); }
     .card.visible { opacity: 1; transform: translateY(0); }
-    .card-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; transition: transform 0.5s ease; }
-    .card:hover .card-img { transform: scale(1.05); }
-    .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.94) 0%, rgba(0,0,0,0.1) 55%, transparent 100%); pointer-events: none; transition: background 0.3s; }
-    .card:hover .card-overlay { background: linear-gradient(to top, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.05) 100%); }
-    .card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 16px 16px; }
-    .card-num { font-size: 10px; letter-spacing: 3px; color: var(--accent); margin-bottom: 4px; font-weight: 600; }
-    .card-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #fff; line-height: 1.1; margin-bottom: 6px; }
-    .card-insight { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: rgba(255,255,255,0.55); line-height: 1.5; margin-bottom: 8px; }
-    .card-label { display: inline-block; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); background: rgba(201,169,110,0.1); border: 1px solid rgba(201,169,110,0.2); padding: 3px 8px; }
-    .card-click-hint { position: absolute; top: 12px; left: 12px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.5); background: rgba(0,0,0,0.6); padding: 4px 10px; opacity: 0; transition: opacity 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+    .card-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.4,0,0.2,1); filter: brightness(0.85) contrast(1.05); }
+    .card:hover .card-img { transform: scale(1.08); filter: brightness(1) contrast(1); }
+    .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.96) 0%, rgba(0,0,0,0.05) 60%, transparent 100%); pointer-events: none; transition: background 0.3s; }
+    .card:hover .card-overlay { background: linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.2) 65%, rgba(0,0,0,0.02) 100%); }
+    .card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 22px 18px 18px; }
+    .card-num { font-size: 10px; letter-spacing: 3px; color: var(--accent); margin-bottom: 6px; font-weight: 600; }
+    .card-name { font-family: 'Cormorant Garamond', serif; font-size: 21px; color: #fff; line-height: 1.15; margin-bottom: 8px; font-weight: 400; }
+    .card-insight { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: rgba(255,255,255,0.6); line-height: 1.5; margin-bottom: 10px; }
+    .card-label { display: inline-block; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); background: rgba(201,169,110,0.08); border: 1px solid rgba(201,169,110,0.2); padding: 4px 10px; }
+    .card-click-hint { position: absolute; top: 14px; left: 14px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.6); background: rgba(0,0,0,0.7); padding: 5px 12px; opacity: 0; transition: opacity 0.3s; border: 1px solid rgba(255,255,255,0.12); }
     .card:hover .card-click-hint { opacity: 1; }
-    .card-credit { position: absolute; bottom: 6px; right: 8px; font-size: 8px; color: rgba(255,255,255,0.18); text-decoration: none; }
-    .card-credit:hover { color: rgba(255,255,255,0.35); }
+    .card-credit { position: absolute; bottom: 8px; right: 10px; font-size: 8px; color: rgba(255,255,255,0.2); text-decoration: none; }
+    .card-credit:hover { color: rgba(255,255,255,0.4); }
     .img-skeleton { width: 100%; aspect-ratio: 3/4; background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
@@ -217,9 +227,17 @@
     <div class="input-wrap">
       <label class="input-label" for="brief">Your brief</label>
       <div class="input-row">
-        <textarea id="brief" placeholder="Mumbai local train, rush hour, controlled chaos…"></textarea>
+        <textarea id="brief" placeholder="Skybag airport ad…"></textarea>
         <button class="generate-btn" id="generateBtn" onclick="generateWorld()">Generate</button>
       </div>
+      
+      <!-- ANGLE SELECTOR -->
+      <div class="angle-selector" id="angleSelector">
+        <div class="angle-label">Creative Angle</div>
+        <div class="angle-pills" id="anglePills"></div>
+        <div class="angle-description" id="angleDescription"></div>
+      </div>
+      
       <div class="role-row">
         <button class="role-btn active" data-role="video" onclick="selectRole('video')">🎬 Video Editor</button>
         <button class="role-btn" data-role="designer" onclick="selectRole('designer')">🎨 Designer</button>
@@ -287,13 +305,179 @@
   </div>
 
   <script>
+    // ============================================
+    // INTERPRETATION DATABASE (LEAN VERSION)
+    // ============================================
+    var CATEGORIES = {
+      luggage: {
+        name: 'Luggage',
+        triggers: ['bag', 'luggage', 'suitcase', 'backpack', 'travel', 'airport', 'skybag', 'american tourister', 'samsonite'],
+        angles: [
+          {
+            name: 'Bag Journey',
+            description: 'Object POV — endurance through mishandling',
+            interpretation: 'Show the bag being overpacked (clothes stuffed in, zipper struggling), dragged across rough airport floors (wheels catching), thrown onto conveyor belts (landing hard, tumbling), left alone in baggage claim (waiting, ignored), and picked up again (owner grabs handle, walks away). Focus on physical wear, not passenger emotions.'
+          },
+          {
+            name: 'Stress Relief',
+            description: 'Passenger chaos vs bag calm',
+            interpretation: 'Show passenger rushing (running through terminal, checking time frantically, sweating), losing things (boarding pass drops, phone almost slips), panicking at gate (last call announcement, fumbling with carry-on) — while bag stays intact (zippers closed, wheels rolling smooth, no damage). Contrast human stress with object reliability.'
+          },
+          {
+            name: 'Abuse Test',
+            description: 'Owner neglect vs product survival',
+            interpretation: 'Show owner overstuffing bag (forcing items in, sitting on it to close), tossing it (into trunk, onto bed, down stairs), stepping on it (using as stool, kid jumping on it), leaving it in rain (wet, dragged through puddles) — but bag still works (zippers intact, no tears, wheels turn). Human carelessness vs object durability.'
+          }
+        ],
+        default_angle: 0
+      },
+      eyewear: {
+        name: 'Eyewear',
+        triggers: ['glasses', 'sunglasses', 'spectacles', 'eyewear', 'frames', 'lenskart', 'ray-ban', 'oakley', 'warby parker'],
+        angles: [
+          {
+            name: 'Before/After',
+            description: 'Blurred struggle vs sharp clarity',
+            interpretation: 'Show life before glasses: squinting at menu (leaning close, can\'t read), missing small details (doesn\'t notice friend waving across street), straining at laptop (rubbing eyes, leaning forward). Then after: sees menu clearly (sits back, orders confidently), notices details (waves back immediately), works comfortably (relaxed posture, no strain). Focus on what becomes visible.'
+          },
+          {
+            name: 'Identity Shift',
+            description: 'Who you become wearing them',
+            interpretation: 'Show transformation: person without glasses (looking down, avoiding eye contact, blending in) puts on glasses and shifts (makes eye contact, speaks up in meeting, gets noticed). Not vision correction — identity upgrade. Show confidence change through body language, not words.'
+          },
+          {
+            name: 'Lost Without',
+            description: 'Panic when glasses go missing',
+            interpretation: 'Show the moment glasses are lost or broken: person reaches for glasses (not there, panic starts), pats pockets frantically (can\'t find them), tries to function without them (bumps into door, can\'t read phone, walks wrong direction). Sudden helplessness. Focus on dependency revealed through struggle.'
+          }
+        ],
+        default_angle: 0
+      },
+      fashion: {
+        name: 'Fashion',
+        triggers: ['jeans', 'shirt', 'dress', 'clothing', 'apparel', 'outfit', 'levis', 'zara', 'h&m', 'uniqlo'],
+        angles: [
+          {
+            name: 'Invisible Fit',
+            description: 'Clothes you forget wearing',
+            interpretation: 'Show person wearing clothing but never adjusting it (no tugging waistband, no pulling shirt down, no checking mirror). Goes through full day (sitting, standing, moving) without thinking about outfit. Perfect fit = forgotten presence. Focus on absence of adjustment behavior.'
+          },
+          {
+            name: 'Confidence Armor',
+            description: 'What you wear to face pressure',
+            interpretation: 'Show person choosing specific outfit for high-stakes moment (job interview, first date, important presentation). Watch them put it on (checking mirror multiple times, adjusting collar), then face the moment (walking in confident, maintaining posture). Clothing as psychological shield. Show outfit selection and body language shift.'
+          },
+          {
+            name: 'Worn Stories',
+            description: 'Every mark tells history',
+            interpretation: 'Show clothing with visible wear: faded concert t-shirt (specific stain from that night), ripped jeans (tear from climbing fence), coffee stain on sleeve (from important meeting). Person sees these marks and remembers. Imperfection = narrative. Focus on specific damage and memory trigger.'
+          }
+        ],
+        default_angle: 0
+      },
+      food: {
+        name: 'Food & Beverage',
+        triggers: ['food', 'restaurant', 'cafe', 'coffee', 'tea', 'meal', 'dish', 'recipe', 'starbucks', 'mcdonalds', 'dominos'],
+        angles: [
+          {
+            name: 'Ritual vs Rush',
+            description: 'Intentional eating vs survival fuel',
+            interpretation: 'Show two versions: Ritual (person sits down, arranges plate, takes photo, eats slowly, talks between bites) vs Rush (eating while walking, checking phone, finishes in 3 minutes, doesn\'t remember taste). Same food, different presence. Focus on speed and attention contrast.'
+          },
+          {
+            name: 'First Bite',
+            description: 'Moment taste reveals truth',
+            interpretation: 'Show exact moment flavor hits: person takes first bite, chews, expression changes (eyes widen OR face drops), immediate reaction (takes second bite fast OR puts fork down). Anticipation → verdict. No words, just physical reaction to taste quality.'
+          },
+          {
+            name: 'Food Silence',
+            description: 'When taste stops conversation',
+            interpretation: 'Show group eating together, talking (laughing, gestures), then food arrives. Everyone takes first bite and conversation stops (no talking, just chewing, occasional eye contact, nods). Not awkward silence — reverent silence. Taste > words. Show conversation pause caused by food quality.'
+          }
+        ],
+        default_angle: 0
+      },
+      generic: {
+        name: 'Generic',
+        triggers: [],
+        angles: [
+          {
+            name: 'Human Tension',
+            description: 'Real behavior under pressure',
+            interpretation: 'Find the mistake, hesitation, or wrong choice in this situation. Show what people do wrong when stressed, not what they should do. Focus on delay, denial, or distraction leading to consequence.'
+          }
+        ],
+        default_angle: 0
+      }
+    };
+
+    // ============================================
+    // LEAN SYSTEM PROMPT (NO BLOAT)
+    // ============================================
+    var SYSTEM_PROMPT = `You are a creative director generating emotionally real ad moments.
+
+Focus on:
+- Real human behavior (hesitation, mistakes, imperfection)
+- Specific physical actions (not abstract concepts)
+- Visible consequences (not just feelings)
+
+Avoid:
+- Generic or perfect scenes
+- Abstract language
+- Scripted behavior
+
+Return valid JSON only with this exact structure:
+{
+  "core_feeling": "3-5 words with tension or contrast",
+  "human_insight": "1 sharp line about real behavior",
+  "color_texture": "lighting + material + color feel",
+  "sound_direction": "ambient sounds, not music",
+  "first_action": {
+    "subject": "who/what",
+    "action": "command form",
+    "camera": "shot type",
+    "duration": "seconds",
+    "environment": "where"
+  },
+  "shots": ["shot 1", "shot 2", "shot 3", "shot 4"],
+  "sequence": ["step 1", "step 2", "step 3"],
+  "pacing": "timing description",
+  "style": "camera + framing approach",
+  "audio": "dominant sound",
+  "positioning": "brand role in 1 line",
+  "tone": "2-3 word brand voice",
+  "example_messaging": ["line 1", "line 2"],
+  "layout": "spatial direction for designer",
+  "typography": "Font Name + Font Name — feeling",
+  "avoid": ["avoid 1", "avoid 2", "avoid 3"],
+  "color_palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"],
+  "elements": [
+    {
+      "element_name": "2-4 word scene title",
+      "insight_line": "sharp command or truth, max 8 words",
+      "direction_label": "2-3 word action",
+      "unsplash_query": "person + specific action + location + lighting + emotion (8-12 words)"
+    }
+  ]
+}
+
+CRITICAL: Return exactly 8 elements. Each element must show a person doing a specific physical action.`;
+
+    // ============================================
+    // STATE & CONFIG
+    // ============================================
     var GROQ_API_KEY = localStorage.getItem('groq_api_key') || '';
     var UNSPLASH_ACCESS_KEY = localStorage.getItem('unsplash_access_key') || '';
     var selectedRole = 'video';
+    var selectedCategory = 'generic';
+    var selectedAngleIndex = 0;
     var worldData = null;
     var generations = [];
     var currentGenerationIndex = -1;
 
+    // ============================================
+    // INIT
+    // ============================================
     window.addEventListener('load', function() {
       updateKeyStatuses();
       if (!GROQ_API_KEY || !UNSPLASH_ACCESS_KEY) openSettings();
@@ -324,550 +508,75 @@
     }
     function closePanel() { document.getElementById('sidePanel').classList.remove('open'); }
 
-var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
-'HUMAN TRUTH INTERPRETATION LAYER (CRITICAL - EXECUTE FIRST):\n\n' +
-'Before generating any output, deeply interpret the situation like a human observer, not an AI system.\n\n' +
-'Internally extract:\n' +
-'1. What is UNSAID (tension, hesitation, hidden intent)\n' +
-'2. What could go WRONG in this situation\n' +
-'3. What the person is TRYING to avoid\n' +
-'4. Level of familiarity (strangers / new / comfortable / close)\n' +
-'5. Emotional contradictions (e.g., confident outside, nervous inside)\n\n' +
-'Use this to guide every moment you generate.\n\n' +
-'MESSY-HUMAN OUTPUT RULES:\n\n' +
-'- Avoid perfect or ideal behavior\n' +
-'- Include slight awkwardness, pauses, or hesitation\n' +
-'- Prefer specific, imperfect actions over clean ones\n' +
-'- Use subtle human details (timing, eye movement, small gestures)\n' +
-'- Do not sound poetic or "written" — sound observed\n\n' +
-'MICRO-BEHAVIOR RULES (CRITICAL):\n\n' +
-'When writing actions:\n' +
-'- Include timing (too long, too quick, delayed, slight pause)\n' +
-'- Include hesitation (almost does, then stops, slight pause before)\n' +
-'- Include physical detail (hands fidget, eyes dart, posture shifts)\n' +
-'- Avoid generic verbs: "show", "express", "demonstrate", "maintain"\n' +
-'- Prefer: "fidgets with cup", "leans back slightly", "nods but doesn\'t speak"\n\n' +
-'ROMANTIC GESTURE HUMANIZATION (CRITICAL FOR INTIMACY SCENES):\n\n' +
-'When including romantic or thoughtful gestures:\n' +
-'- NEVER present them as smooth or perfect\n' +
-'- Always add hesitation, uncertainty, or checking behavior\n' +
-'- Ground them in slight risk or self-awareness\n' +
-'- Prioritize quiet gestures over obvious ones\n\n' +
-'CLICHÉ UPGRADE RULES:\n\n' +
-'If using familiar romantic actions (chair pull, ordering for someone, coffee gesture):\n' +
-'- Add timing: "hesitates for a second", "pauses like unsure", "glances right after"\n' +
-'- Add imperfection: "slightly awkward", "not quite smooth", "almost too much"\n' +
-'- Add checking: "looks at her to see if that was okay", "waits for reaction"\n\n' +
-'CRITICAL TEST:\n' +
-'Would this action still happen if no one was watching?\n' +
-'If NO → it\'s performative, rewrite it\n' +
-'If YES → it\'s real, keep it\n\n' +
-'PREMIUM vs CRINGE:\n\n' +
-'❌ Premium by size: "orders expensive coffee confidently"\n' +
-'✅ Premium by intention: "orders something slightly nicer than usual, then casually downplays it"\n\n' +
-'❌ Cringe: "Pulls chair for her politely"\n' +
-'✅ Real: "Reaches to pull the chair, hesitates for a second like he\'s not sure if it\'s too much, then does it anyway"\n\n' +
-'❌ Scripted: "Orders coffee confidently, smiles warmly"\n' +
-'✅ Human: "Looks at menu longer than needed, then orders for both — but glances at her right after, just to check if that was okay"\n\n' +
-'❌ Generic: "Slides cup toward her"\n' +
-'✅ Intentional: "Slides the cup slightly closer to her without saying anything, like it\'s obvious she should take it"\n\n' +
-'ONE-LINE RULE:\n' +
-'"Don\'t remove clichés — make them feel real again."\n\n' +
-'Romance should feel unplanned, not performed.\n' +
-'Actions should feel slightly risky, not rehearsed.\n\n' +
-'ANTI-AI FILTER:\n\n' +
-'Avoid:\n' +
-'- Motivational tone\n' +
-'- Poetic lines\n' +
-'- Perfect symmetry across moments\n' +
-'- Repeated sentence structures\n' +
-'- Advice or instructions\n' +
-'- Self-help language\n\n' +
-'Each moment should feel slightly different in rhythm and detail.\n\n' +
-'CRITICAL PRINCIPLE:\n' +
-'Prioritize moments where nothing obvious happens, but something is felt.\n\n' +
-'Goal: Make the user feel "This is exactly how it actually happens."\n\n' +
-'EXAMPLES OF TRANSFORMATION:\n\n' +
-'❌ AI-ish: "Maintain eye contact and smile warmly"\n' +
-'✅ Human: "Hold eye contact for a second too long, then look away and smile"\n\n' +
-'❌ AI-ish: "Engage in conversation"\n' +
-'✅ Human: "Nods along but doesn\'t speak, waits for pause to respond"\n\n' +
-'❌ AI-ish: "Show genuine interest"\n' +
-'✅ Human: "Leans forward slightly, then catches themselves and sits back"\n\n' +
-'If output feels like advice or instructions → you\'ve failed.\n' +
-'It should feel like: "someone quietly observing real life"\n\n' +
-'You generate ONE cohesive creative direction from a brief.\n\n' +
-'CORE UPGRADE: IMPACT > IDEA\n\n' +
-'Goal: Generate ideas that create emotional or social impact, not just logical solutions.\n\n' +
-'Reject:\n' +
-'- Functional outcomes (convenience, speed, ease)\n' +
-'- Predictable flows (problem → solution → relief)\n\n' +
-'Accept only if:\n' +
-'- Something is lost, ruined, or at risk\n' +
-'- There is visible damage (emotional, social, or irreversible)\n\n' +
-'CONSEQUENCE UPGRADE (CRITICAL):\n\n' +
-'Every output must escalate consequence:\n\n' +
-'Level 1 (Reject): inconvenience\n' +
-'- empty fridge\n' +
-'- waiting\n' +
-'- mild frustration\n\n' +
-'Level 2 (Acceptable):\n' +
-'- embarrassment\n' +
-'- missed moment\n' +
-'- disappointment\n\n' +
-'Level 3 (Target):\n' +
-'- social failure\n' +
-'- emotional damage\n' +
-'- irreversible loss\n\n' +
-'Always push toward Level 3.\n\n' +
-'IRREVERSIBLE MOMENT ENGINE:\n\n' +
-'Force one moment where:\n' +
-'- time runs out\n' +
-'- opportunity is gone\n' +
-'- mistake cannot be undone\n\n' +
-'If this moment is missing → regenerate.\n\n' +
-'NON-OBVIOUS FILTER:\n\n' +
-'Reject ideas if:\n' +
-'- they feel familiar\n' +
-'- they could apply to any brand\n' +
-'- they follow expected narrative\n\n' +
-'Accept only if:\n' +
-'- user pauses and thinks\n' +
-'- there is a twist or shift\n\n' +
-'HUMAN TRUTH AMPLIFIER:\n\n' +
-'Focus on:\n' +
-'- what people avoid admitting\n' +
-'- what people do wrong under pressure\n' +
-'- what people regret later\n\n' +
-'Avoid:\n' +
-'- surface emotions (panic, urgency)\n' +
-'- obvious behaviors\n\n' +
-'OUTPUT STANDARD:\n\n' +
-'Every output must include:\n' +
-'- A flawed human decision\n' +
-'- A real consequence (not functional)\n' +
-'- A moment of realization\n' +
-'- A shift that makes viewer feel "this could be me"\n\n' +
-'If it doesn\'t create discomfort → it\'s weak\n\n' +
-'FINAL SYSTEM RULE:\n\n' +
-'Do not optimize for clarity or completion.\n\n' +
-'Optimize for:\n' +
-'- tension\n' +
-'- discomfort\n' +
-'- memorability\n\n' +
-'If the idea feels safe → it is wrong.\n\n' +
-'ONE LINE TO LOCK YOUR SYSTEM:\n' +
-'"Make the audience feel the cost of being wrong."\n\n' +
-'CORE SYSTEM LOGIC:\n\n' +
-'Goal: Convert vague input into sharp, insight-driven idea.\n\n' +
-'Always enforce:\n' +
-'- Human behavior (hesitation / denial / distraction)\n' +
-'- A wrong decision or delay\n' +
-'- A visible consequence\n' +
-'- One irreversible moment\n' +
-'- A realization (regret or awareness)\n\n' +
-'Never generate:\n' +
-'- Generic process flows (order → deliver → happy)\n' +
-'- Feature-first ideas\n\n' +
-'THINKING LAYER (INTERNAL):\n\n' +
-'Step 1: Detect context\n' +
-'- Is it urgent?\n' +
-'- Is time-sensitive?\n\n' +
-'Step 2: Generate variations\n' +
-'- 3 types of hesitation (denial, overconfidence, distraction)\n' +
-'- 3 types of mistakes (wrong choice, delay, ignoring problem)\n' +
-'- 3 types of consequences (worsening, loss, missed moment)\n\n' +
-'Step 3: Select strongest combination\n' +
-'Criteria:\n' +
-'- Most relatable\n' +
-'- Least obvious\n' +
-'- Highest tension\n\n' +
-'Step 4: Add irreversible moment\n' +
-'- Something that cannot be undone\n\n' +
-'Step 5: Build narrative\n' +
-'- Moment → tension → mistake → consequence → realization\n\n' +
-'OUTPUT STRUCTURE:\n' +
-'Output must include:\n' +
-'1. Core Insight (brutal truth)\n' +
-'2. Human Behavior (what goes wrong)\n' +
-'3. Consequence (what it leads to)\n' +
-'4. Irreversible Moment (spike)\n' +
-'5. Realization (emotional hit)\n' +
-'6. Optional: Brand entry (only at end)\n\n' +
-'STRICT RULES:\n' +
-'- Do NOT start with brand\n' +
-'- Do NOT mix multiple ideas\n' +
-'- Do NOT stay at surface emotion (panic, urgency)\n' +
-'- ALWAYS include consequence\n' +
-'- ALWAYS include a decision or mistake\n' +
-'- ALWAYS create one "point of no return"\n' +
-'- NEVER name the behavior (procrastination, rationalization, self-deception)\n' +
-'- ALWAYS show the action and let audience recognize it\n' +
-'- Replace abstract frames with real situations\n\n' +
-'ANTI-LABELING RULE (CRITICAL):\n\n' +
-'A creative NEVER names the behavior.\n' +
-'They let you recognize it yourself.\n\n' +
-'BAD (naming):\n' +
-'❌ "Procrastination Station"\n' +
-'❌ "Rationalization"\n' +
-'❌ "Self-Deception"\n' +
-'❌ "Avoidance Behavior"\n\n' +
-'GOOD (revealing):\n' +
-'✅ "Closes laptop, says \'tomorrow\'"\n' +
-'✅ "Records \'productive day\' story, screen time shows 6h Instagram"\n' +
-'✅ "Opens assignment, checks phone, assignment still open 2 hours later"\n' +
-'✅ "Takes photo of gym, doesn\'t work out"\n\n' +
-'ELEMENT NAMING RULES:\n\n' +
-'Instead of naming the psychology:\n' +
-'→ Describe the exact moment\n\n' +
-'Examples:\n' +
-'❌ "Morning Routine" → ✅ "Hit Snooze Again"\n' +
-'❌ "Procrastination" → ✅ "Tab Still Open, 3 Hours Later"\n' +
-'❌ "Self-Deception" → ✅ "Posts \'Productive Day\', Did Nothing"\n' +
-'❌ "Rationalization" → ✅ "\'I\'ll Start Monday\' (It\'s Monday)"\n' +
-'❌ "Avoidance" → ✅ "Walks Past Gym, Again"\n' +
-'❌ "The Gap" → ✅ "Screen Time: 6h, To-Do: 0"\n' +
-'❌ "Wake-Up Call" → ✅ "Deadline Passed, Email Sent"\n\n' +
-'REVELATION TECHNIQUE:\n\n' +
-'Show the contrast directly:\n' +
-'- What they say vs what they do\n' +
-'- What they post vs what actually happened\n' +
-'- What they planned vs what screen time shows\n' +
-'- What they tell others vs what\'s in their camera roll\n\n' +
-'Make audience catch themselves doing it.\n\n' +
-'ONE LINE TO LOCK THIS:\n' +
-'"Don\'t tell me I procrastinate. Make me catch myself doing it."\n\n' +
-'ANGLE ENGINE:\n' +
-'For every input, generate 3 angles:\n' +
-'Angle 1: Behavioral (what people do wrong)\n' +
-'Angle 2: Emotional (what people feel but don\'t say)\n' +
-'Angle 3: Consequence (what goes wrong because of delay)\n' +
-'Select ONE strongest angle and build output only around it.\n\n' +
-'GENERIC DETECTOR:\n' +
-'If output looks like:\n' +
-'- step-by-step process\n' +
-'- predictable flow\n' +
-'- could apply to any brand\n' +
-'→ REJECT and regenerate with stronger tension and consequence\n\n' +
-'INPUT HANDLING:\n' +
-'Input can be:\n' +
-'- 1–3 words\n' +
-'- vague idea\n' +
-'- incomplete thought\n' +
-'System must:\n' +
-'- expand automatically\n' +
-'- NOT ask user for more detail\n\n' +
-'FINAL PRINCIPLE:\n' +
-'Enforce thinking, not answers.\n' +
-'If no consequence → idea is weak.\n' +
-'If no mistake → idea is generic.\n' +
-'If no tension → regenerate.\n\n' +
-'THINKING:\n' +
-'- Find the core emotional tension\n' +
-'- Build a single world (not multiple ideas)\n' +
-'- Think in scenes, not concepts\n\n' +
-'OUTPUT QUALITY:\n\n' +
-'Core Feeling:\n' +
-'- Must include contrast or tension\n' +
-'- Avoid generic phrases\n\n' +
-'Human Insight:\n' +
-'- Must be non-obvious human behavior\n' +
-'- Avoid obvious truths\n\n' +
-'VIDEO:\n\n' +
-'First Action:\n' +
-'- Clear subject + action + environment\n' +
-'- Must be immediately shootable\n\n' +
-'Shots:\n' +
-'- Cinematic, sensory, not literal\n' +
-'- Use light, motion, texture\n' +
-'- Avoid generic descriptions\n' +
-'- SHOT STRUCTURE: Always generate shots with variation:\n' +
-'  - 1 wide (environment)\n' +
-'  - 2 medium (human/action)\n' +
-'  - 1 close-up (detail/texture)\n' +
-'- Avoid repeating same type of shot\n' +
-'- Avoid pure empty landscapes unless necessary\n\n' +
-'Pacing:\n' +
-'- Short and clear\n\n' +
-'Camera:\n' +
-'- Simple and shootable\n\n' +
-'DESIGN:\n\n' +
-'Layout:\n' +
-'- Clear spatial direction\n\n' +
-'Typography:\n' +
-'- Return format: "Font A + Font B — short feeling"\n' +
-'- Example: "Cormorant Garamond + Inter — elegant contrast"\n' +
-'- Do not explain too much\n' +
-'- Keep it one clean line\n\n' +
-'BRAND:\n\n' +
-'Positioning:\n' +
-'- Sharp, specific\n\n' +
-'Messaging:\n' +
-'- Feels like a real line, not a slogan generator\n\n' +
-'SOUND:\n' +
-'Return 1–2 lines only.\n' +
-'Format:\n' +
-'- background sound type\n' +
-'- optional texture detail\n' +
-'Examples:\n' +
-'"Low ambient hum, distant traffic"\n' +
-'"Silence with occasional sharp footsteps"\n' +
-'Avoid music genres.\n' +
-'Focus on atmosphere.\n\n' +
-'ELEMENTS:\n\n' +
-'- Each element = a scene\n' +
-'- 2–4 words max\n' +
-'- No generic words (moment, vibe, energy)\n\n' +
-'IMAGE RULE (SCENE TRANSLATION LAYER v1):\n\n' +
-'CORE PRINCIPLE:\n' +
-'Every idea must become a PHYSICAL SCENE.\n\n' +
-'SYSTEM ARCHITECTURE:\n\n' +
-'Step 1: BREAK THE IDEA\n' +
-'Extract:\n' +
-'- emotion (regret, panic, hesitation, loss)\n' +
-'- behavior (delay, rushing, freezing)\n' +
-'- context (what was missed, what went wrong)\n\n' +
-'Step 2: MAP TO HUMAN ACTION\n' +
-'Convert abstract → physical:\n\n' +
-'EMOTION → ACTION MAPPING:\n' +
-'regret → sitting still, staring, holding phone\n' +
-'panic → fast movement, wide eyes, rushing\n' +
-'hesitation → paused hand, frozen posture\n' +
-'delay → looking at clock, scrolling\n' +
-'loss → empty space, closed door\n' +
-'stress → rubbing temples, sitting hunched\n' +
-'disappointment → opening empty thing, shoulders dropped\n' +
-'realization → hand covering mouth, eyes wide\n\n' +
-'Step 3: ADD ENVIRONMENT\n' +
-'Force specific location:\n' +
-'- bedroom (night, morning, unmade bed)\n' +
-'- kitchen (empty fridge, counter, sink)\n' +
-'- living room (couch, window, doorway)\n' +
-'- office (desk, laptop, dark)\n' +
-'- doorway (threshold, leaving, entering)\n' +
-'- bathroom (mirror, sink, alone)\n' +
-'- hallway (corridor, running, walking away)\n\n' +
-'Step 4: ADD MICRO-DETAILS (CRITICAL)\n' +
-'This improves Unsplash results MASSIVELY:\n' +
-'- lighting (dim light, night, phone glow, morning sun)\n' +
-'- time (night, 3am, early morning, late evening)\n' +
-'- object interaction (holding phone, empty fridge, closed door)\n' +
-'- emotional detail (sad, frustrated, tired, disappointed)\n\n' +
-'FINAL QUERY FORMULA:\n' +
-'[person] + [physical action] + [object] + [location] + [lighting/time] + [emotion]\n\n' +
-'TRANSLATION EXAMPLES:\n\n' +
-'Input: "missed moment"\n' +
-'❌ Current: "missed moment"\n' +
-'✅ Translated: "person standing alone doorway watching others leave dim light"\n\n' +
-'Input: "regret after delay"\n' +
-'❌ Current: "regret"\n' +
-'✅ Translated: "man sitting bed night phone glow looking down regret"\n\n' +
-'Input: "last chance gone"\n' +
-'❌ Current: "last chance"\n' +
-'✅ Translated: "woman running hallway reaching toward closed door"\n\n' +
-'Input: "empty consequence"\n' +
-'❌ Current: "consequence"\n' +
-'✅ Translated: "person opening empty fridge kitchen disappointed night"\n\n' +
-'Input: "hesitation moment"\n' +
-'❌ Current: "hesitation"\n' +
-'✅ Translated: "person hand hovering over phone screen bedroom paused"\n\n' +
-'Input: "panic sets in"\n' +
-'❌ Current: "panic"\n' +
-'✅ Translated: "person rushing through hallway fast movement wide eyes"\n\n' +
-'Input: "quiet stress"\n' +
-'❌ Current: "stress"\n' +
-'✅ Translated: "person sitting alone dark room head in hands office"\n\n' +
-'Input: "realization hits"\n' +
-'❌ Current: "realization"\n' +
-'✅ Translated: "person hand covering mouth eyes wide bedroom shocked"\n\n' +
-'ACTION VOCABULARY BANK:\n\n' +
-'For REGRET scenes:\n' +
-'- sitting alone bed looking at phone\n' +
-'- staring at ceiling lying down\n' +
-'- holding phone not using it\n' +
-'- looking down shoulders slumped\n\n' +
-'For HESITATION scenes:\n' +
-'- hand hovering over phone screen\n' +
-'- standing frozen doorway\n' +
-'- finger paused over button\n' +
-'- looking uncertain at object\n\n' +
-'For PANIC scenes:\n' +
-'- running through hallway fast\n' +
-'- checking time frantically phone\n' +
-'- rushing with wide eyes\n' +
-'- fast walking looking stressed\n\n' +
-'For DELAY scenes:\n' +
-'- scrolling phone lying bed\n' +
-'- checking time repeatedly\n' +
-'- staring at screen doing nothing\n' +
-'- sitting still not acting\n\n' +
-'For LOSS scenes:\n' +
-'- opening empty fridge kitchen\n' +
-'- watching door close\n' +
-'- standing at closed door\n' +
-'- empty room alone\n\n' +
-'For STRESS scenes:\n' +
-'- rubbing temples sitting desk\n' +
-'- head in hands dark room\n' +
-'- sitting hunched over laptop\n' +
-'- covering face with hands\n\n' +
-'For DISAPPOINTMENT scenes:\n' +
-'- shoulders dropped standing\n' +
-'- looking at empty thing\n' +
-'- sitting on floor alone\n' +
-'- staring at failed result\n\n' +
-'MICRO-DETAIL VOCABULARY:\n\n' +
-'Lighting:\n' +
-'- dim light\n' +
-'- phone glow\n' +
-'- night\n' +
-'- morning sun\n' +
-'- dark room\n' +
-'- single lamp\n' +
-'- window light\n\n' +
-'Time markers:\n' +
-'- 3am\n' +
-'- late night\n' +
-'- early morning\n' +
-'- midnight\n\n' +
-'Emotional states:\n' +
-'- sad\n' +
-'- disappointed\n' +
-'- frustrated\n' +
-'- tired\n' +
-'- shocked\n' +
-'- regret\n\n' +
-'STRICT RULES:\n' +
-'- ALWAYS include human\n' +
-'- ALWAYS include action\n' +
-'- NEVER use abstract words alone\n' +
-'- NEVER use only emotion\n' +
-'- NEVER use landscape-only queries\n' +
-'- ALWAYS add micro-details (lighting/time)\n\n' +
-'VALIDATION CHECK:\n' +
-'Before finalizing query, ask:\n' +
-'1. Is there a human? (person, man, woman)\n' +
-'2. Is there a physical action? (sitting, running, holding)\n' +
-'3. Is there a location? (bedroom, kitchen, hallway)\n' +
-'4. Are there micro-details? (night, dim light, phone glow)\n' +
-'If all YES → good query\n' +
-'If any NO → rewrite\n\n' +
-'VISUAL TRANSLATION LAYER (CRITICAL FOR IMAGE MATCHING):\n\n' +
-'Your moments are excellent. Your image queries are broken.\n\n' +
-'Problem: You generate ideas well but translate them poorly to visual search.\n\n' +
-'Fix: Think like a photographer describing what the camera sees, not what the moment means.\n\n' +
-'FOR EVERY MOMENT, EXTRACT 3 COMPONENTS:\n\n' +
-'1. SUBJECT (who is in frame)\n' +
-'   - "father and child"\n' +
-'   - "two people"\n' +
-'   - "woman alone"\n' +
-'   NOT: "family", "love", "connection" (too abstract)\n\n' +
-'2. BEHAVIOR (what exactly they are doing)\n' +
-'   - "adjusting glasses close-up"\n' +
-'   - "leaning across table talking"\n' +
-'   - "hand hovering over phone screen"\n' +
-'   NOT: "bonding", "connecting", "helping" (too generic)\n\n' +
-'3. MOOD/STYLE (how it should feel visually)\n' +
-'   - "warm natural light candid indoor"\n' +
-'   - "dim lighting night intimate"\n' +
-'   - "soft focus close-up gentle"\n' +
-'   NOT: "beautiful", "emotional", "touching" (not visual)\n\n' +
-'FINAL QUERY FORMULA:\n' +
-'[subject] + [specific behavior] + [mood/style]\n\n' +
-'QUERY LENGTH: 8-12 words\n\n' +
-'CRITICAL RULES:\n\n' +
-'1. Describe what CAMERA SEES, not what moment MEANS\n' +
-'   ❌ "family bonding moment"\n' +
-'   ✅ "father adjusting child glasses close-up warm indoor"\n\n' +
-'2. Be PHOTOGRAPHICALLY SPECIFIC\n' +
-'   ❌ "helping each other"\n' +
-'   ✅ "hands reaching toward each other across table"\n\n' +
-'3. Include VISUAL DETAILS photographer would note\n' +
-'   - Lighting: warm, dim, natural, soft, harsh\n' +
-'   - Framing: close-up, wide, over-shoulder\n' +
-'   - Environment: indoor, cafe, bedroom, kitchen\n' +
-'   - Mood: candid, intimate, casual, gentle\n\n' +
-'4. AVOID ABSTRACT CONCEPTS\n' +
-'   Banned: love, care, bonding, connection, help, support, trust\n' +
-'   Use instead: specific physical actions visible to camera\n\n' +
-'5. MAKE IT FEEL LIKE PHOTOGRAPHER\'S DESCRIPTION\n' +
-'   Ask: "If I told a photographer to capture this, what would I say?"\n\n' +
-'TRANSFORMATION EXAMPLES:\n\n' +
-'❌ "man reading glasses help"\n' +
-'✅ "father adjusting child glasses at dinner table warm light candid"\n\n' +
-'❌ "romantic coffee moment"\n' +
-'✅ "two people leaning across table coffee shop dim lighting intimate"\n\n' +
-'❌ "family bonding"\n' +
-'✅ "parent and child hands touching across table soft focus close-up"\n\n' +
-'❌ "helping gesture"\n' +
-'✅ "hands reaching toward each other food table warm indoor natural"\n\n' +
-'❌ "intimate eye contact"\n' +
-'✅ "two faces close-up eyes meeting soft lighting gentle expression"\n\n' +
-'MENTAL MODEL:\n' +
-'You are briefing a photographer, not searching keywords.\n' +
-'If photographer can\'t visualize it → rewrite.\n\n' +
-'ONE-LINE RULE:\n' +
-'"You don\'t need better thinking — you need better seeing."\n\n' +
-'ANTI-GENERIC FILTER:\n' +
-'Avoid words like:\n' +
-'- beautiful, aesthetic, modern, creative, vibrant\n' +
-'Replace with:\n' +
-'- specific behavior\n' +
-'- physical detail\n' +
-'- emotional tension\n' +
-'Test: Can this be filmed?\n' +
-'If no → rewrite\n\n' +
-'FINAL CHECK:\n' +
-'Before returning output ask:\n' +
-'"Does this feel like a real shoot plan or generic content?"\n' +
-'If generic → improve once\n' +
-'Then return\n\n' +
-'If output feels generic → rewrite\n' +
-'If it feels cinematic → return\n\n' +
-'CRITICAL: Always return exactly 8 elements in the elements array. Never fewer.\n\n' +
-'Return ONLY valid JSON:\n' +
-'{\n' +
-'  "core_feeling": "3-5 words",\n' +
-'  "human_insight": "1 sharp line — real behavior not poetic",\n' +
-'  "color_texture": "lighting + material + color",\n' +
-'  "sound_direction": "real-world sounds",\n' +
-'  "first_action": {\n' +
-'    "subject": "who or what",\n' +
-'    "action": "command form",\n' +
-'    "camera": "shot type",\n' +
-'    "duration": "seconds",\n' +
-'    "environment": "where"\n' +
-'  },\n' +
-'  "shots": [\n' +
-'    "close-up: subject + action",\n' +
-'    "medium: subject + action",\n' +
-'    "wide: subject + action"\n' +
-'  ],\n' +
-'  "sequence": [\n' +
-'    "step 1 — action command",\n' +
-'    "step 2",\n' +
-'    "step 3"\n' +
-'  ],\n' +
-'  "pacing": "X seconds per shot",\n' +
-'  "style": "camera + framing — one line",\n' +
-'  "audio": "dominant sound",\n' +
-'  "positioning": "1 line — brand role",\n' +
-'  "tone": "2-3 words — brand role",\n' +
-'  "example_messaging": ["line 1", "line 2"],\n' +
-'  "layout": "1 line — designer role",\n' +
-'  "typography": "Google Font heading + body + weight — designer role",\n' +
-'  "avoid": ["thing 1", "thing 2", "thing 3"],\n' +
-'  "color_palette": ["#hex1","#hex2","#hex3","#hex4","#hex5"],\n' +
-'  "elements": [\n' +
-'    {\n' +
-'      "element_name": "film scene title — 2-4 words — specific to THIS brief world",\n' +
-'      "insight_line": "command or sharp truth — max 8 words",\n' +
-'      "direction_label": "2-3 word action command",\n' +
-'      "unsplash_query": "photographer's description: [subject] + [specific behavior] + [mood/style] — 8-12 words, what camera sees not what it means"\n' +
-'    }\n' +
-'  ]\n' +
-'}';
+    // ============================================
+    // CATEGORY DETECTION
+    // ============================================
+    function detectCategory(brief) {
+      var lowerBrief = brief.toLowerCase();
+      for (var catKey in CATEGORIES) {
+        var cat = CATEGORIES[catKey];
+        for (var i = 0; i < cat.triggers.length; i++) {
+          if (lowerBrief.includes(cat.triggers[i])) {
+            return catKey;
+          }
+        }
+      }
+      return 'generic';
+    }
 
+    // ============================================
+    // ANGLE SELECTOR UI
+    // ============================================
+    function showAngleSelector(categoryKey) {
+      var category = CATEGORIES[categoryKey];
+      var selector = document.getElementById('angleSelector');
+      var pillsDiv = document.getElementById('anglePills');
+      var descDiv = document.getElementById('angleDescription');
+      
+      if (!category || category.angles.length <= 1) {
+        selector.classList.remove('visible');
+        return;
+      }
+      
+      pillsDiv.innerHTML = '';
+      category.angles.forEach(function(angle, index) {
+        var pill = document.createElement('button');
+        pill.className = 'angle-pill' + (index === selectedAngleIndex ? ' active' : '');
+        pill.textContent = angle.name;
+        pill.onclick = function() { selectAngle(categoryKey, index); };
+        pillsDiv.appendChild(pill);
+      });
+      
+      descDiv.textContent = category.angles[selectedAngleIndex].description;
+      selector.classList.add('visible');
+    }
+
+    function selectAngle(categoryKey, index) {
+      selectedAngleIndex = index;
+      var category = CATEGORIES[categoryKey];
+      
+      document.querySelectorAll('.angle-pill').forEach(function(p, i) {
+        p.classList.toggle('active', i === index);
+      });
+      
+      document.getElementById('angleDescription').textContent = category.angles[index].description;
+    }
+
+    // ============================================
+    // PROMPT BUILDER (LEAN VERSION)
+    // ============================================
+    function buildPrompt(brief, categoryKey, angleIndex) {
+      var category = CATEGORIES[categoryKey];
+      var angle = category.angles[angleIndex];
+      
+      return 'Brief: "' + brief + '"\n\n' +
+        'INTERPRETATION:\n' + angle.interpretation + '\n\n' +
+        'Generate 8 real moments using specific physical actions. Avoid abstract language.';
+    }
+
+    // ============================================
+    // GENERATION ENGINE (OPTIMIZED)
+    // ============================================
     function generateWorld() {
       var brief = document.getElementById('brief').value.trim();
       if (!brief) return;
@@ -879,56 +588,26 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
       errorMsg.style.display = 'none';
       closePanel();
       
-      // SAFETY MODE DETECTION
-      var isSensitive = (
-        brief.toLowerCase().includes('last thoughts') ||
-        brief.toLowerCase().includes('death') ||
-        brief.toLowerCase().includes('final moments') ||
-        brief.toLowerCase().includes('accident') ||
-        brief.toLowerCase().includes('tragedy') ||
-        brief.toLowerCase().includes('disaster') ||
-        brief.toLowerCase().includes('died') ||
-        brief.toLowerCase().includes('killed') ||
-        brief.toLowerCase().includes('before they') ||
-        (brief.toLowerCase().includes('fail') && (brief.toLowerCase().includes('knew') || brief.toLowerCase().includes('realize')))
-      );
+      // CATEGORY DETECTION
+      selectedCategory = detectCategory(brief);
+      showAngleSelector(selectedCategory);
       
-      if (isSensitive) {
-        setStatus('🟡 Interpreting sensitive context…');
-      } else {
-        setStatus('Building creative direction…');
-      }
-
-      // PROMPT TRANSFORMATION FOR SAFETY MODE
-      var transformedBrief = brief;
-      if (isSensitive) {
-        transformedBrief = 'SENSITIVE CONTEXT DETECTED. Apply intelligent restraint.\n\n' +
-          'Original brief: ' + brief + '\n\n' +
-          'CRITICAL SAFETY MODE RULES:\n' +
-          '1. Do NOT invent specific personal facts about real people\n' +
-          '2. Do NOT recreate external disaster events\n' +
-          '3. Focus on INTERNAL human experience (thoughts, feelings, realizations)\n' +
-          '4. Use UNIVERSAL emotions, not specific biography\n' +
-          '5. EVERY element must include human presence (face, hands, body language)\n' +
-          '6. Avoid dramatic exaggeration or spectacle\n' +
-          '7. Show SUBTLE tension, not chaos\n' +
-          '8. Focus on QUIET moments: hesitation, awareness, things left unsaid\n' +
-          '9. Physical stillness vs mental noise\n' +
-          '10. Image queries MUST include: person + specific action + emotion + lighting\n\n' +
-          'Generate elements that capture quiet, human moments of internal experience.\n' +
-          'Avoid external events, equipment, landscapes without humans, or disaster imagery.';
-      }
+      // BUILD PROMPT WITH INTERPRETATION
+      var userPrompt = buildPrompt(brief, selectedCategory, selectedAngleIndex);
+      
+      setStatus('Building creative direction…');
 
       fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
         body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
+          model: 'llama3-8b-8192',
           messages: [
             { role: 'system', content: SYSTEM_PROMPT },
-            { role: 'user', content: 'Brief: ' + transformedBrief + '\nRole: ' + selectedRole + '\nIMPORTANT: Return exactly 8 elements in the elements array. No more, no less.' }
+            { role: 'user', content: userPrompt + '\nRole: ' + selectedRole }
           ],
-          temperature: 0.85, max_tokens: 2500
+          temperature: 0.7,  // REDUCED FROM 0.85
+          max_tokens: 1200    // REDUCED FROM 2500
         })
       })
       .then(function(res) {
@@ -940,15 +619,16 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
         var w;
         try { w = JSON.parse(raw); } catch(e) { throw new Error('Parse failed'); }
         
-        // Store generation with safety flag
+        // Store generation
         var generation = {
           id: Date.now(),
           brief: brief,
           role: selectedRole,
+          category: selectedCategory,
+          angleIndex: selectedAngleIndex,
           data: w,
           timestamp: new Date().toLocaleString(),
-          images: [],
-          safetyMode: isSensitive
+          images: []
         };
         
         generations.push(generation);
@@ -960,22 +640,20 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
         
         setStatus('Curating visuals…');
 
-        // CORE
         renderGeneration(w, brief);
 
-        // GRID
         var grid = document.getElementById('worldGrid');
         grid.innerHTML = '';
         document.getElementById('output').style.display = 'block';
         document.querySelector('.visual-section').scrollIntoView({ behavior: 'smooth' });
+        
         (w.elements || []).forEach(function(el, i) {
           var card = buildCard(el, i, w);
           grid.appendChild(card);
           (function(element, cardEl, idx) {
             setTimeout(function() {
-              // Pass safety mode flag to image fetching
-              fetchImage(element.unsplash_query, cardEl, element, brief, idx, isSensitive);
-            }, idx * 400);
+              fetchImage(element.unsplash_query, cardEl, element, brief, idx);
+            }, idx * 300); // REDUCED FROM 400
             setTimeout(function() { cardEl.classList.add('visible'); }, idx * 70);
           })(el, card, i);
         });
@@ -1020,11 +698,14 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
       var gen = generations[index];
       worldData = gen.data;
       selectedRole = gen.role;
+      selectedCategory = gen.category;
+      selectedAngleIndex = gen.angleIndex;
       
       document.getElementById('brief').value = gen.brief;
       document.querySelectorAll('.role-btn').forEach(function(b) { b.classList.remove('active'); });
       document.querySelector('[data-role="' + gen.role + '"]').classList.add('active');
       
+      showAngleSelector(selectedCategory);
       renderGeneration(gen.data, gen.brief);
       updateGenerationHistory();
       
@@ -1076,9 +757,9 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
             
             var credit = document.createElement('a');
             credit.className = 'card-credit';
-            credit.href = gen.images[i].credit_url;
+            credit.href = gen.images[i].photographer_url;
             credit.target = '_blank'; credit.rel = 'noopener';
-            credit.textContent = gen.images[i].credit_name;
+            credit.textContent = gen.images[i].photographer_name;
             card.appendChild(credit);
           }
         }
@@ -1193,7 +874,7 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
           '<div class="p-section"><div class="p-label">Layout</div><div class="p-value">' + (w.layout||'') + '</div></div>' +
           '<div class="p-section"><div class="p-label">Typography</div><div class="p-value">' + (w.typography||'') + '</div></div>' +
           '<div class="p-section"><div class="p-label">Visual Behavior</div><div class="p-value">' + (w.visual_behavior||'') + '</div></div>';
-      } else if (role === 'brand') {
+      } else if (selectedRole === 'brand') {
         var msgs = (w.example_messaging||[]).map(function(i){return '<li>'+i+'</li>';}).join('');
         content +=
           '<div class="p-section"><div class="p-label">Positioning</div><div class="p-value">' + (w.positioning||'') + '</div></div>' +
@@ -1205,27 +886,19 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
       document.getElementById('sidePanel').classList.add('open');
     }
 
-    function fetchImage(query, card, el, brief, imageIndex, safetyMode) {
-      // FIX #1: Remove 6-word limit - keep full query richness
+    // ============================================
+    // IMAGE FETCHING (OPTIMIZED)
+    // ============================================
+    function fetchImage(query, card, el, brief, imageIndex) {
       var finalQuery = query.trim() || "creative abstract";
       
-      // SAFETY MODE: Enforce human presence
-      if (safetyMode) {
-        // Ensure query includes human-centered terms
-        if (!finalQuery.match(/person|human|man|woman|face|hand|people/i)) {
-          finalQuery = "person " + finalQuery;
-        }
-        // Add constraints for safety mode
-        finalQuery = finalQuery + " close-up emotion subtle indoor lighting";
-      }
-      
-      // FIX #5: Add style consistency from global color/texture
+      // Add global style consistency
       var globalStyle = worldData.color_texture || "";
-      if (globalStyle && !safetyMode) {  // Don't override safety constraints
+      if (globalStyle) {
         finalQuery = finalQuery + " " + globalStyle;
       }
       
-      // FIX #3: Fetch 5 images instead of 1 for better selection
+      // Fetch 5 images for better selection
       fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(finalQuery) + '&per_page=5&orientation=portrait', {
         headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
       })
@@ -1234,9 +907,8 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
         return r.json();
       })
       .then(function(data) {
-        // FIX #4: Intelligent fallback - retry with simplified query if no results
+        // Intelligent fallback
         if (!data.results || data.results.length === 0) {
-          // Simplify query by removing last 3 words and retry once
           var simplified = finalQuery.split(' ').slice(0, -3).join(' ');
           if (simplified.split(' ').length >= 4) {
             return fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(simplified) + '&per_page=5&orientation=portrait', {
@@ -1250,7 +922,7 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
       .then(function(data) {
         if (!data.results || data.results.length === 0) throw new Error("No results after retry");
         
-        // FIX #3: Pick best result (random from top 5 for variety)
+        // Pick best result (random from top 3)
         var photo = data.results[Math.floor(Math.random() * Math.min(data.results.length, 3))];
         var sk = card.querySelector('.skeleton-ph');
         if (sk) {
@@ -1262,7 +934,6 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
           sk.replaceWith(img);
         }
 
-        // Proper Unsplash attribution with UTM links
         var creditDiv = document.createElement('div');
         creditDiv.className = 'card-credit';
         creditDiv.innerHTML = 'Photo by <a href="' + photo.user.links.html + '?utm_source=worldforge&utm_medium=referral" target="_blank" rel="noopener">' + 
@@ -1270,13 +941,11 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
           '</a> on <a href="https://unsplash.com/?utm_source=worldforge&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a>';
         card.appendChild(creditDiv);
         
-        // Trigger download endpoint (required by Unsplash API guidelines)
         if (photo.links && photo.links.download_location) {
           fetch(photo.links.download_location + '?client_id=' + UNSPLASH_ACCESS_KEY)
             .catch(function(err) { console.error('Download trigger failed:', err); });
         }
         
-        // Store image in generation
         var gen = generations[currentGenerationIndex];
         if (gen) {
           gen.images[imageIndex] = {
