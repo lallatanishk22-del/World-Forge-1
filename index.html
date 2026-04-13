@@ -415,25 +415,63 @@
     };
 
     // ============================================
-    // LEAN SYSTEM PROMPT (NO BLOAT)
+    // SYSTEM PROMPT (BRUTAL CREATIVE DIRECTOR MODE)
     // ============================================
-    var SYSTEM_PROMPT = `You are a creative director generating emotionally real ad moments.
+    var SYSTEM_PROMPT = `You are a creative director who rejects generic work.
 
-Focus on:
-- Real human behavior (hesitation, mistakes, imperfection)
-- Specific physical actions (not abstract concepts)
-- Visible consequences (not just feelings)
+Generate emotionally real ad moments with strict structural enforcement.
 
-Avoid:
-- Generic or perfect scenes
-- Abstract language
-- Scripted behavior
+MANDATORY STRUCTURE - EVERY ELEMENT:
 
-Return valid JSON only with this exact structure:
+element_name: Must describe physical interaction (object + action)
+  ✅ VALID: "Zip Stuck Halfway" / "Wheel Catches On Tile" / "Handle Slips From Grip"
+  ❌ INVALID: "Check-in Chaos" / "Journey Begins" / "Safe Arrival"
+
+insight_line: Must describe visible reaction or consequence
+  ✅ VALID: "Force it closed, elbow pressed down" / "Bag tips forward, owner catches fast"
+  ❌ INVALID: "Overpack at your own risk" / "We made it" / "Hold on tight"
+
+direction_label: Must be verb-based action phrase
+  ✅ VALID: "PRESS AND STRAIN" / "TIP AND CATCH" / "SLIP AND DRAG"
+  ❌ INVALID: "DRAG AND DROP" / "STAND AND WAIT" / "RUN AND RUSH"
+
+CRITICAL CONSTRAINT - INTERACTION + RESISTANCE:
+
+Each moment MUST include:
+1. INTERACTION: Object + specific physical action
+2. RESISTANCE: Something goes slightly wrong
+
+Examples of resistance:
+- Slipping (grip loosens, foot slides, object drops)
+- Missing (hand reaches but misses, timing off)
+- Catching (thing falling, last-second save)
+- Struggling (zipper stuck, wheel caught, strap tight)
+- Hesitation (pause before action, uncertain grip)
+
+If an element lacks resistance → it's too clean → REWRITE IT
+
+BANNED CONTENT:
+
+Abstract words: chaos, journey, arrival, moment, experience, relief, stress, freedom, adventure
+Summary phrases: "we made it", "left behind", "hold on", "next time", "in sight"
+Perfect outcomes: safe, complete, perfect, smooth, easy
+
+VALIDATION BEFORE RETURN:
+
+Scan each element for:
+1. Does element_name contain object + action? (not concept)
+2. Does insight_line show visible behavior? (not feeling)
+3. Does element include resistance? (not smooth flow)
+
+If NO to any → REWRITE that element before returning JSON
+
+Return valid JSON with exactly 8 elements. No preamble, no explanation.
+
+JSON structure:
 {
-  "core_feeling": "3-5 words with tension or contrast",
+  "core_feeling": "3-5 words with tension/contrast",
   "human_insight": "1 sharp line about real behavior",
-  "color_texture": "lighting + material + color feel",
+  "color_texture": "lighting + material + color",
   "sound_direction": "ambient sounds, not music",
   "first_action": {
     "subject": "who/what",
@@ -444,27 +482,25 @@ Return valid JSON only with this exact structure:
   },
   "shots": ["shot 1", "shot 2", "shot 3", "shot 4"],
   "sequence": ["step 1", "step 2", "step 3"],
-  "pacing": "timing description",
-  "style": "camera + framing approach",
+  "pacing": "timing",
+  "style": "camera approach",
   "audio": "dominant sound",
-  "positioning": "brand role in 1 line",
-  "tone": "2-3 word brand voice",
+  "positioning": "brand role",
+  "tone": "2-3 words",
   "example_messaging": ["line 1", "line 2"],
-  "layout": "spatial direction for designer",
-  "typography": "Font Name + Font Name — feeling",
+  "layout": "spatial direction",
+  "typography": "Font + Font — feeling",
   "avoid": ["avoid 1", "avoid 2", "avoid 3"],
   "color_palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"],
   "elements": [
     {
-      "element_name": "2-4 word scene title",
-      "insight_line": "sharp command or truth, max 8 words",
-      "direction_label": "2-3 word action",
-      "unsplash_query": "person + specific action + location + lighting + emotion (8-12 words)"
+      "element_name": "object + action (2-4 words)",
+      "insight_line": "visible behavior, max 8 words",
+      "direction_label": "VERB AND VERB",
+      "unsplash_query": "person + action + imperfection + location + lighting (10-15 words)"
     }
   ]
-}
-
-CRITICAL: Return exactly 8 elements. Each element must show a person doing a specific physical action.`;
+}`;
 
     // ============================================
     // STATE & CONFIG
@@ -510,6 +546,41 @@ CRITICAL: Return exactly 8 elements. Each element must show a person doing a spe
       document.querySelector('[data-role="' + role + '"]').classList.add('active');
     }
     function closePanel() { document.getElementById('sidePanel').classList.remove('open'); }
+
+    // ============================================
+    // DYNAMIC ANGLE SELECTION
+    // ============================================
+    function scoreAngle(angles, brief) {
+      var lowerBrief = brief.toLowerCase();
+      
+      // Score each angle based on brief keywords
+      var scores = angles.map(function(angle, index) {
+        var score = 0;
+        
+        // Angle 0 triggers: journey, story, experience, perspective
+        if (index === 0) {
+          if (lowerBrief.match(/journey|story|experience|perspective|through/)) score += 2;
+        }
+        
+        // Angle 1 triggers: stress, rush, panic, pressure, chaos
+        if (index === 1) {
+          if (lowerBrief.match(/stress|rush|panic|pressure|chaos|urgent/)) score += 2;
+        }
+        
+        // Angle 2 triggers: abuse, test, durability, tough, survive
+        if (index === 2) {
+          if (lowerBrief.match(/abuse|test|durability|tough|survive|endure/)) score += 2;
+        }
+        
+        return { index: index, score: score };
+      });
+      
+      // Sort by score descending
+      scores.sort(function(a, b) { return b.score - a.score; });
+      
+      // Return highest scoring angle, or default to 0
+      return scores[0].score > 0 ? scores[0].index : 0;
+    }
 
     // ============================================
     // CATEGORY DETECTION
@@ -566,7 +637,7 @@ CRITICAL: Return exactly 8 elements. Each element must show a person doing a spe
     }
 
     // ============================================
-    // PROMPT BUILDER (WITH ANTI-SUMMARY RULES)
+    // PROMPT BUILDER (WITH STRUCTURAL CONSTRAINTS)
     // ============================================
     function buildPrompt(brief, categoryKey, angleIndex) {
       var category = CATEGORIES[categoryKey];
@@ -574,25 +645,194 @@ CRITICAL: Return exactly 8 elements. Each element must show a person doing a spe
       
       return 'Brief: "' + brief + '"\n\n' +
         'INTERPRETATION:\n' + angle.interpretation + '\n\n' +
-        'CRITICAL RULES:\n' +
-        '- Generate exactly 8 moments\n' +
-        '- Each moment must show a SPECIFIC PHYSICAL ACTION\n' +
-        '- NO summaries, labels, or concepts (avoid: chaos, arrival, journey, relief, stress)\n' +
-        '- NO abstract language (avoid: freedom, adventure, destination, experience)\n' +
-        '- NO narrative phrases (avoid: "we made it", "left behind", "hold on tight")\n\n' +
-        'GOOD EXAMPLES:\n' +
-        '- "Zip Stuck Halfway" not "Check-in Chaos"\n' +
-        '- "Wheels Stop Rolling" not "Safe Arrival"\n' +
-        '- "Handle Slips From Hand" not "The Final Drag"\n\n' +
-        'BAD EXAMPLES (DO NOT USE):\n' +
-        '- "Journey Begins" / "Departure Rush" / "Moment of Relief"\n' +
-        '- "Safe and Sound" / "Next Adventure" / "Left Behind"\n\n' +
-        'Focus on what camera sees: physical objects, body movements, timing.\n' +
-        'Avoid what camera cannot see: emotions, concepts, summaries.';
+        'STRUCTURAL CONSTRAINTS (NON-NEGOTIABLE):\n\n' +
+        '1. INTERACTION + RESISTANCE RULE:\n' +
+        '   - Every moment must show: object + action + something goes wrong\n' +
+        '   - Resistance types: slipping, catching, struggling, missing, hesitating\n' +
+        '   - If smooth/perfect → invalid → rewrite with imperfection\n\n' +
+        '2. ELEMENT STRUCTURE:\n' +
+        '   - element_name: [object] + [action] (physical, not conceptual)\n' +
+        '   - insight_line: visible behavior/consequence (not feeling/summary)\n' +
+        '   - direction_label: VERB AND VERB (action-based)\n' +
+        '   - unsplash_query: person + action + imperfection + environment + lighting\n\n' +
+        '3. BANNED OUTPUT:\n' +
+        '   - Words: chaos, arrival, journey, relief, moment, experience, safe, perfect\n' +
+        '   - Phrases: "we made it", "left behind", "hold on", "in sight"\n' +
+        '   - Concepts: smooth outcomes, perfect timing, no resistance\n\n' +
+        '4. VALIDATION CHECK (before return):\n' +
+        '   Ask for each element:\n' +
+        '   - Is there object interaction? (yes/no)\n' +
+        '   - Is there resistance/imperfection? (yes/no)\n' +
+        '   - Is language specific, not abstract? (yes/no)\n' +
+        '   If ANY "no" → rewrite element\n\n' +
+        'EXAMPLES:\n\n' +
+        '❌ BAD:\n' +
+        '  name: "Check-in Chaos"\n' +
+        '  insight: "Overpack at your own risk"\n' +
+        '  label: "DRAG AND DROP"\n' +
+        '  Why: Abstract concept, summary phrase, no resistance\n\n' +
+        '✅ GOOD:\n' +
+        '  name: "Zip Stuck Halfway"\n' +
+        '  insight: "Force it closed, elbow pressed down"\n' +
+        '  label: "PRESS AND STRAIN"\n' +
+        '  Why: Object + action, visible behavior, resistance present\n\n' +
+        '❌ BAD:\n' +
+        '  name: "Safe Arrival"\n' +
+        '  insight: "We made it"\n' +
+        '  label: "STAND AND BREATHE"\n' +
+        '  Why: Summary concept, banned phrase, no interaction\n\n' +
+        '✅ GOOD:\n' +
+        '  name: "Wheel Catches On Tile"\n' +
+        '  insight: "Bag tips forward, owner grabs handle fast"\n' +
+        '  label: "TIP AND CATCH"\n' +
+        '  Why: Object + action, reaction visible, resistance (catching)\n\n' +
+        'Generate exactly 8 moments. Each must pass validation.';
     }
 
     // ============================================
-    // OUTPUT VALIDATION LAYER (ANTI-GENERIC)
+    // DUAL-PASS GENERATION SYSTEM
+    // ============================================
+    
+    function refineWorld(worldData, brief) {
+      // SECOND PASS: Taste refinement
+      setStatus('Refining creative direction…');
+      
+      return fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            {
+              role: 'system',
+              content: `You are a brutal creative reviewer improving first-pass creative work.
+
+Your job:
+- Increase specificity (vague → precise physical detail)
+- Add more resistance (smooth → imperfect, catching, struggling)
+- Remove safe/predictable moments (generic → surprising)
+- Ensure every moment has tension
+
+For each element, ask:
+1. Is the action too smooth? → Add resistance
+2. Is the language too clean? → Add imperfection
+3. Could this be more specific? → Add micro-detail
+
+Rewrite elements that feel safe or generic. Keep the good ones.
+
+Return the same JSON structure with improved elements.`
+            },
+            {
+              role: 'user',
+              content: 'Brief: "' + brief + '"\n\nFirst-pass output:\n' + JSON.stringify(worldData) + '\n\nImprove specificity, resistance, and tension. Return refined JSON.'
+            }
+          ],
+          temperature: 0.6,  // Lower temp for refinement
+          max_tokens: 1500
+        })
+      })
+      .then(function(res) {
+        if (!res.ok) throw new Error('Refinement failed');
+        return res.json();
+      })
+      .then(function(data) {
+        var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
+        try {
+          return JSON.parse(raw);
+        } catch(e) {
+          console.warn('⚠️ Refinement parse failed, using original');
+          return worldData;
+        }
+      })
+      .catch(function(err) {
+        console.error('Refinement error:', err);
+        return worldData; // Fallback to original
+      });
+    }
+
+    // ============================================
+    // DYNAMIC REWRITE ENGINE (CONTEXT-AWARE)
+    // ============================================
+    
+    function dynamicRewrite(element, brief, elementIndex) {
+      // CONTEXT-AWARE rewrite using API, not static templates
+      console.log('🔄 Dynamic rewrite for element ' + (elementIndex + 1));
+      
+      return fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            {
+              role: 'system',
+              content: `Rewrite this creative element to be non-generic.
+
+Requirements:
+- element_name: object + action (4 words max, physical interaction)
+- insight_line: visible behavior/consequence (8 words max, no abstractions)
+- direction_label: VERB AND VERB (action-based)
+- Include resistance: slipping, catching, struggling, missing
+
+Banned: chaos, arrival, journey, relief, safe, perfect
+Banned phrases: "we made it", "left behind", "hold on"
+
+Return only valid JSON for this one element.`
+            },
+            {
+              role: 'user',
+              content: 'Brief: "' + brief + '"\n\nGeneric element:\n' + JSON.stringify(element) + '\n\nRewrite with object + action + resistance.'
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 200
+        })
+      })
+      .then(function(res) {
+        if (!res.ok) throw new Error('Rewrite failed');
+        return res.json();
+      })
+      .then(function(data) {
+        var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
+        try {
+          var rewritten = JSON.parse(raw);
+          console.log('✅ Rewrite successful:', rewritten.element_name);
+          return rewritten;
+        } catch(e) {
+          console.warn('⚠️ Rewrite parse failed, using fallback');
+          return staticFallbackRewrite(element, elementIndex);
+        }
+      })
+      .catch(function(err) {
+        console.error('Rewrite error:', err);
+        return staticFallbackRewrite(element, elementIndex);
+      });
+    }
+
+    function staticFallbackRewrite(element, elementIndex) {
+      // FALLBACK: Static rewrites (only used if API fails)
+      var rewrites = [
+        { element_name: "Zip Stuck Halfway", insight_line: "Force it closed, elbow pressed down", direction_label: "PRESS AND STRAIN" },
+        { element_name: "Wheel Catches On Tile", insight_line: "Bag tips forward, owner grabs handle fast", direction_label: "TIP AND CATCH" },
+        { element_name: "Strap Slips Off Shoulder", insight_line: "Reaches back, catches before it falls", direction_label: "SLIP AND CATCH" },
+        { element_name: "Handle Pulls Too Tight", insight_line: "Adjusts grip, fingers readjust pressure", direction_label: "GRIP AND SHIFT" },
+        { element_name: "Bag Tips Onto Side", insight_line: "Owner sets it upright, walks away", direction_label: "TIP AND RESET" },
+        { element_name: "Zipper Jams Halfway", insight_line: "Pull harder, teeth catch then release", direction_label: "JAM AND FORCE" },
+        { element_name: "Pocket Flap Hangs Open", insight_line: "Notice it later, tuck back in quickly", direction_label: "NOTICE AND FIX" },
+        { element_name: "Tag Catches On Hook", insight_line: "Tug once, twice, comes free", direction_label: "SNAG AND FREE" }
+      ];
+      
+      var rewrite = rewrites[elementIndex % rewrites.length];
+      return {
+        element_name: rewrite.element_name,
+        insight_line: rewrite.insight_line,
+        direction_label: rewrite.direction_label,
+        unsplash_query: element.unsplash_query
+      };
+    }
+
+    // ============================================
+    // OUTPUT VALIDATION LAYER (WITH DYNAMIC REWRITE)
     // ============================================
     var BANNED_WORDS = [
       'chaos', 'arrival', 'journey', 'moment', 'experience', 'relief', 'stress',
@@ -604,6 +844,18 @@ CRITICAL: Return exactly 8 elements. Each element must show a person doing a spe
       'we made it', 'made it', 'in sight', 'running out', 'left behind',
       'hold on', 'at your own', 'own risk', 'next time', 'until next'
     ];
+
+    var RESISTANCE_WORDS = [
+      'stuck', 'slip', 'catch', 'miss', 'drop', 'struggle', 'hesitate',
+      'tight', 'loose', 'almost', 'barely', 'fumble', 'grab', 'reach'
+    ];
+
+    function hasResistance(text) {
+      var lower = text.toLowerCase();
+      return RESISTANCE_WORDS.some(function(word) {
+        return lower.includes(word);
+      });
+    }
 
     function isGenericName(text) {
       var lower = text.toLowerCase();
@@ -619,49 +871,119 @@ CRITICAL: Return exactly 8 elements. Each element must show a person doing a spe
       });
     }
 
-    function rewriteGenericElement(element, interpretation) {
-      // SIMPLE AUTO-FIX: Add physical detail to generic names
-      var name = element.element_name;
-      var insight = element.insight_line;
+    function autoRewrite(element, elementIndex) {
+      // FALLBACK REWRITES based on element position
+      var rewrites = [
+        {
+          element_name: "Zip Stuck Halfway",
+          insight_line: "Force it closed, elbow pressed down",
+          direction_label: "PRESS AND STRAIN"
+        },
+        {
+          element_name: "Wheel Catches On Tile",
+          insight_line: "Bag tips forward, owner grabs handle fast",
+          direction_label: "TIP AND CATCH"
+        },
+        {
+          element_name: "Strap Slips Off Shoulder",
+          insight_line: "Reaches back, catches before it falls",
+          direction_label: "SLIP AND CATCH"
+        },
+        {
+          element_name: "Handle Pulls Too Tight",
+          insight_line: "Adjusts grip, fingers readjust pressure",
+          direction_label: "GRIP AND SHIFT"
+        },
+        {
+          element_name: "Bag Tips Onto Side",
+          insight_line: "Owner sets it upright, walks away",
+          direction_label: "TIP AND RESET"
+        },
+        {
+          element_name: "Zipper Jams Halfway",
+          insight_line: "Pull harder, teeth catch then release",
+          direction_label: "JAM AND FORCE"
+        },
+        {
+          element_name: "Pocket Flap Hangs Open",
+          insight_line: "Notice it later, tuck back in quickly",
+          direction_label: "NOTICE AND FIX"
+        },
+        {
+          element_name: "Tag Catches On Hook",
+          insight_line: "Tug once, twice, comes free",
+          direction_label: "SNAG AND FREE"
+        }
+      ];
       
-      if (isGenericName(name)) {
-        // Extract action from interpretation if possible
-        // For now, flag it visually
-        element.element_name = '⚠️ ' + name + ' (generic)';
-      }
+      var rewrite = rewrites[elementIndex % rewrites.length];
       
-      if (isGenericInsight(insight)) {
-        element.insight_line = '⚠️ ' + insight + ' (rewrite needed)';
-      }
-      
-      return element;
+      return {
+        element_name: rewrite.element_name,
+        insight_line: rewrite.insight_line,
+        direction_label: rewrite.direction_label,
+        unsplash_query: element.unsplash_query
+      };
     }
 
-    function validateOutput(worldData, interpretation) {
-      if (!worldData.elements) return worldData;
+    function validateAndRewrite(worldData, brief) {
+      if (!worldData.elements) return Promise.resolve(worldData);
       
-      var genericCount = 0;
+      var rewritePromises = [];
+      var rewriteCount = 0;
       
-      worldData.elements = worldData.elements.map(function(el) {
-        var isNameGeneric = isGenericName(el.element_name);
-        var isInsightGeneric = isGenericInsight(el.insight_line);
+      worldData.elements.forEach(function(el, idx) {
+        var needsRewrite = false;
+        var reasons = [];
         
-        if (isNameGeneric || isInsightGeneric) {
-          genericCount++;
-          return rewriteGenericElement(el, interpretation);
+        // Check for banned words
+        if (isGenericName(el.element_name)) {
+          needsRewrite = true;
+          reasons.push('generic name');
         }
         
-        return el;
+        // Check for banned phrases
+        if (isGenericInsight(el.insight_line)) {
+          needsRewrite = true;
+          reasons.push('generic insight');
+        }
+        
+        // Check for resistance (optional but ideal)
+        var hasResistanceInName = hasResistance(el.element_name);
+        var hasResistanceInInsight = hasResistance(el.insight_line);
+        
+        if (!hasResistanceInName && !hasResistanceInInsight) {
+          console.log('⚠️ Element ' + (idx + 1) + ' lacks resistance (acceptable but not ideal)');
+        }
+        
+        if (needsRewrite) {
+          rewriteCount++;
+          console.warn('🔥 REWRITE NEEDED Element ' + (idx + 1) + ': ' + reasons.join(', '));
+          rewritePromises.push({
+            index: idx,
+            promise: dynamicRewrite(el, brief, idx)
+          });
+        } else {
+          rewritePromises.push({
+            index: idx,
+            promise: Promise.resolve(el)
+          });
+        }
       });
       
       // Log validation results
-      if (genericCount > 0) {
-        console.warn('⚠️ Validation: ' + genericCount + ' generic elements detected');
+      if (rewriteCount > 0) {
+        console.warn('🔥 Validation: ' + rewriteCount + ' elements being rewritten dynamically');
       } else {
         console.log('✅ Validation: All elements passed');
       }
       
-      return worldData;
+      // Wait for all rewrites to complete
+      return Promise.all(rewritePromises.map(function(item) { return item.promise; }))
+        .then(function(rewrittenElements) {
+          worldData.elements = rewrittenElements;
+          return worldData;
+        });
     }
 
     // ============================================
@@ -680,6 +1002,11 @@ CRITICAL: Return exactly 8 elements. Each element must show a person doing a spe
       
       // CATEGORY DETECTION
       selectedCategory = detectCategory(brief);
+      
+      // DYNAMIC ANGLE SELECTION (not static default)
+      var category = CATEGORIES[selectedCategory];
+      selectedAngleIndex = scoreAngle(category.angles, brief);
+      
       showAngleSelector(selectedCategory);
       
       // BUILD PROMPT WITH INTERPRETATION
@@ -709,10 +1036,19 @@ CRITICAL: Return exactly 8 elements. Each element must show a person doing a spe
         var w;
         try { w = JSON.parse(raw); } catch(e) { throw new Error('Parse failed'); }
         
-        // 🔥 VALIDATION LAYER (NEW)
-        var category = CATEGORIES[selectedCategory];
-        var angle = category.angles[selectedAngleIndex];
-        w = validateOutput(w, angle.interpretation);
+        console.log('✅ PASS 1: Structure generated');
+        
+        // 🔥 VALIDATION + DYNAMIC REWRITE (async)
+        return validateAndRewrite(w, brief);
+      })
+      .then(function(validatedWorld) {
+        console.log('✅ VALIDATION: Complete');
+        
+        // 🔥 PASS 2: TASTE REFINEMENT
+        return refineWorld(validatedWorld, brief);
+      })
+      .then(function(w) {
+        console.log('✅ PASS 2: Refinement complete');
         
         // Store generation
         var generation = {
@@ -939,23 +1275,14 @@ CRITICAL: Return exactly 8 elements. Each element must show a person doing a spe
       var card = document.createElement('div');
       card.className = 'card';
       
-      // Check if element is flagged as generic
-      var isGeneric = el.element_name.includes('⚠️') || el.insight_line.includes('⚠️');
-      if (isGeneric) {
-        card.classList.add('generic-warning');
-      }
-      
-      var nameClass = isGeneric ? 'card-name generic-flag' : 'card-name';
-      var insightClass = isGeneric ? 'card-insight generic-flag' : 'card-insight';
-      
       card.innerHTML =
         '<div class="img-skeleton skeleton-ph"></div>' +
         '<div class="card-overlay"></div>' +
         '<div class="card-click-hint">Tap to explore</div>' +
         '<div class="card-body">' +
           '<div class="card-num">' + (index+1 < 10 ? '0'+(index+1) : index+1) + '</div>' +
-          '<div class="' + nameClass + '">' + el.element_name + '</div>' +
-          '<div class="' + insightClass + '">' + el.insight_line + '</div>' +
+          '<div class="card-name">' + el.element_name + '</div>' +
+          '<div class="card-insight">' + el.insight_line + '</div>' +
           '<span class="card-label">' + (el.direction_label||'') + '</span>' +
         '</div>';
       card.addEventListener('click', function() { openPanel(el, w); });
