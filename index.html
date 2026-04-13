@@ -755,7 +755,46 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
       btn.disabled = true;
       errorMsg.style.display = 'none';
       closePanel();
-      setStatus('Building creative direction…');
+      
+      // SAFETY MODE DETECTION
+      var isSensitive = (
+        brief.toLowerCase().includes('last thoughts') ||
+        brief.toLowerCase().includes('death') ||
+        brief.toLowerCase().includes('final moments') ||
+        brief.toLowerCase().includes('accident') ||
+        brief.toLowerCase().includes('tragedy') ||
+        brief.toLowerCase().includes('disaster') ||
+        brief.toLowerCase().includes('died') ||
+        brief.toLowerCase().includes('killed') ||
+        brief.toLowerCase().includes('before they') ||
+        (brief.toLowerCase().includes('fail') && (brief.toLowerCase().includes('knew') || brief.toLowerCase().includes('realize')))
+      );
+      
+      if (isSensitive) {
+        setStatus('🟡 Interpreting sensitive context…');
+      } else {
+        setStatus('Building creative direction…');
+      }
+
+      // PROMPT TRANSFORMATION FOR SAFETY MODE
+      var transformedBrief = brief;
+      if (isSensitive) {
+        transformedBrief = 'SENSITIVE CONTEXT DETECTED. Apply intelligent restraint.\n\n' +
+          'Original brief: ' + brief + '\n\n' +
+          'CRITICAL SAFETY MODE RULES:\n' +
+          '1. Do NOT invent specific personal facts about real people\n' +
+          '2. Do NOT recreate external disaster events\n' +
+          '3. Focus on INTERNAL human experience (thoughts, feelings, realizations)\n' +
+          '4. Use UNIVERSAL emotions, not specific biography\n' +
+          '5. EVERY element must include human presence (face, hands, body language)\n' +
+          '6. Avoid dramatic exaggeration or spectacle\n' +
+          '7. Show SUBTLE tension, not chaos\n' +
+          '8. Focus on QUIET moments: hesitation, awareness, things left unsaid\n' +
+          '9. Physical stillness vs mental noise\n' +
+          '10. Image queries MUST include: person + specific action + emotion + lighting\n\n' +
+          'Generate elements that capture quiet, human moments of internal experience.\n' +
+          'Avoid external events, equipment, landscapes without humans, or disaster imagery.';
+      }
 
       fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -764,7 +803,7 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
           model: 'llama-3.3-70b-versatile',
           messages: [
             { role: 'system', content: SYSTEM_PROMPT },
-            { role: 'user', content: 'Brief: ' + brief + '\nRole: ' + selectedRole + '\nIMPORTANT: Return exactly 8 elements in the elements array. No more, no less.' }
+            { role: 'user', content: 'Brief: ' + transformedBrief + '\nRole: ' + selectedRole + '\nIMPORTANT: Return exactly 8 elements in the elements array. No more, no less.' }
           ],
           temperature: 0.85, max_tokens: 2500
         })
@@ -778,14 +817,15 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
         var w;
         try { w = JSON.parse(raw); } catch(e) { throw new Error('Parse failed'); }
         
-        // Store generation
+        // Store generation with safety flag
         var generation = {
           id: Date.now(),
           brief: brief,
           role: selectedRole,
           data: w,
           timestamp: new Date().toLocaleString(),
-          images: []
+          images: [],
+          safetyMode: isSensitive
         };
         
         generations.push(generation);
@@ -810,7 +850,8 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
           grid.appendChild(card);
           (function(element, cardEl, idx) {
             setTimeout(function() {
-              fetchImage(element.unsplash_query, cardEl, element, brief, idx);
+              // Pass safety mode flag to image fetching
+              fetchImage(element.unsplash_query, cardEl, element, brief, idx, isSensitive);
             }, idx * 400);
             setTimeout(function() { cardEl.classList.add('visible'); }, idx * 70);
           })(el, card, i);
@@ -1041,13 +1082,23 @@ var SYSTEM_PROMPT = 'You are a sharp creative director.\n\n' +
       document.getElementById('sidePanel').classList.add('open');
     }
 
-    function fetchImage(query, card, el, brief, imageIndex) {
+    function fetchImage(query, card, el, brief, imageIndex, safetyMode) {
       // FIX #1: Remove 6-word limit - keep full query richness
       var finalQuery = query.trim() || "creative abstract";
       
+      // SAFETY MODE: Enforce human presence
+      if (safetyMode) {
+        // Ensure query includes human-centered terms
+        if (!finalQuery.match(/person|human|man|woman|face|hand|people/i)) {
+          finalQuery = "person " + finalQuery;
+        }
+        // Add constraints for safety mode
+        finalQuery = finalQuery + " close-up emotion subtle indoor lighting";
+      }
+      
       // FIX #5: Add style consistency from global color/texture
       var globalStyle = worldData.color_texture || "";
-      if (globalStyle) {
+      if (globalStyle && !safetyMode) {  // Don't override safety constraints
         finalQuery = finalQuery + " " + globalStyle;
       }
       
