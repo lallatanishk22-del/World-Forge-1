@@ -406,6 +406,15 @@ CORE RULE: Every moment must describe something that can be physically observed 
 
 If it cannot be captured in a close-up shot showing human interaction, it is invalid.
 
+CRITICAL RULE (NON-NEGOTIABLE):
+
+If the action can be done once correctly, it is INVALID.
+
+Only include actions where:
+- the person does it again unnecessarily
+- the first attempt fails or feels incomplete
+- there is visible correction or re-adjustment
+
 ANTI-GENERIC PRESSURE:
 If the moment feels like something seen in ads before, reject it.
 Each moment should feel slightly uncomfortable in its specificity.
@@ -751,21 +760,28 @@ Return the same JSON structure with improved elements.`
           messages: [
             {
               role: 'system',
-              content: `Rewrite this creative element to show human imperfection.
+              content: `Rewrite this element to feel slightly irrational.
+
+The action should make viewer think: "Why are they doing that again?"
 
 Requirements:
-- element_name: human + action + imperfection (4 words max)
-- insight_line: visible human behavior (8 words max)
-- direction_label: VERB AND VERB (showing mistake/repeat)
-- Include: hesitation, mistake, repeated action, or unnecessary action
+- element_name: human + friction action (3-5 words)
+- Must show: retry, recheck, adjust again, or correction
+- insight_line: visible repeated behavior (8 words max)
+- direction_label: VERB AND VERB
 
-Must show HUMAN doing action, not object alone.
+Avoid normal actions (walking, standing, holding).
+Force unnecessary repetition or correction.
+
+Example:
+❌ "Hand On Button" → too normal
+✅ "Presses Button Again After Light" → irrational repetition
 
 Return only valid JSON for this one element.`
             },
             {
               role: 'user',
-              content: 'Brief: "' + brief + '"\n\nGeneric element:\n' + JSON.stringify(element) + '\n\nRewrite with human + imperfection.'
+              content: 'Brief: "' + brief + '"\n\nGeneric element:\n' + JSON.stringify(element) + '\n\nRewrite with friction + irrational repetition.'
             }
           ],
           temperature: 0.7,
@@ -794,11 +810,12 @@ Return only valid JSON for this one element.`
     }
 
     function staticFallbackRewrite(element, elementIndex) {
+      // FALLBACK: Friction-based rewrites showing irrational repetition
       var rewrites = [
-        { element_name: "Hand Misses Zipper Pull", insight_line: "Reaches twice before fingers catch it", direction_label: "REACH AND MISS" },
+        { element_name: "Presses Button Again After Light", insight_line: "Light shows, presses once more anyway", direction_label: "PRESS AND REPRESS" },
         { element_name: "Checks Pocket Third Time", insight_line: "Opens same pocket, closes, opens again", direction_label: "CHECK AND RECHECK" },
-        { element_name: "Drops Then Catches Handle", insight_line: "Fumbles grip, bag slips, grabs fast", direction_label: "DROP AND CATCH" },
-        { element_name: "Adjusts Strap Twice", insight_line: "Pulls tight, still loose, tries again", direction_label: "PULL AND REPULL" }
+        { element_name: "Adjusts Strap After Tightening", insight_line: "Pulls tight, still loose, tries again", direction_label: "PULL AND REPULL" },
+        { element_name: "Reaches Then Misses Handle", insight_line: "Hand reaches, misses, adjusts and grabs", direction_label: "REACH AND MISS" }
       ];
       
       var rewrite = rewrites[elementIndex % rewrites.length];
@@ -826,9 +843,16 @@ Return only valid JSON for this one element.`
       return /(pass|pause|notice|lean|adjust|linger|glance|hesitate|shift|turn|leave|enter|walk by|slow|stop)/i.test(text);
     }
     
-    // 🔥 UPGRADED: Specific actions only (kills "walking", "standing", "holding")
-    function hasSpecificAction(text) {
-      return /(miss|drop|adjust|check|grab|pull|push|fumble|catch|recheck|reach|touch|slip|squeeze|force|twist|tug|yank)/i.test(text);
+    // 🔥 UPGRADED: Friction actions only - kills lazy verbs
+    function hasFrictionAction(text) {
+      // ONLY actions with visible friction/mistake/repetition
+      return /(miss|drop|fumble|slip|retry|recheck|check again|press again|adjust again|tighten again|loosen|struggle|force|yank|tug|almost|hesitate|stop then|start again|re-|twice|third time)/i.test(text);
+    }
+    
+    // 🔥 NEW: Detect neutral/lazy behavior (REJECT these)
+    function isTooNormal(text) {
+      // These are too neutral - no friction
+      return /(^walking|^standing|^holding|^waiting|^looking|^sitting|^watching)/i.test(text.trim());
     }
     
     // 🔥 UPGRADED: Stronger imperfection detection
@@ -837,7 +861,7 @@ Return only valid JSON for this one element.`
       return /(again|twice|third|retry|re-|miss|almost|slip|fumble|drop|catch|wrong|adjust|recheck|hesitate|barely|struggle|loose|tight)/i.test(text);
     }
     
-    // 🔥 NEW: Imperfection strength score
+    // 🔥 UPGRADED: Imperfection strength score (now requires minimum 2)
     function imperfectionScore(text) {
       var matches = text.match(/(again|twice|third|retry|miss|drop|fumble|adjust|recheck|re-)/gi);
       return matches ? matches.length : 0;
@@ -854,23 +878,28 @@ Return only valid JSON for this one element.`
       return text.trim().split(/\s+/).length > 6;
     }
     
-    // 🔥 UPGRADED: Dual-mode validation (physical OR indirect)
+    // 🔥 UPGRADED: Dual-mode validation with STRICT friction requirement
     function isValidElement(element, conceptType) {
       var name = element.element_name || '';
       var insight = element.insight_line || '';
       
+      // KILL TOO NORMAL immediately
+      if (isTooNormal(name) || isTooNormal(insight)) {
+        return false;
+      }
+      
       if (conceptType === 'indirect') {
         // INDIRECT MODE: Allow subtle presence
-        var nameValid = (hasIndirectPresence(name) || hasSpecificAction(name)) && !feelsLikeHeadline(name);
+        var nameValid = (hasIndirectPresence(name) || hasFrictionAction(name)) && !feelsLikeHeadline(name);
         var insightValid = (hasIndirectPresence(insight) || hasPhysicalAction(insight)) && !feelsLikeHeadline(insight);
         // Indirect mode doesn't require strong imperfection
         var hasSubtlety = hasIndirectPresence(name + " " + insight) || imperfectionScore(name + " " + insight) >= 1;
         return nameValid && insightValid && hasSubtlety;
       } else {
-        // PHYSICAL MODE: Require specific actions + imperfection
-        var nameValid = hasSpecificAction(name) && !feelsLikeHeadline(name);
+        // PHYSICAL MODE: Require FRICTION actions + STRONG imperfection (2+)
+        var nameValid = hasFrictionAction(name) && !feelsLikeHeadline(name);
         var insightValid = hasPhysicalAction(insight) && !feelsLikeHeadline(insight);
-        var strongImperfection = imperfectionScore(name + " " + insight) >= 1;
+        var strongImperfection = imperfectionScore(name + " " + insight) >= 2;
         return nameValid && insightValid && strongImperfection;
       }
     }
@@ -929,11 +958,12 @@ Return only valid JSON for this one element.`
           }
           
           if (conceptType === 'physical') {
-            if (!hasSpecificAction(el.element_name)) reasons.push('no specific action in name');
+            if (!hasFrictionAction(el.element_name)) reasons.push('no friction action in name');
             if (!hasPhysicalAction(el.insight_line)) reasons.push('no physical action in insight');
-            if (imperfectionScore(el.element_name + " " + el.insight_line) < 1) reasons.push('weak imperfection');
+            if (imperfectionScore(el.element_name + " " + el.insight_line) < 2) reasons.push('imperfection too weak (need 2+)');
+            if (isTooNormal(el.element_name)) reasons.push('too normal (walking/standing/holding)');
           } else {
-            if (!hasIndirectPresence(el.element_name) && !hasSpecificAction(el.element_name)) reasons.push('no indirect presence or action');
+            if (!hasIndirectPresence(el.element_name) && !hasFrictionAction(el.element_name)) reasons.push('no indirect presence or friction action');
             if (!hasIndirectPresence(el.insight_line) && !hasPhysicalAction(el.insight_line)) reasons.push('no subtle interaction');
           }
           
