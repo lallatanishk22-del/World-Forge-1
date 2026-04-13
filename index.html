@@ -406,6 +406,32 @@ CORE RULE: Every moment must describe something that can be physically observed 
 
 If it cannot be captured in a close-up shot showing human interaction, it is invalid.
 
+ANTI-INTERPRETATION RULE (CRITICAL):
+
+If the moment can be described in one word (confident, nervous, happy, relieved) → it is INVALID.
+
+NO emotion labels. NO interpretations. ONLY physical actions.
+
+Examples:
+❌ "Confident Stance" → interpretation, not behavior
+✅ "Shoulders Pull Back Then Drop Slightly" → motion observed
+❌ "Nervous Fidget" → emotion label
+✅ "Finger Taps Twice Then Presses Harder" → action sequence
+
+MICRO-ACTION STRUCTURE (MANDATORY):
+
+Every moment must include:
+1. A visible action
+2. AND a variation in that action (repeat / fail / adjust / pause)
+
+Format: [action] → [pause/change] → [continuation]
+
+Examples:
+❌ "Pen Scratching" → static
+✅ "Pen Taps Twice, Pauses, Then Presses Harder" → motion sequence
+❌ "Hand On Handle" → frozen
+✅ "Grips Handle, Loosens, Then Grips Again" → micro-loop
+
 CRITICAL RULE (NON-NEGOTIABLE):
 
 If the action can be done once correctly, it is INVALID.
@@ -415,6 +441,9 @@ Only include actions where:
 - the first attempt fails or feels incomplete
 - there is visible correction or re-adjustment
 
+NO HUMANS = INVALID:
+If no human is present OR no human action is visible → discard moment immediately.
+
 REDUNDANCY SIGNAL RULE:
 
 The element_name must include a contradiction or redundancy signal.
@@ -423,6 +452,7 @@ Required words/phrases:
 - "after" / "again after" / "even after"
 - "still" / "already"
 - "same" / "just"
+- "then" / "pause then" / "stops then"
 
 Examples:
 ❌ "Adjusts Strap Again" → missing redundancy context
@@ -777,40 +807,55 @@ Return the same JSON structure with improved elements.`
           messages: [
             {
               role: 'system',
-              content: `Rewrite this element to feel unnecessary or slightly irrational.
+              content: `Rewrite this element as a motion sequence showing irrational behavior.
+
+CRITICAL ANTI-INTERPRETATION RULE:
+If the moment can be described in one word (confident, nervous, happy, relieved, anxious) → REJECT IT.
+
+NO emotion labels. ONLY physical motion.
+
+MOTION SEQUENCE STRUCTURE (MANDATORY):
+Format: [action] → [pause/change] → [continuation]
+
+Examples:
+❌ "Confident Stance" → emotion label, invalid
+✅ "Shoulders Pull Back, Pause, Then Drop" → motion observed
+❌ "Nervous Fidget" → emotion label
+✅ "Pen Taps Twice, Pauses, Presses Harder" → action sequence
+❌ "Hand On Button" → static, no motion
+✅ "Presses Button, Waits, Presses Again" → before/during/after
 
 CRITICAL: If the viewer can justify why the action is needed → reject it.
 
-Force moments like:
+Force moments showing:
 - doing something again immediately after doing it
 - checking something that hasn't changed
 - correcting something that was already correct
 
 Requirements:
-- element_name: Must include redundancy signal (after/even after/still/already/same/just)
+- element_name: Must include motion sequence (action → pause → continuation)
 - Must show: unnecessary repetition or irrational correction
+- Must include redundancy signal (after/even after/still/already/same/just/then)
 - insight_line: visible repeated behavior (8 words max)
 - direction_label: VERB AND VERB
 
-Bad:
-"Adjusts Strap Again" (still logical - could need adjustment)
+NO HUMANS VISIBLE = INVALID. Reject immediately.
 
-Good:
-"Adjusts Strap Even After Tightening Fully" (irrational - it's already tight)
+Bad examples:
+"Adjusts Strap Again" (still logical + static)
+"Confident Stance" (emotion label)
+"Pen Scratching" (no motion variation)
 
-Bad:
-"Checks Pocket Twice" (logical - might have missed something)
-
-Good:
-"Checks Same Pocket Again After Just Looking" (irrational - nothing changed)
-
-Avoid normal actions (walking, standing, holding).
+Good examples:
+"Adjusts Strap, Feels It, Adjusts Again" (motion loop)
+"Pen Taps Twice, Pauses, Then Presses Harder" (variation)
+"Checks Pocket, Closes It, Opens Same One Again" (irrational sequence)
 
 Return only valid JSON for this one element.`
             },
             {
               role: 'user',
-              content: 'Brief: "' + brief + '"\n\nGeneric element:\n' + JSON.stringify(element) + '\n\nRewrite with irrational redundancy.'
+              content: 'Brief: "' + brief + '"\n\nGeneric element:\n' + JSON.stringify(element) + '\n\nRewrite as motion sequence with irrational redundancy.'
             }
           ],
           temperature: 0.7,
@@ -839,12 +884,12 @@ Return only valid JSON for this one element.`
     }
 
     function staticFallbackRewrite(element, elementIndex) {
-      // FALLBACK: Irrational redundancy examples
+      // FALLBACK: Motion sequences with irrational redundancy
       var rewrites = [
-        { element_name: "Presses Button Even After It Lights", insight_line: "Light shows, presses once more anyway", direction_label: "PRESS AND REPRESS" },
-        { element_name: "Checks Same Pocket Again After Just Looking", insight_line: "Opens pocket, closes, opens same one again", direction_label: "CHECK AND RECHECK" },
-        { element_name: "Adjusts Strap Still After Tightening Fully", insight_line: "Pulls tight, already secure, adjusts again", direction_label: "TIGHTEN AND RETIGHTEN" },
-        { element_name: "Reaches For Handle Already In Grip", insight_line: "Hand holding handle, reaches again anyway", direction_label: "GRIP AND REGRIP" }
+        { element_name: "Presses Button, Waits, Presses Again Even After Light", insight_line: "Light shows, finger lifts, presses once more", direction_label: "PRESS AND REPRESS" },
+        { element_name: "Opens Pocket, Closes, Opens Same One Immediately", insight_line: "Hand dips in, pulls out, dips again", direction_label: "CHECK AND RECHECK" },
+        { element_name: "Pulls Strap Tight, Feels It, Pulls Again", insight_line: "Tightens fully, touches strap, tightens more", direction_label: "TIGHTEN AND RETIGHTEN" },
+        { element_name: "Grips Handle, Loosens, Then Grips Again", insight_line: "Hand wraps around, releases, wraps again", direction_label: "GRIP AND REGRIP" }
       ];
       
       var rewrite = rewrites[elementIndex % rewrites.length];
