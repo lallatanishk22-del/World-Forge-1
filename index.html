@@ -415,6 +415,23 @@ Only include actions where:
 - the first attempt fails or feels incomplete
 - there is visible correction or re-adjustment
 
+REDUNDANCY SIGNAL RULE:
+
+The element_name must include a contradiction or redundancy signal.
+
+Required words/phrases:
+- "after" / "again after" / "even after"
+- "still" / "already"
+- "same" / "just"
+
+Examples:
+❌ "Adjusts Strap Again" → missing redundancy context
+✅ "Adjusts Strap Even After Tightening" → shows irrationality
+❌ "Checks Pocket Twice" → weak
+✅ "Checks Same Pocket Again After Just Looking" → irrational
+
+If name does not imply redundancy, reject it.
+
 ANTI-GENERIC PRESSURE:
 If the moment feels like something seen in ads before, reject it.
 Each moment should feel slightly uncomfortable in its specificity.
@@ -760,28 +777,40 @@ Return the same JSON structure with improved elements.`
           messages: [
             {
               role: 'system',
-              content: `Rewrite this element to feel slightly irrational.
+              content: `Rewrite this element to feel unnecessary or slightly irrational.
 
-The action should make viewer think: "Why are they doing that again?"
+CRITICAL: If the viewer can justify why the action is needed → reject it.
+
+Force moments like:
+- doing something again immediately after doing it
+- checking something that hasn't changed
+- correcting something that was already correct
 
 Requirements:
-- element_name: human + friction action (3-5 words)
-- Must show: retry, recheck, adjust again, or correction
+- element_name: Must include redundancy signal (after/even after/still/already/same/just)
+- Must show: unnecessary repetition or irrational correction
 - insight_line: visible repeated behavior (8 words max)
 - direction_label: VERB AND VERB
 
-Avoid normal actions (walking, standing, holding).
-Force unnecessary repetition or correction.
+Bad:
+"Adjusts Strap Again" (still logical - could need adjustment)
 
-Example:
-❌ "Hand On Button" → too normal
-✅ "Presses Button Again After Light" → irrational repetition
+Good:
+"Adjusts Strap Even After Tightening Fully" (irrational - it's already tight)
+
+Bad:
+"Checks Pocket Twice" (logical - might have missed something)
+
+Good:
+"Checks Same Pocket Again After Just Looking" (irrational - nothing changed)
+
+Avoid normal actions (walking, standing, holding).
 
 Return only valid JSON for this one element.`
             },
             {
               role: 'user',
-              content: 'Brief: "' + brief + '"\n\nGeneric element:\n' + JSON.stringify(element) + '\n\nRewrite with friction + irrational repetition.'
+              content: 'Brief: "' + brief + '"\n\nGeneric element:\n' + JSON.stringify(element) + '\n\nRewrite with irrational redundancy.'
             }
           ],
           temperature: 0.7,
@@ -810,12 +839,12 @@ Return only valid JSON for this one element.`
     }
 
     function staticFallbackRewrite(element, elementIndex) {
-      // FALLBACK: Friction-based rewrites showing irrational repetition
+      // FALLBACK: Irrational redundancy examples
       var rewrites = [
-        { element_name: "Presses Button Again After Light", insight_line: "Light shows, presses once more anyway", direction_label: "PRESS AND REPRESS" },
-        { element_name: "Checks Pocket Third Time", insight_line: "Opens same pocket, closes, opens again", direction_label: "CHECK AND RECHECK" },
-        { element_name: "Adjusts Strap After Tightening", insight_line: "Pulls tight, still loose, tries again", direction_label: "PULL AND REPULL" },
-        { element_name: "Reaches Then Misses Handle", insight_line: "Hand reaches, misses, adjusts and grabs", direction_label: "REACH AND MISS" }
+        { element_name: "Presses Button Even After It Lights", insight_line: "Light shows, presses once more anyway", direction_label: "PRESS AND REPRESS" },
+        { element_name: "Checks Same Pocket Again After Just Looking", insight_line: "Opens pocket, closes, opens same one again", direction_label: "CHECK AND RECHECK" },
+        { element_name: "Adjusts Strap Still After Tightening Fully", insight_line: "Pulls tight, already secure, adjusts again", direction_label: "TIGHTEN AND RETIGHTEN" },
+        { element_name: "Reaches For Handle Already In Grip", insight_line: "Hand holding handle, reaches again anyway", direction_label: "GRIP AND REGRIP" }
       ];
       
       var rewrite = rewrites[elementIndex % rewrites.length];
@@ -861,6 +890,12 @@ Return only valid JSON for this one element.`
       return /(again|twice|third|retry|re-|miss|almost|slip|fumble|drop|catch|wrong|adjust|recheck|hesitate|barely|struggle|loose|tight)/i.test(text);
     }
     
+    // 🔥 NEW: Irrationality detection - forces "why are they doing that?" moments
+    function hasIrrationality(text) {
+      // Detects unnecessary/redundant behavior markers
+      return /(already|still|even after|again after|immediately|same spot|just checked|for no reason|even though|after just|right after)/i.test(text);
+    }
+    
     // 🔥 UPGRADED: Imperfection strength score (now requires minimum 2)
     function imperfectionScore(text) {
       var matches = text.match(/(again|twice|third|retry|miss|drop|fumble|adjust|recheck|re-)/gi);
@@ -878,7 +913,7 @@ Return only valid JSON for this one element.`
       return text.trim().split(/\s+/).length > 6;
     }
     
-    // 🔥 UPGRADED: Dual-mode validation with STRICT friction requirement
+    // 🔥 UPGRADED: Dual-mode validation with STRICT friction + irrationality requirement
     function isValidElement(element, conceptType) {
       var name = element.element_name || '';
       var insight = element.insight_line || '';
@@ -896,11 +931,13 @@ Return only valid JSON for this one element.`
         var hasSubtlety = hasIndirectPresence(name + " " + insight) || imperfectionScore(name + " " + insight) >= 1;
         return nameValid && insightValid && hasSubtlety;
       } else {
-        // PHYSICAL MODE: Require FRICTION actions + STRONG imperfection (2+)
+        // PHYSICAL MODE: Require FRICTION + STRONG imperfection + IRRATIONALITY
         var nameValid = hasFrictionAction(name) && !feelsLikeHeadline(name);
         var insightValid = hasPhysicalAction(insight) && !feelsLikeHeadline(insight);
         var strongImperfection = imperfectionScore(name + " " + insight) >= 2;
-        return nameValid && insightValid && strongImperfection;
+        var irrational = hasIrrationality(name + " " + insight);
+        
+        return nameValid && insightValid && strongImperfection && irrational;
       }
     }
 
@@ -961,6 +998,7 @@ Return only valid JSON for this one element.`
             if (!hasFrictionAction(el.element_name)) reasons.push('no friction action in name');
             if (!hasPhysicalAction(el.insight_line)) reasons.push('no physical action in insight');
             if (imperfectionScore(el.element_name + " " + el.insight_line) < 2) reasons.push('imperfection too weak (need 2+)');
+            if (!hasIrrationality(el.element_name + " " + el.insight_line)) reasons.push('not irrational enough');
             if (isTooNormal(el.element_name)) reasons.push('too normal (walking/standing/holding)');
           } else {
             if (!hasIndirectPresence(el.element_name) && !hasFrictionAction(el.element_name)) reasons.push('no indirect presence or friction action');
