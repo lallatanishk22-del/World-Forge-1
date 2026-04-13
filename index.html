@@ -402,89 +402,71 @@
     // ============================================
     var SYSTEM_PROMPT = `You are a creative director who captures real human behavior.
 
-Generate 4 emotionally real moments with strict human-first enforcement.
+CORE RULE: Every moment must describe something that can be physically observed happening in real life.
 
-MANDATORY STRUCTURE - EVERY ELEMENT:
+If it cannot be captured in a close-up shot showing human interaction, it is invalid.
 
-element_name: Human + action + imperfection (3-5 words)
-  ✅ VALID: "Hand Misses Zipper Pull" / "Checks Pocket Third Time" / "Drops Then Catches Handle"
-  ❌ INVALID: "Bag Journey" / "Airport Rush" / "Check-in Scene"
+ANTI-GENERIC PRESSURE:
+If the moment feels like something seen in ads before, reject it.
+Each moment should feel slightly uncomfortable in its specificity.
 
-insight_line: Visible human behavior (max 8 words)
-  ✅ VALID: "Reaches twice before fingers catch the pull"
-  ❌ INVALID: "Hold on tight" / "We made it" / "Journey begins"
+Generate 4 disconnected moments showing human imperfection.
 
-direction_label: VERB AND VERB (must show repetition/mistake/hesitation)
-  ✅ VALID: "REACH AND MISS" / "CHECK AND RECHECK" / "DROP AND CATCH"
-  ❌ INVALID: "DRAG AND DROP" / "STAND AND WAIT" / "PACK AND GO"
+STRUCTURE:
 
-CRITICAL CONSTRAINT - HUMAN INTERACTION + IMPERFECTION:
+element_name: Human + physical action + imperfection (3-5 words)
+  Example: "Adjusts Strap Twice" / "Checks Pocket Again" / "Fumbles With Zipper"
 
-Each moment MUST include:
-1. HUMAN: Visible person doing specific action (or just-used object showing human trace)
-2. IMPERFECTION: One of these MUST be present:
-   - Hesitation (pause before acting, uncertain grip)
-   - Mistake (miss, drop, wrong choice)
-   - Repeated action (check twice, adjust again, retry)
-   - Unnecessary action (over-preparation, redundant check)
+insight_line: What you see them doing (max 8 words, action-based)
+  Example: "Pulls tight, still loose, tries again"
 
-Examples of human-first imperfection:
-- "Hand reaches for zipper, misses, tries again"
-- "Checks same pocket twice in 3 seconds"
-- "Grabs handle, adjusts grip, readjusts"
-- "Sets bag down, picks up, moves it again"
-- "Pulls strap tight, then tighter, still adjusts"
+direction_label: VERB AND VERB (showing the imperfection)
+  Example: "PULL AND REPULL" / "CHECK AND RECHECK" / "REACH AND MISS"
 
-BANNED CONTENT:
+MANDATORY IMPERFECTION (pick one per moment):
+- Repeated action (does same thing twice/three times)
+- Hesitation (pauses before acting, uncertain movement)
+- Mistake (misses, drops, wrong choice, then corrects)
+- Unnecessary action (checks something already checked)
 
-Object POV: bag sitting, wheel rolling, zipper closing (without human)
-Abstract words: chaos, journey, arrival, moment, experience, relief, stress, freedom
-Summary phrases: "we made it", "left behind", "hold on", "next time"
-Linear sequence: beginning → middle → end (do NOT create story arc)
-Expected moments: obvious first/last steps, predictable actions
+ANTI-TIMELINE:
+Do NOT create sequence. These are 4 random observations.
+Not: packing → security → gate → boarding
+Yes: random moments that could happen anytime during travel
 
-ANTI-TIMELINE RULE:
+PREFER:
+- Actions over situations
+- Behavior over description  
+- Imperfection over completion
+- Observable over conceptual
 
-Moments must feel like random observations, NOT a sequence.
-❌ "Packing → Leaving → Arriving → Unpacking"
-✅ "Checks pocket while walking / Adjusts strap at random moment / Fumbles with zipper mid-conversation / Picks up bag twice before leaving"
+VALIDATION (ask yourself before returning):
+1. Can I see a human doing this action? (not just bag moving)
+2. Is there visible imperfection? (not smooth/perfect)
+3. Is this independent? (not part of story sequence)
+4. Is this specific? (not "Airport Rush" or "Check-in Chaos")
 
-No chronological order. No narrative flow. Just 4 disconnected real human moments.
+If NO to any → rewrite that element.
 
-VALIDATION BEFORE RETURN:
-
-Scan each element for:
-1. Is there a visible human (or human trace)? YES/NO
-2. Is there imperfection (hesitation/mistake/repeat/unnecessary)? YES/NO
-3. Is this a random moment, not part of timeline? YES/NO
-4. Would a real person do this? YES/NO
-
-If ANY "NO" → REWRITE that element before returning JSON
-
-GENERIC DETECTION:
-
-Before returning, ask: "Would I expect this in any [category] ad?"
-If YES → Too generic → Rewrite with more specific human mistake/quirk
-
-Return valid JSON with exactly 4 elements. No preamble.
+Return valid JSON with exactly 4 elements.
 
 JSON structure:
 {
   "core_feeling": "3-5 words with human tension",
-  "human_insight": "1 sharp line about mistake/repetition/hesitation",
+  "human_insight": "1 line about repeated behavior/mistake",
   "color_texture": "lighting + material + color",
-  "sound_direction": "human sounds (breathing, fumbling, checking), not music",
+  "sound_direction": "human sounds (fumbling, zipping, checking)",
   "first_action": {
-    "subject": "specific human (not 'person', use 'passenger', 'owner', 'wearer')",
-    "action": "command form with imperfection",
-    "camera": "shot type showing human hands/face/body",
+    "subject": "specific human type (passenger/traveler/owner)",
+    "action": "command showing imperfection",
+    "camera": "close on human hands/face/body",
     "duration": "seconds",
-    "environment": "where (must allow human presence)"
+    "environment": "where"
   },
   "shots": ["human action 1", "human action 2", "human action 3", "human action 4"],
-  "sequence": ["human moment 1", "human moment 2", "human moment 3"],
-  "pacing": "timing with hesitation beats",
-  "style": "camera on human behavior",
+  "sequence": ["moment 1", "moment 2", "moment 3"],
+  "pacing": "timing with hesitation",
+  "style": "observational, close on human behavior",
   "audio": "human sounds dominant",
   "positioning": "brand role",
   "tone": "2-3 words",
@@ -496,9 +478,9 @@ JSON structure:
   "elements": [
     {
       "element_name": "human + action + imperfection (3-5 words)",
-      "insight_line": "visible human behavior, max 8 words",
-      "direction_label": "VERB AND VERB (showing mistake/repeat)",
-      "unsplash_query": "person + specific action + imperfection + hands/face visible + environment + lighting (12-18 words)"
+      "insight_line": "visible behavior, max 8 words",
+      "direction_label": "VERB AND VERB",
+      "unsplash_query": "person + action + imperfection + hands visible + environment + lighting (12-18 words)"
     }
   ]
 }`;
@@ -514,6 +496,9 @@ JSON structure:
     var worldData = null;
     var generations = [];
     var currentGenerationIndex = -1;
+    
+    // 🔥 NEGATIVE MEMORY: Track rejected patterns
+    var rejectedPatterns = [];
 
     // ============================================
     // INIT
@@ -567,6 +552,27 @@ JSON structure:
       return scores[0].score > 0 ? scores[0].index : 0;
     }
 
+    // ============================================
+    // 🔥 CONCEPT TYPE DETECTION (PHYSICAL vs INDIRECT)
+    // ============================================
+    function detectConceptType(brief) {
+      var lowerBrief = brief.toLowerCase();
+      
+      // INDIRECT PRESENCE triggers
+      var indirectTriggers = [
+        'scent', 'perfume', 'fragrance', 'smell', 'aroma',
+        'memory', 'remember', 'recall', 'nostalgia',
+        'presence', 'atmosphere', 'ambiance', 'feeling',
+        'influence', 'subtle', 'background', 'quiet'
+      ];
+      
+      var hasIndirectTrigger = indirectTriggers.some(function(trigger) {
+        return lowerBrief.includes(trigger);
+      });
+      
+      return hasIndirectTrigger ? 'indirect' : 'physical';
+    }
+
     function detectCategory(brief) {
       var lowerBrief = brief.toLowerCase();
       for (var catKey in CATEGORIES) {
@@ -618,28 +624,64 @@ JSON structure:
     // ============================================
     // 🔥 UPDATED: PROMPT BUILDER (4 ELEMENTS, HUMAN-FIRST)
     // ============================================
-    function buildPrompt(brief, categoryKey, angleIndex) {
+    function buildPrompt(brief, categoryKey, angleIndex, conceptType) {
       var category = CATEGORIES[categoryKey];
       var angle = category.angles[angleIndex];
       
-      return 'Brief: "' + brief + '"\n\n' +
-        'INTERPRETATION:\n' + angle.interpretation + '\n\n' +
-        'CONSTRAINTS:\n\n' +
-        '1. HUMAN-FIRST RULE:\n' +
-        '   Every element must show human doing action\n' +
-        '   If no human visible, show just-used object (warm coffee cup, wrinkled clothes)\n' +
-        '   NEVER show object alone without human trace\n\n' +
-        '2. IMPERFECTION MANDATORY:\n' +
-        '   Each moment needs: hesitation OR mistake OR repeated action OR unnecessary action\n' +
-        '   Examples: reaches twice, checks again, drops then catches, adjusts repeatedly\n\n' +
-        '3. NO TIMELINE:\n' +
-        '   Do NOT create sequence (first → middle → last)\n' +
-        '   Generate 4 random disconnected moments\n' +
-        '   Like security camera catching random human mistakes\n\n' +
-        '4. KILL GENERIC:\n' +
-        '   If element feels expected/common → rewrite with specific human quirk\n' +
-        '   Replace "packing bag" with "stuffs sock in, pulls out, tries different corner"\n\n' +
-        'Generate exactly 4 moments. Each must show human imperfection.';
+      var prompt = 'Brief: "' + brief + '"\n\n';
+      
+      if (conceptType === 'indirect') {
+        // 🔥 INDIRECT PRESENCE MODE
+        prompt += 'MODE: INDIRECT PRESENCE\n\n';
+        prompt += 'This concept is intangible (scent/memory/presence/atmosphere).\n\n';
+        prompt += 'DO NOT show direct actions.\n\n';
+        prompt += 'SHOW:\n';
+        prompt += '- Proximity (passing close, leaning in)\n';
+        prompt += '- Pausing (stopping mid-action, lingering)\n';
+        prompt += '- Subtle adjustments (turning slightly, glancing)\n';
+        prompt += '- Moments almost missed (walking by, leaving)\n\n';
+        prompt += 'The subject should NOT be central.\n';
+        prompt += 'It should feel like a background influence that people notice late.\n\n';
+        prompt += 'EXAMPLES:\n';
+        prompt += '✅ "Passenger Pauses Mid-Aisle"\n';
+        prompt += '   insight: "Stops walking, turns head slightly"\n\n';
+        prompt += '✅ "Crew Member Passes Close"\n';
+        prompt += '   insight: "Walks by, passenger leans back slightly"\n\n';
+        prompt += 'Generate 4 subtle presence moments.\n\n';
+      } else {
+        // PHYSICAL BEHAVIOR MODE (existing)
+        prompt += 'INTERPRETATION:\n' + angle.interpretation + '\n\n' +
+          'CONSTRAINTS:\n\n' +
+          '1. HUMAN-FIRST RULE:\n' +
+          '   Every element must show human doing action\n' +
+          '   Human must be VISIBLE or physically implied (hand, body part, motion blur)\n' +
+          '   Object-only scenes are NOT allowed\n\n' +
+          '2. IMPERFECTION MANDATORY:\n' +
+          '   Each moment needs: hesitation OR mistake OR repeated action OR unnecessary action\n' +
+          '   Examples: reaches twice, checks again, drops then catches, adjusts repeatedly\n\n' +
+          '3. NO TIMELINE:\n' +
+          '   Do NOT create sequence (first → middle → last)\n' +
+          '   Generate 4 random disconnected moments\n' +
+          '   Like security camera catching random human mistakes\n\n' +
+          '4. KILL GENERIC:\n' +
+          '   If element feels expected/common → rewrite with specific human quirk\n' +
+          '   If moment feels like something seen in ads before, reject it\n' +
+          '   Each moment should feel slightly uncomfortable in its specificity\n\n';
+        
+        // 🔥 INJECT NEGATIVE MEMORY
+        if (rejectedPatterns.length > 0) {
+          var recentRejected = rejectedPatterns.slice(-5);
+          prompt += '5. AVOID THESE REJECTED PATTERNS:\n';
+          recentRejected.forEach(function(pattern) {
+            prompt += '   ❌ "' + pattern + '"\n';
+          });
+          prompt += '   Generate completely different types of moments.\n\n';
+        }
+        
+        prompt += 'Generate exactly 4 moments. Each must show human imperfection.';
+      }
+      
+      return prompt;
     }
 
     function refineWorld(worldData, brief) {
@@ -769,59 +811,104 @@ Return only valid JSON for this one element.`
     }
 
     // ============================================
-    // 🔥 UPDATED: VALIDATION (HUMAN-FIRST CHECK)
+    // 🔥 UNIVERSAL REALITY FILTER (NO BANNED WORDS)
     // ============================================
-    var BANNED_WORDS = [
-      'chaos', 'arrival', 'journey', 'moment', 'experience', 'relief', 'stress',
-      'freedom', 'adventure', 'destination', 'departure', 'final', 'next',
-      'beginning', 'end', 'start', 'finish', 'safe', 'perfect', 'complete'
-    ];
     
-    var BANNED_PHRASES = [
-      'we made it', 'made it', 'in sight', 'running out', 'left behind',
-      'hold on', 'at your own', 'own risk', 'next time', 'until next'
-    ];
-
-    var HUMAN_WORDS = [
-      'hand', 'finger', 'arm', 'face', 'eye', 'person', 'owner', 'passenger',
-      'wearer', 'user', 'customer', 'reaches', 'grabs', 'checks', 'looks',
-      'fumbles', 'adjusts', 'touches', 'holds', 'drops', 'catches'
-    ];
-
-    var IMPERFECTION_WORDS = [
-      'miss', 'twice', 'again', 'recheck', 'readjust', 'hesitate', 'fumble',
-      'drop', 'catch', 'slip', 'loose', 'tight', 'wrong', 'mistake', 'repeat'
-    ];
-
-    function hasHumanPresence(text) {
-      var lower = text.toLowerCase();
-      return HUMAN_WORDS.some(function(word) {
-        return lower.includes(word);
-      });
+    // CORE: Can this be physically observed?
+    function hasPhysicalAction(text) {
+      // Detects action verbs (present participle or action words)
+      return /(\b\w+ing\b|\bmiss(es)?\b|\bdrop(s)?\b|\badjust(s)?\b|\breach(es)?\b|\bgrab(s)?\b|\bcheck(s)?\b|\bpull(s)?\b|\bpush(es)?\b|\btouch(es)?\b|\bhold(s)?\b|\bwait(s)?\b|\blook(s)?\b|\bset(s)?\b|\bpick(s)?\b)/i.test(text);
     }
-
+    
+    // 🔥 NEW: Indirect presence detection (for scent/memory/atmosphere)
+    function hasIndirectPresence(text) {
+      // Detects subtle interactions: passing, pausing, noticing, adjusting
+      return /(pass|pause|notice|lean|adjust|linger|glance|hesitate|shift|turn|leave|enter|walk by|slow|stop)/i.test(text);
+    }
+    
+    // 🔥 UPGRADED: Specific actions only (kills "walking", "standing", "holding")
+    function hasSpecificAction(text) {
+      return /(miss|drop|adjust|check|grab|pull|push|fumble|catch|recheck|reach|touch|slip|squeeze|force|twist|tug|yank)/i.test(text);
+    }
+    
+    // 🔥 UPGRADED: Stronger imperfection detection
     function hasImperfection(text) {
-      var lower = text.toLowerCase();
-      return IMPERFECTION_WORDS.some(function(word) {
-        return lower.includes(word);
-      });
+      // Detects friction/mistakes/repetition - stricter patterns
+      return /(again|twice|third|retry|re-|miss|almost|slip|fumble|drop|catch|wrong|adjust|recheck|hesitate|barely|struggle|loose|tight)/i.test(text);
+    }
+    
+    // 🔥 NEW: Imperfection strength score
+    function imperfectionScore(text) {
+      var matches = text.match(/(again|twice|third|retry|miss|drop|fumble|adjust|recheck|re-)/gi);
+      return matches ? matches.length : 0;
+    }
+    
+    function isObservable(text) {
+      // Short = specific = visual (not headlines)
+      var wordCount = text.trim().split(/\s+/).length;
+      return wordCount >= 2 && wordCount <= 6;
+    }
+    
+    function feelsLikeHeadline(text) {
+      // Too long = likely generic summary
+      return text.trim().split(/\s+/).length > 6;
+    }
+    
+    // 🔥 UPGRADED: Dual-mode validation (physical OR indirect)
+    function isValidElement(element, conceptType) {
+      var name = element.element_name || '';
+      var insight = element.insight_line || '';
+      
+      if (conceptType === 'indirect') {
+        // INDIRECT MODE: Allow subtle presence
+        var nameValid = (hasIndirectPresence(name) || hasSpecificAction(name)) && !feelsLikeHeadline(name);
+        var insightValid = (hasIndirectPresence(insight) || hasPhysicalAction(insight)) && !feelsLikeHeadline(insight);
+        // Indirect mode doesn't require strong imperfection
+        var hasSubtlety = hasIndirectPresence(name + " " + insight) || imperfectionScore(name + " " + insight) >= 1;
+        return nameValid && insightValid && hasSubtlety;
+      } else {
+        // PHYSICAL MODE: Require specific actions + imperfection
+        var nameValid = hasSpecificAction(name) && !feelsLikeHeadline(name);
+        var insightValid = hasPhysicalAction(insight) && !feelsLikeHeadline(insight);
+        var strongImperfection = imperfectionScore(name + " " + insight) >= 1;
+        return nameValid && insightValid && strongImperfection;
+      }
     }
 
-    function isGenericName(text) {
-      var lower = text.toLowerCase();
-      return BANNED_WORDS.some(function(word) {
-        return lower.includes(word);
-      });
+    // ============================================
+    // 🔥 NEW: FORCED REWRITE LOOP (SELF-CORRECTING)
+    // ============================================
+    function enforceReality(worldData, brief, conceptType) {
+      var attempts = 0;
+      var maxAttempts = 3;
+      
+      function runLoop(data) {
+        if (attempts >= maxAttempts) {
+          console.warn('⚠️ Max validation attempts reached');
+          return Promise.resolve(data);
+        }
+        
+        return validateAndRewrite(data, brief, conceptType)
+          .then(function(validatedData) {
+            var allValid = (validatedData.elements || []).every(function(el) {
+              return isValidElement(el, conceptType);
+            });
+            
+            if (allValid) {
+              console.log('✅ All elements valid after ' + (attempts + 1) + ' passes (' + conceptType + ' mode)');
+              return validatedData;
+            }
+            
+            console.warn('🔁 Re-running validation loop... (attempt ' + (attempts + 2) + ')');
+            attempts++;
+            return runLoop(validatedData);
+          });
+      }
+      
+      return runLoop(worldData);
     }
 
-    function isGenericInsight(text) {
-      var lower = text.toLowerCase();
-      return BANNED_PHRASES.some(function(phrase) {
-        return lower.includes(phrase);
-      });
-    }
-
-    function validateAndRewrite(worldData, brief) {
+    function validateAndRewrite(worldData, brief, conceptType) {
       if (!worldData.elements) return Promise.resolve(worldData);
       
       var rewritePromises = [];
@@ -831,23 +918,27 @@ Return only valid JSON for this one element.`
         var needsRewrite = false;
         var reasons = [];
         
-        if (isGenericName(el.element_name)) {
+        // DUAL-MODE REALITY CHECK
+        if (!isValidElement(el, conceptType)) {
           needsRewrite = true;
-          reasons.push('banned word');
-        }
-        
-        if (isGenericInsight(el.insight_line)) {
-          needsRewrite = true;
-          reasons.push('banned phrase');
-        }
-        
-        if (!hasHumanPresence(el.element_name) && !hasHumanPresence(el.insight_line)) {
-          needsRewrite = true;
-          reasons.push('no human visible');
-        }
-        
-        if (!hasImperfection(el.element_name) && !hasImperfection(el.insight_line)) {
-          console.log('⚠️ Element ' + (idx + 1) + ' lacks imperfection (acceptable but not ideal)');
+          
+          // 🔥 TRACK REJECTED PATTERNS
+          rejectedPatterns.push(el.element_name);
+          if (rejectedPatterns.length > 20) {
+            rejectedPatterns = rejectedPatterns.slice(-15); // Keep last 15
+          }
+          
+          if (conceptType === 'physical') {
+            if (!hasSpecificAction(el.element_name)) reasons.push('no specific action in name');
+            if (!hasPhysicalAction(el.insight_line)) reasons.push('no physical action in insight');
+            if (imperfectionScore(el.element_name + " " + el.insight_line) < 1) reasons.push('weak imperfection');
+          } else {
+            if (!hasIndirectPresence(el.element_name) && !hasSpecificAction(el.element_name)) reasons.push('no indirect presence or action');
+            if (!hasIndirectPresence(el.insight_line) && !hasPhysicalAction(el.insight_line)) reasons.push('no subtle interaction');
+          }
+          
+          if (feelsLikeHeadline(el.element_name)) reasons.push('name too long (headline-like)');
+          if (feelsLikeHeadline(el.insight_line)) reasons.push('insight too long (headline-like)');
         }
         
         if (needsRewrite) {
@@ -868,7 +959,7 @@ Return only valid JSON for this one element.`
       if (rewriteCount > 0) {
         console.warn('🔥 Validation: ' + rewriteCount + ' elements being rewritten');
       } else {
-        console.log('✅ Validation: All elements passed');
+        console.log('✅ Validation: All elements passed reality filter');
       }
       
       return Promise.all(rewritePromises.map(function(item) { return item.promise; }))
@@ -892,12 +983,16 @@ Return only valid JSON for this one element.`
       errorMsg.style.display = 'none';
       closePanel();
       
+      // 🔥 DETECT CONCEPT TYPE (physical vs indirect)
+      var conceptType = detectConceptType(brief);
+      console.log('🎯 Concept type detected: ' + conceptType);
+      
       selectedCategory = detectCategory(brief);
       var category = CATEGORIES[selectedCategory];
       selectedAngleIndex = scoreAngle(category.angles, brief);
       
       showAngleSelector(selectedCategory);
-      var userPrompt = buildPrompt(brief, selectedCategory, selectedAngleIndex);
+      var userPrompt = buildPrompt(brief, selectedCategory, selectedAngleIndex, conceptType);
       
       setStatus('Building creative direction…');
 
@@ -925,7 +1020,8 @@ Return only valid JSON for this one element.`
         
         console.log('✅ PASS 1: Structure generated (' + (w.elements ? w.elements.length : 0) + ' elements)');
         
-        return validateAndRewrite(w, brief);
+        // 🔥 USE ENFORCED REALITY LOOP with conceptType
+        return enforceReality(w, brief, conceptType);
       })
       .then(function(validatedWorld) {
         console.log('✅ VALIDATION: Complete');
