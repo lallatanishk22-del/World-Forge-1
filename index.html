@@ -455,7 +455,11 @@ START OUTPUT NOW:`;
     // ============================================
     // 🔥 V2: PLAIN TEXT PARSER (CLEAN)
     // ============================================
-    function parseOutput(text) {
+    function parseOutput(text, brief) {
+      // 🔥 DEBUG
+      console.log("🧪 brief value:", brief);
+      console.log("🧪 brief type:", typeof brief);
+
       // 🔥 NORMALIZE LINE BREAKS (handles ↵, \r\n, \r)
       var normalized = text
         .replace(/↵/g, "\n")        // handle arrow newline
@@ -485,6 +489,9 @@ START OUTPUT NOW:`;
 
       var elements = [];
 
+      // STEP 3: Force string to be bulletproof
+      var lowerBrief = String(brief || "").toLowerCase();
+
       for (var i = 0; i < lines.length; i += 3) {
         if (!lines[i] || !lines[i+1] || !lines[i+2]) {
           console.warn("⚠️ Incomplete triplet at index", i);
@@ -493,7 +500,6 @@ START OUTPUT NOW:`;
 
         // 🔥 OBJECT-AWARE QUERY BUILDER
         var context = "person";
-        var lowerBrief = brief.toLowerCase();
         
         if (lowerBrief.match(/mall|shopping|store|retail/)) {
           context = "shopping mall";
@@ -845,7 +851,7 @@ START OUTPUT NOW:`;
         console.log("🧠 RAW MODEL OUTPUT (first 300 chars):", raw.substring(0, 300));
         
         // 🔥 V2: Parse plain text output (no JSON)
-        var w = parseOutput(raw);
+        var w = parseOutput(raw, brief);
         if (!w || !w.elements || w.elements.length === 0) {
           console.warn('⚠️ Parse failed or empty, using fallback');
           w = { elements: fallbackElements() };
