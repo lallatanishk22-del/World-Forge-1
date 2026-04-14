@@ -402,6 +402,33 @@
     // ============================================
     var SYSTEM_PROMPT = `You generate only real human micro-moments.
 
+CRITICAL: You MUST return JSON in this EXACT structure:
+
+{
+  "elements": [
+    {
+      "element_name": "string",
+      "insight_line": "string",
+      "direction_label": "string",
+      "unsplash_query": "string"
+    }
+  ],
+  "core_feeling": "string",
+  "human_insight": "string",
+  "color_texture": "string",
+  "sound_direction": "string",
+  "color_palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"],
+  "avoid": ["string", "string", "string"]
+}
+
+JSON RULES (NON-NEGOTIABLE):
+- elements must be exactly 4 items
+- no trailing commas
+- all keys must be in double quotes
+- no extra text before or after JSON
+- no markdown code blocks
+- no explanations
+
 Each output MUST include:
 - one identifiable human
 - one specific physical action  
@@ -1101,6 +1128,16 @@ Return only valid JSON for this one element.`
       })
       .then(function(data) {
         var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
+        
+        // 🔥 LOG RAW OUTPUT (debugging)
+        console.log("🧠 RAW MODEL OUTPUT (first 300 chars):", raw.substring(0, 300));
+        
+        // 🔥 HARD GUARD: Check if output is JSON
+        if (!raw.startsWith("{")) {
+          console.error("❌ Model did not return JSON. Full output:", raw);
+          throw new Error("Model returned non-JSON response");
+        }
+        
         var w = safeParse(raw);
         if (!w) throw new Error('Parse failed - invalid JSON from model');
         
@@ -1111,10 +1148,13 @@ Return only valid JSON for this one element.`
       })
       .then(function(validatedWorld) {
         console.log('✅ VALIDATION: Complete');
-        return refineWorld(validatedWorld, brief);
+        
+        // 🔥 REFINE STEP DISABLED (reduces JSON transformation complexity)
+        // return refineWorld(validatedWorld, brief);
+        return validatedWorld;
       })
       .then(function(w) {
-        console.log('✅ PASS 2: Refinement complete');
+        console.log('✅ Generation complete (refine disabled)');
         
         var generation = {
           id: Date.now(),
