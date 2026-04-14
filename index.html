@@ -453,7 +453,7 @@ No extra text.`;
 
       var elements = [];
 
-      for (var i = 0; i < lines.length; i += 3) {
+      for (var i = 0; i < lines.length - 2; i += 3) {
         var l1 = lines[i];
         var l2 = lines[i + 1];
         var l3 = lines[i + 2];
@@ -461,7 +461,8 @@ No extra text.`;
         // 🔥 STRICT VALIDATION
         if (!l1 || !l2 || !l3) continue;
         if (l1.split(" ").length < 2) continue;
-        if (!l3.includes("AND")) continue;
+        // Accept AND, &, or "and" in any case
+        if (!l3.match(/and|&/i)) continue;
 
         elements.push({
           element_name: l1,
@@ -469,6 +470,13 @@ No extra text.`;
           direction_label: l3,
           unsplash_query: l1 + " hands interaction candid real moment"
         });
+      }
+
+      // 🔥 GUARANTEE 8 ELEMENTS
+      if (elements.length < 8) {
+        var needed = 8 - elements.length;
+        var fallback = fallbackElements();
+        elements = elements.concat(fallback.slice(0, needed));
       }
 
       return {
