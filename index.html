@@ -400,53 +400,78 @@
     // ============================================
     // 🔥 UPDATED: HUMAN-FIRST SYSTEM PROMPT (4 ELEMENTS)
     // ============================================
-    var SYSTEM_PROMPT = `Generate human micro-behaviors only.
+    var SYSTEM_PROMPT = `Generate real human micro-behaviors.
 
-RULES:
-- Show physical action (not situation or place)
-- Include visible imperfection (mistake, hesitation, retry)
-- No aesthetic descriptions
-- No scene names ("coffee shop", "gate area", "bench")
+STRICT RULES:
 
-BANNED OUTPUTS:
-- Location names
-- Emotion labels ("confident", "nervous")
-- Clean perfect actions
-- Abstract concepts
+1. HUMAN MUST BE PRESENT
+- Show a person, hands, or body in action
+- No objects alone
+- No environments alone
 
-REQUIRED:
-- Human visible
-- Specific action
-- Something goes wrong
+2. ACTION MUST BE SPECIFIC
+- Describe physical movement only
+- No categories, no summaries
+- Must be something you can see frame-by-frame
 
-JSON STRUCTURE:
+3. IMPERFECTION IS MANDATORY
+Each moment must include at least one:
+- hesitation (stops, pauses)
+- mistake (misses, drops)
+- repetition (does again unnecessarily)
+- correction (fixes something already correct)
 
-{
-  "elements": [
-    {
-      "element_name": "action + imperfection (4-6 words)",
-      "insight_line": "physical behavior (8 words max)",
-      "direction_label": "VERB AND VERB",
-      "unsplash_query": "human + action + environment"
-    }
-  ],
-  "core_feeling": "string",
-  "human_insight": "string",
-  "color_texture": "string",
-  "sound_direction": "string",
-  "color_palette": ["#hex", "#hex", "#hex", "#hex", "#hex"],
-  "avoid": ["string", "string", "string"]
-}
+4. NO GENERIC OUTPUT
+Reject anything that looks like:
+- "waiting", "standing", "holding"
+- "airport", "shop", "scene", "area"
+- anything that feels like a stock photo title
+
+5. NO EMOTIONS / NO INTERPRETATION
+- Do NOT say "nervous", "confident", "happy"
+- Only show physical behavior
+
+6. NO TIMELINE
+- Moments must be random
+- Not beginning -> middle -> end
+- Like CCTV catching disconnected human actions
+
+FORMAT:
+
+Return EXACTLY 4 elements.
+
+Each element must be formatted as exactly 3 lines:
+
+Line 1: Title (3-5 words showing action + imperfection)
+Line 2: Action (max 8 words describing what is visibly happening)
+Line 3: Direction (exactly 2 verbs in format: VERB AND VERB)
+
+Then a blank line before the next element.
 
 EXAMPLES:
-✅ "Types, Stops, Deletes Word"
-✅ "Checks Pocket, Looks Again"
-✅ "Presses Button Twice Fast"
-❌ "Coffee shop moment"
-❌ "Traveler waiting"
-❌ "Confident stance"
 
-Return ONLY valid JSON. No markdown. No text outside JSON.`;
+GOOD:
+Checks pocket, checks again
+Hand goes in, comes out, goes again
+CHECK AND RECHECK
+
+Presses button twice
+Finger taps, pauses, taps again
+PRESS AND REPRESS
+
+BAD:
+Waiting at gate
+Coffee shop moment
+Confident stance
+
+FINAL OUTPUT:
+Return plain text only.
+No JSON.
+No explanation.
+No formatting symbols.
+No markdown.
+
+Just 4 elements, each as 3 lines separated by blank lines.`;
 
     // ============================================
     // STATE & CONFIG
@@ -464,15 +489,45 @@ Return ONLY valid JSON. No markdown. No text outside JSON.`;
     var rejectedPatterns = [];
 
     // ============================================
-    // 🔥 ROBUST JSON PARSER
+    // 🔥 V2 PLAIN TEXT PARSER (NO JSON FRAGILITY)
     // ============================================
-    function safeParse(raw) {
+    function parsePlainText(raw) {
       try {
-        var match = raw.match(/\{[\s\S]*\}/);
-        if (!match) return null;
-        return JSON.parse(match[0]);
+        // Split into blocks (separated by blank lines)
+        var blocks = raw.trim().split(/\n\s*\n/);
+        
+        var elements = [];
+        
+        blocks.forEach(function(block) {
+          var lines = block.trim().split('\n');
+          
+          if (lines.length >= 3) {
+            var element = {
+              element_name: lines[0].trim(),
+              insight_line: lines[1].trim(),
+              direction_label: lines[2].trim(),
+              unsplash_query: "candid person " + lines[1].trim() + " imperfect real moment documentary"
+            };
+            elements.push(element);
+          }
+        });
+        
+        if (elements.length === 0) {
+          console.error("❌ No valid elements parsed from output");
+          return null;
+        }
+        
+        return {
+          elements: elements,
+          core_feeling: "Raw human imperfection",
+          human_insight: "People repeat unnecessary actions",
+          color_texture: "Natural light, muted tones",
+          sound_direction: "Ambient human sounds",
+          color_palette: ["#8B7355", "#A0826D", "#C9ADA7", "#E8DDD3", "#F4EDE8"],
+          avoid: ["perfection", "beauty", "confidence"]
+        };
       } catch (e) {
-        console.error("❌ Parse failed:", e.message);
+        console.error("❌ Plain text parse failed:", e.message);
         return null;
       }
     }
@@ -878,6 +933,21 @@ Return only valid JSON for this one element.`
       return text.trim().split(/\s+/).length > 6;
     }
     
+    // 🔥 V2: PRE-RENDER VALIDATION (kills generic outputs)
+    function preRenderValidation(element) {
+      var name = element.element_name || '';
+      var insight = element.insight_line || '';
+      
+      var bannedGeneric = /(waiting|standing|holding|looking|area|scene|place|moment|environment|shop|gate|station|bench)/i;
+      
+      if (bannedGeneric.test(name) || bannedGeneric.test(insight)) {
+        console.warn('🚫 PRE-RENDER REJECT:', name);
+        return false;
+      }
+      
+      return true;
+    }
+
     // 🔥 LIGHT VALIDATION (not strict - allow good outputs through)
     function isValidElement(element, conceptType) {
       var name = element.element_name || '';
@@ -925,11 +995,18 @@ Return only valid JSON for this one element.`
       
       var rewriteCount = 0;
       
-      // 🔥 SINGLE PASS: Replace invalid elements with static fallback (no LLM rewrite)
+      // 🔥 V2: SINGLE PASS with pre-render validation
       worldData.elements.forEach(function(el, idx) {
-        if (!isValidElement(el, conceptType)) {
+        // First check: pre-render validation (kills generic words)
+        if (!preRenderValidation(el)) {
           rewriteCount++;
-          console.warn('🔥 Element ' + (idx + 1) + ' invalid, using fallback');
+          console.warn('🔥 Element ' + (idx + 1) + ' contains generic words, using fallback');
+          worldData.elements[idx] = staticFallbackRewrite(el, idx);
+        }
+        // Second check: behavior validation
+        else if (!isValidElement(el, conceptType)) {
+          rewriteCount++;
+          console.warn('🔥 Element ' + (idx + 1) + ' invalid behavior, using fallback');
           
           // 🔥 TRACK REJECTED PATTERNS
           rejectedPatterns.push(el.element_name);
@@ -937,7 +1014,7 @@ Return only valid JSON for this one element.`
             rejectedPatterns = rejectedPatterns.slice(-15);
           }
           
-          // Use static fallback (deterministic, no JSON corruption)
+          // Use static fallback (deterministic, stable)
           worldData.elements[idx] = staticFallbackRewrite(el, idx);
         }
       });
@@ -1005,20 +1082,13 @@ Return only valid JSON for this one element.`
         // 🔥 LOG RAW OUTPUT (debugging)
         console.log("🧠 RAW MODEL OUTPUT (first 300 chars):", raw.substring(0, 300));
         
-        // 🔥 EXTRACT JSON (instead of strict startsWith check)
-        var match = raw.match(/\{[\s\S]*\}/);
-        if (!match) {
-          console.error("❌ No JSON found in output. Full response:", raw);
-          throw new Error("Model returned no JSON");
-        }
-        raw = match[0];
+        // 🔥 V2: Parse plain text output (no JSON)
+        var w = parsePlainText(raw);
+        if (!w) throw new Error('Parse failed - invalid text format from model');
         
-        var w = safeParse(raw);
-        if (!w) throw new Error('Parse failed - invalid JSON from model');
+        console.log('✅ PASS 1: Structure parsed (' + (w.elements ? w.elements.length : 0) + ' elements)');
         
-        console.log('✅ PASS 1: Structure generated (' + (w.elements ? w.elements.length : 0) + ' elements)');
-        
-        // 🔥 USE ENFORCED REALITY LOOP with conceptType
+        // 🔥 USE SINGLE PASS VALIDATION
         return enforceReality(w, brief, conceptType);
       })
       .then(function(validatedWorld) {
