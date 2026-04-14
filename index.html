@@ -400,27 +400,69 @@
     // ============================================
     // 🔥 UPDATED: HUMAN-FIRST SYSTEM PROMPT (4 ELEMENTS)
     // ============================================
-    var SYSTEM_PROMPT = `Generate simple human actions.
+    var SYSTEM_PROMPT = `STRICT BEHAVIOR MODE:
 
-Each moment must show a small physical action with slight imperfection (repeat, pause, or interruption).
+Do NOT output:
+- locations (mall, store, cafe, entrance, exit)
+- scenes or categories
+- types of places
+- summaries of environments
 
-Keep actions real and observable.
+Only output:
+- small human physical actions
+- micro behaviors (hands, body, movement)
+- imperfect actions (repeat, hesitate, undo)
+
+Each moment must describe WHAT A PERSON DOES, not WHERE they are.
+
+Generate real human micro-behaviors.
+
+Each moment must show an action that does NOT resolve properly.
+
+Reject any moment that feels like a complete action.
+
+Each moment must feel slightly wrong, interrupted, or unnecessary.
+
+If the action could be used in a fashion photoshoot, it is invalid.
+
+Every action must be incomplete, repeated, or slightly reversed.
+
+Prefer:
+- stopping midway
+- repeating action
+- correcting action
+- must show repetition or interruption (do, stop, do again)
+
+At least one moment must include reversal (does something, then undoes it).
+
+Avoid clean actions. Prefer actions that stop midway, repeat, or change direction.
+
+Each moment must contain a contradiction in action (does something, then partially undoes or questions it).
+
+At least one moment must feel unnecessary or inefficient, as if done out of habit rather than purpose.
+
+Titles must include repetition or change (not a single clean action).
+
+Do not describe situations or events. Only describe small physical actions.
+
+If output sounds like a scene, rewrite it as a physical movement.
+
+Avoid single-step actions. Prefer broken or looping actions.
+
+If an action completes cleanly, rewrite it to show interruption or repetition.
 
 Avoid:
-- emotions
-- storytelling
-- abstract words
+- generic scenes
+- abstract words (happy, anxious, etc.)
 
 Format:
 
-Line 1: short action phrase
-Line 2: what physically happens
-Line 3: short action label
+Title (3-5 words)
+Action (max 8 words)
+DIRECTION AND DIRECTION
 
-Return exactly 8 moments.
-Each moment should be 3 lines.
-
-No extra text.`;
+Return 4 moments.
+Plain text only.`;
 
     // ============================================
     // STATE & CONFIG
@@ -451,57 +493,19 @@ No extra text.`;
 
       var elements = [];
 
-      // FIX 6: DEBUG LOGGING
-      console.log("RAW:", text);
-      console.log("LINES:", lines.length);
-
-      // FIX 2: IMPROVED PARSER WITH LOCKED GROUPING
       for (var i = 0; i < lines.length; i += 3) {
-        var l1 = lines[i];
-        var l2 = lines[i + 1];
-        var l3 = lines[i + 2];
-
-        if (!l1 || !l2) continue;
+        if (!lines[i + 2]) break;
 
         elements.push({
-          element_name: l1,
-          insight_line: l2,
-          direction_label: l3 || "DO AND REDO",
-          // FIX 4: BETTER IMAGE QUERIES WITH RANDOMIZATION
-          unsplash_query: l1 + " person real candid " + (Math.random() > 0.5 ? "close up" : "wide shot")
+          element_name: lines[i],
+          insight_line: lines[i + 1],
+          direction_label: lines[i + 2],
+          unsplash_query: lines[i] + " hands interaction candid real moment"
         });
       }
 
-      console.log("ELEMENTS PARSED:", elements.length);
-
-      // FIX 2: SOFT CLEANING (instead of deleting)
-      elements = elements.map(function(el) {
-        return {
-          element_name: el.element_name.trim(),
-          insight_line: el.insight_line.trim(),
-          direction_label: el.direction_label || "DO AND REDO",
-          unsplash_query: el.unsplash_query
-        };
-      });
-
-      // FIX 1: MINIMAL QUALITY FILTER (preserve good data)
-      elements = elements.filter(function(el) {
-        return el.element_name && el.insight_line;
-      });
-
-      console.log("AFTER QUALITY FILTER:", elements.length);
-
-      // FIX 4: HARD LIMIT TO 8 ELEMENTS
-      elements = elements.slice(0, 8);
-
-      // FIX 3: EMERGENCY FALLBACK ONLY
-      if (elements.length < 4) {
-        console.warn("⚠️ Severe failure, using fallback");
-        elements = fallbackElements();
-      }
-
       return {
-        elements: elements,
+        elements: elements.slice(0, 4),
         core_feeling: "Raw human imperfection",
         human_insight: "People repeat unnecessary actions",
         color_texture: "Natural light, muted tones",
@@ -658,20 +662,38 @@ No extra text.`;
         prompt += '   insight: "Stops walking, turns head slightly"\n\n';
         prompt += '✅ "Crew Member Passes Close"\n';
         prompt += '   insight: "Walks by, passenger leans back slightly"\n\n';
-        prompt += 'Generate 8 subtle presence moments.\n\n';
+        prompt += 'Generate 4 subtle presence moments.\n\n';
       } else {
-        // PHYSICAL BEHAVIOR MODE
-        prompt += 'INTERPRETATION:\n' + angle.interpretation + '\n\n';
+        // PHYSICAL BEHAVIOR MODE (existing)
+        prompt += 'INTERPRETATION:\n' + angle.interpretation + '\n\n' +
+          'CONSTRAINTS:\n\n' +
+          '1. HUMAN-FIRST RULE:\n' +
+          '   Every element must show human doing action\n' +
+          '   Human must be VISIBLE or physically implied (hand, body part, motion blur)\n' +
+          '   Object-only scenes are NOT allowed\n\n' +
+          '2. IMPERFECTION MANDATORY:\n' +
+          '   Each moment needs: hesitation OR mistake OR repeated action OR unnecessary action\n' +
+          '   Examples: reaches twice, checks again, drops then catches, adjusts repeatedly\n\n' +
+          '3. NO TIMELINE:\n' +
+          '   Do NOT create sequence (first -> middle -> last)\n' +
+          '   Generate 4 random disconnected moments\n' +
+          '   Like security camera catching random human mistakes\n\n' +
+          '4. KILL GENERIC:\n' +
+          '   If element feels expected/common -> rewrite with specific human quirk\n' +
+          '   If moment feels like something seen in ads before, reject it\n' +
+          '   Each moment should feel slightly uncomfortable in its specificity\n\n';
         
-        prompt += 'Generate 8 raw human moments.\n\n';
-        prompt += 'Each moment must show:\n';
-        prompt += '- a small physical action\n';
-        prompt += '- done imperfectly (repeat, miss, hesitate, or interrupt)\n\n';
-        prompt += 'Moments should feel real, slightly awkward, and unplanned.\n\n';
-        prompt += 'Do NOT create a sequence.\n';
-        prompt += 'Each moment is independent.\n\n';
+        // 🔥 INJECT NEGATIVE MEMORY
+        if (rejectedPatterns.length > 0) {
+          var recentRejected = rejectedPatterns.slice(-5);
+          prompt += '5. AVOID THESE REJECTED PATTERNS:\n';
+          recentRejected.forEach(function(pattern) {
+            prompt += '   ❌ "' + pattern + '"\n';
+          });
+          prompt += '   Generate completely different types of moments.\n\n';
+        }
         
-        prompt += 'Generate exactly 8 moments.';
+        prompt += 'Generate exactly 4 moments. Each must show human imperfection.';
       }
       
       return prompt;
@@ -705,30 +727,6 @@ No extra text.`;
           insight_line: "Cup lifts, pauses, lowers again",
           direction_label: "LIFT AND LOWER",
           unsplash_query: "person drinking pause candid real"
-        },
-        {
-          element_name: "Reaches, pulls back",
-          insight_line: "Hand extends, hesitates, extends again",
-          direction_label: "REACH AND RETREAT",
-          unsplash_query: "person reaching hesitating candid"
-        },
-        {
-          element_name: "Opens, closes, opens",
-          insight_line: "Door handle turns halfway, stops, turns",
-          direction_label: "OPEN AND RETHINK",
-          unsplash_query: "person opening door hesitating candid"
-        },
-        {
-          element_name: "Looks, looks away",
-          insight_line: "Glances up, drops eyes, glances again",
-          direction_label: "LOOK AND AVOID",
-          unsplash_query: "person glancing away candid moment"
-        },
-        {
-          element_name: "Steps forward, pauses",
-          insight_line: "Foot lifts, hovers, sets down lightly",
-          direction_label: "STEP AND HESITATE",
-          unsplash_query: "person walking pausing candid"
         }
       ];
     }
