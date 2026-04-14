@@ -291,6 +291,9 @@
   </div>
 
   <script>
+    // 🔥 BUILD FINGERPRINT - verify deployment
+    console.log("🔥 NEW BUILD v2 - parseOutput fix active");
+    
     // ============================================
     // 🔥 UPDATED: HUMAN-FIRST CATEGORIES (4 ELEMENTS)
     // ============================================
@@ -489,8 +492,8 @@ START OUTPUT NOW:`;
 
       var elements = [];
 
-      // STEP 3: Force string to be bulletproof
-      var lowerBrief = String(brief || "").toLowerCase();
+      // BULLETPROOF: Force brief to be a string, never crash
+      var lowerBrief = (typeof brief === "string" ? brief : "").toLowerCase();
 
       for (var i = 0; i < lines.length; i += 3) {
         if (!lines[i] || !lines[i+1] || !lines[i+2]) {
