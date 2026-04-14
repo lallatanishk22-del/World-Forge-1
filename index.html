@@ -117,7 +117,7 @@
     .e-value { font-family: 'Cormorant Garamond', serif; font-size: 16px; line-height: 1.7; color: var(--text-dim); }
     .e-list { list-style: none; }
     .e-list li { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); line-height: 1.7; padding-left: 16px; position: relative; margin-bottom: 3px; }
-    .e-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 11px; top: 4px; }
+    .e-list li::before { content: '->'; position: absolute; left: 0; color: var(--accent-dim); font-size: 11px; top: 4px; }
 
     .avoid-bar { display: flex; align-items: flex-start; gap: 14px; padding: 14px 22px; background: var(--surface); border-top: 2px solid var(--bg); }
     .avoid-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #c0392b; white-space: nowrap; margin-top: 2px; }
@@ -170,7 +170,7 @@
     .p-value { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-dim); line-height: 1.7; }
     .p-list { list-style: none; }
     .p-list li { font-family: 'Cormorant Garamond', serif; font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-left: 14px; position: relative; margin-bottom: 2px; }
-    .p-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 10px; top: 4px; }
+    .p-list li::before { content: '->'; position: absolute; left: 0; color: var(--accent-dim); font-size: 10px; top: 4px; }
 
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
@@ -377,7 +377,7 @@
           },
           {
             name: 'Conversation Stop',
-            description: 'Talk → silence → talk',
+            description: 'Talk -> silence -> talk',
             interpretation: 'Show human group: three people talking (hands gesturing, laughing), food arrives, all take first bite at same time, talking stops (just chewing, eye contact between them, small nods), 10 seconds later talking resumes. Focus on sound gap. Must show multiple faces + moment of synchronized silence.'
           }
         ],
@@ -415,18 +415,18 @@ HARD RULES (NON-NEGOTIABLE):
 
 2. NO CLEAN OR PERFECT ACTIONS
    Every action must include friction, hesitation, or correction.
-   If it can be done smoothly → INVALID.
+   If it can be done smoothly -> INVALID.
 
 3. NO MULTI-STEP SEQUENCES
-   Show one micro-loop only: [action] → [variation] → [repeat/correct]
-   Not: step 1 → step 2 → step 3
+   Show one micro-loop only: [action] -> [variation] -> [repeat/correct]
+   Not: step 1 -> step 2 -> step 3
 
 4. NO STORYTELLING OR ATMOSPHERE
    No mood. No context. No "busy shop" or "quiet moment".
    Only: human + action + imperfection.
 
 5. NO EMOTION LABELS
-   If it can be described in one word (confident, nervous, happy) → INVALID.
+   If it can be described in one word (confident, nervous, happy) -> INVALID.
    Show physical behavior only.
 
 SELF-CHECK BEFORE OUTPUT:
@@ -436,14 +436,14 @@ Before finalizing, validate each element:
 2. Is the action specific and visible? (YES/NO)  
 3. Is there a real imperfection? (YES/NO)
 
-If any answer is NO → regenerate that element internally.
+If any answer is NO -> regenerate that element internally.
 
 LANGUAGE RULES:
 
 - Use minimal, observational language
 - Avoid adjectives unless physically necessary
 - Avoid emotional or interpretive words
-- Format: [action] → [pause/change] → [continuation]
+- Format: [action] -> [pause/change] -> [continuation]
 
 VARIATION ENFORCEMENT:
 
@@ -457,11 +457,11 @@ Each element must differ in physical behavior type.
 AUTO-REJECT EXAMPLES:
 
 These are INVALID outputs:
-❌ "A person enjoying coffee" → emotion, no imperfection
-❌ "A busy shop scene" → no specific human
-❌ "Someone interacting with a device" → generic, no friction
-❌ "Confident stance" → emotion label
-❌ "Preparation for departure" → idea, not action
+❌ "A person enjoying coffee" -> emotion, no imperfection
+❌ "A busy shop scene" -> no specific human
+❌ "Someone interacting with a device" -> generic, no friction
+❌ "Confident stance" -> emotion label
+❌ "Preparation for departure" -> idea, not action
 
 VALID OUTPUT STRUCTURE:
 
@@ -654,11 +654,11 @@ Generate 4 elements meeting ALL constraints.`;
           '   Each moment needs: hesitation OR mistake OR repeated action OR unnecessary action\n' +
           '   Examples: reaches twice, checks again, drops then catches, adjusts repeatedly\n\n' +
           '3. NO TIMELINE:\n' +
-          '   Do NOT create sequence (first → middle → last)\n' +
+          '   Do NOT create sequence (first -> middle -> last)\n' +
           '   Generate 4 random disconnected moments\n' +
           '   Like security camera catching random human mistakes\n\n' +
           '4. KILL GENERIC:\n' +
-          '   If element feels expected/common → rewrite with specific human quirk\n' +
+          '   If element feels expected/common -> rewrite with specific human quirk\n' +
           '   If moment feels like something seen in ads before, reject it\n' +
           '   Each moment should feel slightly uncomfortable in its specificity\n\n';
         
@@ -692,9 +692,9 @@ Generate 4 elements meeting ALL constraints.`;
               content: `You are a brutal creative reviewer improving first-pass creative work.
 
 Your job:
-- Increase human specificity (vague action → exact hand/face/body movement)
-- Add more imperfection (smooth → fumbling, hesitating, repeating)
-- Remove predictable moments (expected → surprising human quirk)
+- Increase human specificity (vague action -> exact hand/face/body movement)
+- Add more imperfection (smooth -> fumbling, hesitating, repeating)
+- Remove predictable moments (expected -> surprising human quirk)
 - Ensure every moment shows human making mistake
 
 For each element, ask:
@@ -748,22 +748,22 @@ Return the same JSON structure with improved elements.`
               content: `Rewrite this element as a motion sequence showing irrational behavior.
 
 CRITICAL ANTI-INTERPRETATION RULE:
-If the moment can be described in one word (confident, nervous, happy, relieved, anxious) → REJECT IT.
+If the moment can be described in one word (confident, nervous, happy, relieved, anxious) -> REJECT IT.
 
 NO emotion labels. ONLY physical motion.
 
 MOTION SEQUENCE STRUCTURE (MANDATORY):
-Format: [action] → [pause/change] → [continuation]
+Format: [action] -> [pause/change] -> [continuation]
 
 Examples:
-❌ "Confident Stance" → emotion label, invalid
-✅ "Shoulders Pull Back, Pause, Then Drop" → motion observed
-❌ "Nervous Fidget" → emotion label
-✅ "Pen Taps Twice, Pauses, Presses Harder" → action sequence
-❌ "Hand On Button" → static, no motion
-✅ "Presses Button, Waits, Presses Again" → before/during/after
+❌ "Confident Stance" -> emotion label, invalid
+✅ "Shoulders Pull Back, Pause, Then Drop" -> motion observed
+❌ "Nervous Fidget" -> emotion label
+✅ "Pen Taps Twice, Pauses, Presses Harder" -> action sequence
+❌ "Hand On Button" -> static, no motion
+✅ "Presses Button, Waits, Presses Again" -> before/during/after
 
-CRITICAL: If the viewer can justify why the action is needed → reject it.
+CRITICAL: If the viewer can justify why the action is needed -> reject it.
 
 Force moments showing:
 - doing something again immediately after doing it
@@ -771,7 +771,7 @@ Force moments showing:
 - correcting something that was already correct
 
 Requirements:
-- element_name: Must include motion sequence (action → pause → continuation)
+- element_name: Must include motion sequence (action -> pause -> continuation)
 - Must show: unnecessary repetition or irrational correction
 - Must include redundancy signal (after/even after/still/already/same/just/then)
 - insight_line: visible repeated behavior (8 words max)
