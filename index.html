@@ -117,7 +117,7 @@
     .e-value { font-family: 'Cormorant Garamond', serif; font-size: 16px; line-height: 1.7; color: var(--text-dim); }
     .e-list { list-style: none; }
     .e-list li { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); line-height: 1.7; padding-left: 16px; position: relative; margin-bottom: 3px; }
-    .e-list li::before { content: '->'; position: absolute; left: 0; color: var(--accent-dim); font-size: 11px; top: 4px; }
+    .e-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 11px; top: 4px; }
 
     .avoid-bar { display: flex; align-items: flex-start; gap: 14px; padding: 14px 22px; background: var(--surface); border-top: 2px solid var(--bg); }
     .avoid-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #c0392b; white-space: nowrap; margin-top: 2px; }
@@ -170,7 +170,7 @@
     .p-value { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-dim); line-height: 1.7; }
     .p-list { list-style: none; }
     .p-list li { font-family: 'Cormorant Garamond', serif; font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-left: 14px; position: relative; margin-bottom: 2px; }
-    .p-list li::before { content: '->'; position: absolute; left: 0; color: var(--accent-dim); font-size: 10px; top: 4px; }
+    .p-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 10px; top: 4px; }
 
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
@@ -291,9 +291,6 @@
   </div>
 
   <script>
-    // 🔥 BUILD FINGERPRINT - verify deployment
-    console.log("🔥 NEW BUILD v2 - parseOutput fix active");
-    
     // ============================================
     // 🔥 UPDATED: HUMAN-FIRST CATEGORIES (4 ELEMENTS)
     // ============================================
@@ -380,7 +377,7 @@
           },
           {
             name: 'Conversation Stop',
-            description: 'Talk -> silence -> talk',
+            description: 'Talk → silence → talk',
             interpretation: 'Show human group: three people talking (hands gesturing, laughing), food arrives, all take first bite at same time, talking stops (just chewing, eye contact between them, small nods), 10 seconds later talking resumes. Focus on sound gap. Must show multiple faces + moment of synchronized silence.'
           }
         ],
@@ -403,39 +400,146 @@
     // ============================================
     // 🔥 UPDATED: HUMAN-FIRST SYSTEM PROMPT (4 ELEMENTS)
     // ============================================
-    var SYSTEM_PROMPT = `YOU MUST FOLLOW THIS EXACT FORMAT.
+    var SYSTEM_PROMPT = `You are a creative director who captures real human behavior.
 
-CRITICAL RULE:
-DO NOT WRITE WORDS LIKE "Moment", "One", "Two", OR ANY NUMBERING.
+CORE RULE: Every moment must describe something that can be physically observed happening in real life.
 
-If you include numbering, the output is INVALID.
+If it cannot be captured in a close-up shot showing human interaction, it is invalid.
 
-OUTPUT EXACTLY 8 MOMENTS.
-EACH MOMENT MUST BE EXACTLY 3 LINES.
+ANTI-INTERPRETATION RULE (CRITICAL):
 
-Format for EACH moment:
+If the moment can be described in one word (confident, nervous, happy, relieved) → it is INVALID.
 
-<action phrase>
-<physical detail>
-<action label>
+NO emotion labels. NO interpretations. ONLY physical actions.
 
-Example:
+Examples:
+❌ "Confident Stance" → interpretation, not behavior
+✅ "Shoulders Pull Back Then Drop Slightly" → motion observed
+❌ "Nervous Fidget" → emotion label
+✅ "Finger Taps Twice Then Presses Harder" → action sequence
 
-Picks shirt up
-Fingers grab fabric, lift, then lower again
-LIFT AND LOWER
+MICRO-ACTION STRUCTURE (MANDATORY):
 
-Rules:
-- EXACTLY 8 moments
-- EXACTLY 3 lines per moment
-- NO blank lines
-- NO numbering
-- NO labels like "Moment"
-- NO extra text
+Every moment must include:
+1. A visible action
+2. AND a variation in that action (repeat / fail / adjust / pause)
 
-Generate raw human micro-behaviors.
+Format: [action] → [pause/change] → [continuation]
 
-START OUTPUT NOW:`;
+Examples:
+❌ "Pen Scratching" → static
+✅ "Pen Taps Twice, Pauses, Then Presses Harder" → motion sequence
+❌ "Hand On Handle" → frozen
+✅ "Grips Handle, Loosens, Then Grips Again" → micro-loop
+
+CRITICAL RULE (NON-NEGOTIABLE):
+
+If the action can be done once correctly, it is INVALID.
+
+Only include actions where:
+- the person does it again unnecessarily
+- the first attempt fails or feels incomplete
+- there is visible correction or re-adjustment
+
+NO HUMANS = INVALID:
+If no human is present OR no human action is visible → discard moment immediately.
+
+REDUNDANCY SIGNAL RULE:
+
+The element_name must include a contradiction or redundancy signal.
+
+Required words/phrases:
+- "after" / "again after" / "even after"
+- "still" / "already"
+- "same" / "just"
+- "then" / "pause then" / "stops then"
+
+Examples:
+❌ "Adjusts Strap Again" → missing redundancy context
+✅ "Adjusts Strap Even After Tightening" → shows irrationality
+❌ "Checks Pocket Twice" → weak
+✅ "Checks Same Pocket Again After Just Looking" → irrational
+
+If name does not imply redundancy, reject it.
+
+ANTI-GENERIC PRESSURE:
+If the moment feels like something seen in ads before, reject it.
+Each moment should feel slightly uncomfortable in its specificity.
+
+Generate 4 disconnected moments showing human imperfection.
+
+STRUCTURE:
+
+element_name: Human + physical action + imperfection (3-5 words)
+  Example: "Adjusts Strap Twice" / "Checks Pocket Again" / "Fumbles With Zipper"
+
+insight_line: What you see them doing (max 8 words, action-based)
+  Example: "Pulls tight, still loose, tries again"
+
+direction_label: VERB AND VERB (showing the imperfection)
+  Example: "PULL AND REPULL" / "CHECK AND RECHECK" / "REACH AND MISS"
+
+MANDATORY IMPERFECTION (pick one per moment):
+- Repeated action (does same thing twice/three times)
+- Hesitation (pauses before acting, uncertain movement)
+- Mistake (misses, drops, wrong choice, then corrects)
+- Unnecessary action (checks something already checked)
+
+ANTI-TIMELINE:
+Do NOT create sequence. These are 4 random observations.
+Not: packing → security → gate → boarding
+Yes: random moments that could happen anytime during travel
+
+PREFER:
+- Actions over situations
+- Behavior over description  
+- Imperfection over completion
+- Observable over conceptual
+
+VALIDATION (ask yourself before returning):
+1. Can I see a human doing this action? (not just bag moving)
+2. Is there visible imperfection? (not smooth/perfect)
+3. Is this independent? (not part of story sequence)
+4. Is this specific? (not "Airport Rush" or "Check-in Chaos")
+
+If NO to any → rewrite that element.
+
+Return valid JSON with exactly 4 elements.
+
+JSON structure:
+{
+  "core_feeling": "3-5 words with human tension",
+  "human_insight": "1 line about repeated behavior/mistake",
+  "color_texture": "lighting + material + color",
+  "sound_direction": "human sounds (fumbling, zipping, checking)",
+  "first_action": {
+    "subject": "specific human type (passenger/traveler/owner)",
+    "action": "command showing imperfection",
+    "camera": "close on human hands/face/body",
+    "duration": "seconds",
+    "environment": "where"
+  },
+  "shots": ["human action 1", "human action 2", "human action 3", "human action 4"],
+  "sequence": ["moment 1", "moment 2", "moment 3"],
+  "pacing": "timing with hesitation",
+  "style": "observational, close on human behavior",
+  "audio": "human sounds dominant",
+  "positioning": "brand role",
+  "tone": "2-3 words",
+  "example_messaging": ["line 1", "line 2"],
+  "layout": "spatial direction",
+  "typography": "Font + Font — feeling",
+  "avoid": ["avoid 1", "avoid 2", "avoid 3"],
+  "color_palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"],
+  "elements": [
+    {
+      "element_name": "human + action + imperfection (3-5 words)",
+      "insight_line": "visible behavior, max 8 words",
+      "direction_label": "VERB AND VERB",
+      "unsplash_query": "person + action + imperfection + hands visible + environment + lighting (12-18 words)"
+    }
+  ]
+}`;
 
     // ============================================
     // STATE & CONFIG
@@ -451,114 +555,6 @@ START OUTPUT NOW:`;
     
     // 🔥 NEGATIVE MEMORY: Track rejected patterns
     var rejectedPatterns = [];
-
-    // ============================================
-    // 🔥 V2 PLAIN TEXT PARSER (NO JSON FRAGILITY)
-    // ============================================
-    // ============================================
-    // 🔥 V2: PLAIN TEXT PARSER (CLEAN)
-    // ============================================
-    function parseOutput(text, brief) {
-      // 🔥 DEBUG
-      console.log("🧪 brief value:", brief);
-      console.log("🧪 brief type:", typeof brief);
-
-      // 🔥 NORMALIZE LINE BREAKS (handles ↵, \r\n, \r)
-      var normalized = text
-        .replace(/↵/g, "\n")        // handle arrow newline
-        .replace(/\r\n/g, "\n")     // Windows
-        .replace(/\r/g, "\n");      // Mac old
-
-      var lines = normalized
-        .split("\n")
-        .map(function(l) { return l.trim(); })
-        .filter(function(l) { return l.length > 0; });
-
-      console.log("TOTAL LINES:", lines.length);
-
-      // 🔥 STRUCTURE GUARD
-      if (lines.length !== 24) {
-        console.warn("⚠️ INVALID STRUCTURE: Expected 24 lines, got", lines.length);
-        return {
-          elements: fallbackElements(),
-          core_feeling: "Raw human imperfection",
-          human_insight: "People repeat unnecessary actions",
-          color_texture: "Natural light, muted tones",
-          sound_direction: "Ambient human sounds",
-          color_palette: ["#8B7355", "#A0826D", "#C9ADA7", "#E8DDD3", "#F4EDE8"],
-          avoid: ["perfection", "beauty", "confidence"]
-        };
-      }
-
-      var elements = [];
-
-      // BULLETPROOF: Force brief to be a string, never crash
-      var lowerBrief = (typeof brief === "string" ? brief : "").toLowerCase();
-
-      for (var i = 0; i < lines.length; i += 3) {
-        if (!lines[i] || !lines[i+1] || !lines[i+2]) {
-          console.warn("⚠️ Incomplete triplet at index", i);
-          continue;
-        }
-
-        // 🔥 OBJECT-AWARE QUERY BUILDER
-        var context = "person";
-        
-        if (lowerBrief.match(/mall|shopping|store|retail/)) {
-          context = "shopping mall";
-        } else if (lowerBrief.match(/airport|travel|terminal|flight/)) {
-          context = "airport terminal";
-        } else if (lowerBrief.match(/cafe|coffee|restaurant|food/)) {
-          context = "cafe";
-        }
-        
-        var actionText = (lines[i] + " " + lines[i + 1]).toLowerCase();
-        var objectAnchor = "action";
-        
-        if (actionText.match(/jacket|coat|clothes|shirt|try/)) {
-          objectAnchor = "trying clothes";
-        } else if (actionText.match(/phone|screen|text|call/)) {
-          objectAnchor = "using phone";
-        } else if (actionText.match(/bag|luggage|backpack|carry/)) {
-          objectAnchor = "holding bag";
-        } else if (actionText.match(/food|eat|drink|cup|coffee/)) {
-          objectAnchor = "eating drinking";
-        } else if (actionText.match(/shoe|feet|walk/)) {
-          objectAnchor = "walking";
-        } else if (actionText.match(/door|handle|enter/)) {
-          objectAnchor = "using door";
-        } else if (actionText.match(/hand|finger|touch/)) {
-          objectAnchor = "hands action";
-        }
-        
-        var imageQuery = context + " person " + objectAnchor + ", candid, real life";
-
-        elements.push({
-          element_name: lines[i],
-          insight_line: lines[i + 1],
-          direction_label: lines[i + 2],
-          unsplash_query: imageQuery
-        });
-      }
-
-      console.log("ELEMENTS PARSED:", elements.length);
-
-      // Ensure exactly 8 elements
-      while (elements.length < 8) {
-        elements = elements.concat(fallbackElements());
-      }
-      elements = elements.slice(0, 8);
-
-      return {
-        elements: elements,
-        core_feeling: "Raw human imperfection",
-        human_insight: "People repeat unnecessary actions",
-        color_texture: "Natural light, muted tones",
-        sound_direction: "Ambient human sounds",
-        color_palette: ["#8B7355", "#A0826D", "#C9ADA7", "#E8DDD3", "#F4EDE8"],
-        avoid: ["perfection", "beauty", "confidence"]
-      };
-    }
 
     // ============================================
     // INIT
@@ -690,39 +686,8 @@ START OUTPUT NOW:`;
       
       var prompt = 'Brief: "' + brief + '"\n\n';
       
-      // 🔥 CONTEXT-SPECIFIC BEHAVIOR EXAMPLES
-      var lowerBrief = brief.toLowerCase();
-      var contextExamples = '';
-      
-      if (lowerBrief.match(/mall|shopping|store|retail/)) {
-        contextExamples = 'Context: Inside a mall.\n\n' +
-          'Behavior types:\n' +
-          '- browsing items without buying\n' +
-          '- picking up and putting things back\n' +
-          '- comparing products side by side\n' +
-          '- walking, stopping, changing direction\n' +
-          '- checking phone while walking\n' +
-          '- waiting for someone, looking around\n' +
-          '- trying clothes, checking fit in mirror\n\n';
-      } else if (lowerBrief.match(/airport|travel|flight|terminal/)) {
-        contextExamples = 'Context: Airport terminal.\n\n' +
-          'Behavior types:\n' +
-          '- checking documents repeatedly\n' +
-          '- adjusting luggage straps\n' +
-          '- waiting in lines, shifting weight\n' +
-          '- looking at departure boards\n' +
-          '- checking pockets for items\n\n';
-      } else if (lowerBrief.match(/restaurant|cafe|coffee|food|eating/)) {
-        contextExamples = 'Context: Food & dining.\n\n' +
-          'Behavior types:\n' +
-          '- looking at menu, changing mind\n' +
-          '- phone on table, picking up, putting down\n' +
-          '- tasting food, adjusting seasoning\n' +
-          '- fork coordination while distracted\n\n';
-      }
-      
       if (conceptType === 'indirect') {
-        // INDIRECT PRESENCE MODE
+        // 🔥 INDIRECT PRESENCE MODE
         prompt += 'MODE: INDIRECT PRESENCE\n\n';
         prompt += 'This concept is intangible (scent/memory/presence/atmosphere).\n\n';
         prompt += 'DO NOT show direct actions.\n\n';
@@ -733,78 +698,392 @@ START OUTPUT NOW:`;
         prompt += '- Moments almost missed (walking by, leaving)\n\n';
         prompt += 'The subject should NOT be central.\n';
         prompt += 'It should feel like a background influence that people notice late.\n\n';
-        prompt += 'Generate 8 subtle presence moments.\n\n';
+        prompt += 'EXAMPLES:\n';
+        prompt += '✅ "Passenger Pauses Mid-Aisle"\n';
+        prompt += '   insight: "Stops walking, turns head slightly"\n\n';
+        prompt += '✅ "Crew Member Passes Close"\n';
+        prompt += '   insight: "Walks by, passenger leans back slightly"\n\n';
+        prompt += 'Generate 4 subtle presence moments.\n\n';
       } else {
-        // PHYSICAL BEHAVIOR MODE
-        if (contextExamples) {
-          prompt += contextExamples;
+        // PHYSICAL BEHAVIOR MODE (existing)
+        prompt += 'INTERPRETATION:\n' + angle.interpretation + '\n\n' +
+          'CONSTRAINTS:\n\n' +
+          '1. HUMAN-FIRST RULE:\n' +
+          '   Every element must show human doing action\n' +
+          '   Human must be VISIBLE or physically implied (hand, body part, motion blur)\n' +
+          '   Object-only scenes are NOT allowed\n\n' +
+          '2. IMPERFECTION MANDATORY:\n' +
+          '   Each moment needs: hesitation OR mistake OR repeated action OR unnecessary action\n' +
+          '   Examples: reaches twice, checks again, drops then catches, adjusts repeatedly\n\n' +
+          '3. NO TIMELINE:\n' +
+          '   Do NOT create sequence (first → middle → last)\n' +
+          '   Generate 4 random disconnected moments\n' +
+          '   Like security camera catching random human mistakes\n\n' +
+          '4. KILL GENERIC:\n' +
+          '   If element feels expected/common → rewrite with specific human quirk\n' +
+          '   If moment feels like something seen in ads before, reject it\n' +
+          '   Each moment should feel slightly uncomfortable in its specificity\n\n';
+        
+        // 🔥 INJECT NEGATIVE MEMORY
+        if (rejectedPatterns.length > 0) {
+          var recentRejected = rejectedPatterns.slice(-5);
+          prompt += '5. AVOID THESE REJECTED PATTERNS:\n';
+          recentRejected.forEach(function(pattern) {
+            prompt += '   ❌ "' + pattern + '"\n';
+          });
+          prompt += '   Generate completely different types of moments.\n\n';
         }
         
-        prompt += 'INTERPRETATION:\n' + angle.interpretation + '\n\n';
-        
-        prompt += 'Generate 8 raw human moments.\n\n';
-        prompt += 'Each moment must show:\n';
-        prompt += '- a small physical action\n';
-        prompt += '- done imperfectly (repeat, miss, hesitate, or interrupt)\n\n';
-        prompt += 'Moments should feel real, slightly awkward, and unplanned.\n\n';
-        prompt += 'Do NOT create a sequence.\n';
-        prompt += 'Each moment is independent.\n\n';
-        
-        prompt += 'Generate exactly 8 moments.';
+        prompt += 'Generate exactly 4 moments. Each must show human imperfection.';
       }
       
       return prompt;
     }
 
-    // ============================================
-    // 🔥 V2: MINIMAL FALLBACK (only if generation completely fails)
-    // ============================================
-    function fallbackElements() {
-      return [
-        {
-          element_name: "Checks pocket again",
-          insight_line: "Hand goes in, comes out, goes again",
-          direction_label: "CHECK AND RECHECK",
-          unsplash_query: "person checking pocket candid real moment"
-        },
-        {
-          element_name: "Presses button twice",
-          insight_line: "Finger taps, pauses, taps again",
-          direction_label: "PRESS AND REPRESS",
-          unsplash_query: "person pressing button again candid"
-        },
-        {
-          element_name: "Adjusts grip mid-hold",
-          insight_line: "Fingers shift, tighten slightly",
-          direction_label: "SHIFT AND TIGHTEN",
-          unsplash_query: "person adjusting grip object candid"
-        },
-        {
-          element_name: "Starts sip, stops",
-          insight_line: "Cup lifts, pauses, lowers again",
-          direction_label: "LIFT AND LOWER",
-          unsplash_query: "person drinking pause candid real"
+    function refineWorld(worldData, brief) {
+      setStatus('Refining creative direction…');
+      
+      return fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            {
+              role: 'system',
+              content: `You are a brutal creative reviewer improving first-pass creative work.
+
+Your job:
+- Increase human specificity (vague action → exact hand/face/body movement)
+- Add more imperfection (smooth → fumbling, hesitating, repeating)
+- Remove predictable moments (expected → surprising human quirk)
+- Ensure every moment shows human making mistake
+
+For each element, ask:
+1. Is human visible doing action? (not just object)
+2. Is there clear imperfection? (hesitation/mistake/repeat)
+3. Is this a random moment? (not part of timeline)
+
+Rewrite elements missing any of above. Keep the good ones.
+
+Return the same JSON structure with improved elements.`
+            },
+            {
+              role: 'user',
+              content: 'Brief: "' + brief + '"\n\nFirst-pass output:\n' + JSON.stringify(worldData) + '\n\nImprove human visibility, imperfection, and randomness. Return refined JSON.'
+            }
+          ],
+          temperature: 0.6,
+          max_tokens: 1200
+        })
+      })
+      .then(function(res) {
+        if (!res.ok) throw new Error('Refinement failed');
+        return res.json();
+      })
+      .then(function(data) {
+        var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
+        try {
+          return JSON.parse(raw);
+        } catch(e) {
+          console.warn('⚠️ Refinement parse failed, using original');
+          return worldData;
         }
+      })
+      .catch(function(err) {
+        console.error('Refinement error:', err);
+        return worldData;
+      });
+    }
+
+    function dynamicRewrite(element, brief, elementIndex) {
+      console.log('🔄 Dynamic rewrite for element ' + (elementIndex + 1));
+      
+      return fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            {
+              role: 'system',
+              content: `Rewrite this element as a motion sequence showing irrational behavior.
+
+CRITICAL ANTI-INTERPRETATION RULE:
+If the moment can be described in one word (confident, nervous, happy, relieved, anxious) → REJECT IT.
+
+NO emotion labels. ONLY physical motion.
+
+MOTION SEQUENCE STRUCTURE (MANDATORY):
+Format: [action] → [pause/change] → [continuation]
+
+Examples:
+❌ "Confident Stance" → emotion label, invalid
+✅ "Shoulders Pull Back, Pause, Then Drop" → motion observed
+❌ "Nervous Fidget" → emotion label
+✅ "Pen Taps Twice, Pauses, Presses Harder" → action sequence
+❌ "Hand On Button" → static, no motion
+✅ "Presses Button, Waits, Presses Again" → before/during/after
+
+CRITICAL: If the viewer can justify why the action is needed → reject it.
+
+Force moments showing:
+- doing something again immediately after doing it
+- checking something that hasn't changed
+- correcting something that was already correct
+
+Requirements:
+- element_name: Must include motion sequence (action → pause → continuation)
+- Must show: unnecessary repetition or irrational correction
+- Must include redundancy signal (after/even after/still/already/same/just/then)
+- insight_line: visible repeated behavior (8 words max)
+- direction_label: VERB AND VERB
+
+NO HUMANS VISIBLE = INVALID. Reject immediately.
+
+Bad examples:
+"Adjusts Strap Again" (still logical + static)
+"Confident Stance" (emotion label)
+"Pen Scratching" (no motion variation)
+
+Good examples:
+"Adjusts Strap, Feels It, Adjusts Again" (motion loop)
+"Pen Taps Twice, Pauses, Then Presses Harder" (variation)
+"Checks Pocket, Closes It, Opens Same One Again" (irrational sequence)
+
+Return only valid JSON for this one element.`
+            },
+            {
+              role: 'user',
+              content: 'Brief: "' + brief + '"\n\nGeneric element:\n' + JSON.stringify(element) + '\n\nRewrite as motion sequence with irrational redundancy.'
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 200
+        })
+      })
+      .then(function(res) {
+        if (!res.ok) throw new Error('Rewrite failed');
+        return res.json();
+      })
+      .then(function(data) {
+        var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
+        try {
+          var rewritten = JSON.parse(raw);
+          console.log('✅ Rewrite successful:', rewritten.element_name);
+          return rewritten;
+        } catch(e) {
+          console.warn('⚠️ Rewrite parse failed, using fallback');
+          return staticFallbackRewrite(element, elementIndex);
+        }
+      })
+      .catch(function(err) {
+        console.error('Rewrite error:', err);
+        return staticFallbackRewrite(element, elementIndex);
+      });
+    }
+
+    function staticFallbackRewrite(element, elementIndex) {
+      // FALLBACK: Motion sequences with irrational redundancy
+      var rewrites = [
+        { element_name: "Presses Button, Waits, Presses Again Even After Light", insight_line: "Light shows, finger lifts, presses once more", direction_label: "PRESS AND REPRESS" },
+        { element_name: "Opens Pocket, Closes, Opens Same One Immediately", insight_line: "Hand dips in, pulls out, dips again", direction_label: "CHECK AND RECHECK" },
+        { element_name: "Pulls Strap Tight, Feels It, Pulls Again", insight_line: "Tightens fully, touches strap, tightens more", direction_label: "TIGHTEN AND RETIGHTEN" },
+        { element_name: "Grips Handle, Loosens, Then Grips Again", insight_line: "Hand wraps around, releases, wraps again", direction_label: "GRIP AND REGRIP" }
       ];
+      
+      var rewrite = rewrites[elementIndex % rewrites.length];
+      return {
+        element_name: rewrite.element_name,
+        insight_line: rewrite.insight_line,
+        direction_label: rewrite.direction_label,
+        unsplash_query: element.unsplash_query
+      };
     }
 
     // ============================================
-    // 🔥 V2: VALIDATION (MINIMAL - just check existence)
+    // 🔥 UNIVERSAL REALITY FILTER (NO BANNED WORDS)
     // ============================================
-    function isValidElement(el) {
-      if (!el) return false;
-      if (!el.element_name) return false;
-      if (!el.insight_line) return false;
-      if (!el.element_name.includes(" ")) return false; // Ensures descriptive, not one-word generic
-      return true;
+    
+    // CORE: Can this be physically observed?
+    function hasPhysicalAction(text) {
+      // Detects action verbs (present participle or action words)
+      return /(\b\w+ing\b|\bmiss(es)?\b|\bdrop(s)?\b|\badjust(s)?\b|\breach(es)?\b|\bgrab(s)?\b|\bcheck(s)?\b|\bpull(s)?\b|\bpush(es)?\b|\btouch(es)?\b|\bhold(s)?\b|\bwait(s)?\b|\blook(s)?\b|\bset(s)?\b|\bpick(s)?\b)/i.test(text);
+    }
+    
+    // 🔥 NEW: Indirect presence detection (for scent/memory/atmosphere)
+    function hasIndirectPresence(text) {
+      // Detects subtle interactions: passing, pausing, noticing, adjusting
+      return /(pass|pause|notice|lean|adjust|linger|glance|hesitate|shift|turn|leave|enter|walk by|slow|stop)/i.test(text);
+    }
+    
+    // 🔥 UPGRADED: Friction actions only - kills lazy verbs
+    function hasFrictionAction(text) {
+      // ONLY actions with visible friction/mistake/repetition
+      return /(miss|drop|fumble|slip|retry|recheck|check again|press again|adjust again|tighten again|loosen|struggle|force|yank|tug|almost|hesitate|stop then|start again|re-|twice|third time)/i.test(text);
+    }
+    
+    // 🔥 NEW: Detect neutral/lazy behavior (REJECT these)
+    function isTooNormal(text) {
+      // These are too neutral - no friction
+      return /(^walking|^standing|^holding|^waiting|^looking|^sitting|^watching)/i.test(text.trim());
+    }
+    
+    // 🔥 UPGRADED: Stronger imperfection detection
+    function hasImperfection(text) {
+      // Detects friction/mistakes/repetition - stricter patterns
+      return /(again|twice|third|retry|re-|miss|almost|slip|fumble|drop|catch|wrong|adjust|recheck|hesitate|barely|struggle|loose|tight)/i.test(text);
+    }
+    
+    // 🔥 NEW: Irrationality detection - forces "why are they doing that?" moments
+    function hasIrrationality(text) {
+      // Detects unnecessary/redundant behavior markers
+      return /(already|still|even after|again after|immediately|same spot|just checked|for no reason|even though|after just|right after)/i.test(text);
+    }
+    
+    // 🔥 UPGRADED: Imperfection strength score (now requires minimum 2)
+    function imperfectionScore(text) {
+      var matches = text.match(/(again|twice|third|retry|miss|drop|fumble|adjust|recheck|re-)/gi);
+      return matches ? matches.length : 0;
+    }
+    
+    function isObservable(text) {
+      // Short = specific = visual (not headlines)
+      var wordCount = text.trim().split(/\s+/).length;
+      return wordCount >= 2 && wordCount <= 6;
+    }
+    
+    function feelsLikeHeadline(text) {
+      // Too long = likely generic summary
+      return text.trim().split(/\s+/).length > 6;
+    }
+    
+    // 🔥 UPGRADED: Dual-mode validation with STRICT friction + irrationality requirement
+    function isValidElement(element, conceptType) {
+      var name = element.element_name || '';
+      var insight = element.insight_line || '';
+      
+      // KILL TOO NORMAL immediately
+      if (isTooNormal(name) || isTooNormal(insight)) {
+        return false;
+      }
+      
+      if (conceptType === 'indirect') {
+        // INDIRECT MODE: Allow subtle presence
+        var nameValid = (hasIndirectPresence(name) || hasFrictionAction(name)) && !feelsLikeHeadline(name);
+        var insightValid = (hasIndirectPresence(insight) || hasPhysicalAction(insight)) && !feelsLikeHeadline(insight);
+        // Indirect mode doesn't require strong imperfection
+        var hasSubtlety = hasIndirectPresence(name + " " + insight) || imperfectionScore(name + " " + insight) >= 1;
+        return nameValid && insightValid && hasSubtlety;
+      } else {
+        // PHYSICAL MODE: Require FRICTION + STRONG imperfection + IRRATIONALITY
+        var nameValid = hasFrictionAction(name) && !feelsLikeHeadline(name);
+        var insightValid = hasPhysicalAction(insight) && !feelsLikeHeadline(insight);
+        var strongImperfection = imperfectionScore(name + " " + insight) >= 2;
+        var irrational = hasIrrationality(name + " " + insight);
+        
+        return nameValid && insightValid && strongImperfection && irrational;
+      }
     }
 
     // ============================================
-    // 🔥 V2: NO VALIDATION LOOP - SINGLE PASS ONLY
+    // 🔥 NEW: FORCED REWRITE LOOP (SELF-CORRECTING)
     // ============================================
+    function enforceReality(worldData, brief, conceptType) {
+      var attempts = 0;
+      var maxAttempts = 3;
+      
+      function runLoop(data) {
+        if (attempts >= maxAttempts) {
+          console.warn('⚠️ Max validation attempts reached');
+          return Promise.resolve(data);
+        }
+        
+        return validateAndRewrite(data, brief, conceptType)
+          .then(function(validatedData) {
+            var allValid = (validatedData.elements || []).every(function(el) {
+              return isValidElement(el, conceptType);
+            });
+            
+            if (allValid) {
+              console.log('✅ All elements valid after ' + (attempts + 1) + ' passes (' + conceptType + ' mode)');
+              return validatedData;
+            }
+            
+            console.warn('🔁 Re-running validation loop... (attempt ' + (attempts + 2) + ')');
+            attempts++;
+            return runLoop(validatedData);
+          });
+      }
+      
+      return runLoop(worldData);
+    }
+
+    function validateAndRewrite(worldData, brief, conceptType) {
+      if (!worldData.elements) return Promise.resolve(worldData);
+      
+      var rewritePromises = [];
+      var rewriteCount = 0;
+      
+      worldData.elements.forEach(function(el, idx) {
+        var needsRewrite = false;
+        var reasons = [];
+        
+        // DUAL-MODE REALITY CHECK
+        if (!isValidElement(el, conceptType)) {
+          needsRewrite = true;
+          
+          // 🔥 TRACK REJECTED PATTERNS
+          rejectedPatterns.push(el.element_name);
+          if (rejectedPatterns.length > 20) {
+            rejectedPatterns = rejectedPatterns.slice(-15); // Keep last 15
+          }
+          
+          if (conceptType === 'physical') {
+            if (!hasFrictionAction(el.element_name)) reasons.push('no friction action in name');
+            if (!hasPhysicalAction(el.insight_line)) reasons.push('no physical action in insight');
+            if (imperfectionScore(el.element_name + " " + el.insight_line) < 2) reasons.push('imperfection too weak (need 2+)');
+            if (!hasIrrationality(el.element_name + " " + el.insight_line)) reasons.push('not irrational enough');
+            if (isTooNormal(el.element_name)) reasons.push('too normal (walking/standing/holding)');
+          } else {
+            if (!hasIndirectPresence(el.element_name) && !hasFrictionAction(el.element_name)) reasons.push('no indirect presence or friction action');
+            if (!hasIndirectPresence(el.insight_line) && !hasPhysicalAction(el.insight_line)) reasons.push('no subtle interaction');
+          }
+          
+          if (feelsLikeHeadline(el.element_name)) reasons.push('name too long (headline-like)');
+          if (feelsLikeHeadline(el.insight_line)) reasons.push('insight too long (headline-like)');
+        }
+        
+        if (needsRewrite) {
+          rewriteCount++;
+          console.warn('🔥 REWRITE NEEDED Element ' + (idx + 1) + ': ' + reasons.join(', '));
+          rewritePromises.push({
+            index: idx,
+            promise: dynamicRewrite(el, brief, idx)
+          });
+        } else {
+          rewritePromises.push({
+            index: idx,
+            promise: Promise.resolve(el)
+          });
+        }
+      });
+      
+      if (rewriteCount > 0) {
+        console.warn('🔥 Validation: ' + rewriteCount + ' elements being rewritten');
+      } else {
+        console.log('✅ Validation: All elements passed reality filter');
+      }
+      
+      return Promise.all(rewritePromises.map(function(item) { return item.promise; }))
+        .then(function(rewrittenElements) {
+          worldData.elements = rewrittenElements;
+          return worldData;
+        });
+    }
 
     // ============================================
-    // 🔥 V2: GENERATION ENGINE (CLEAN)
+    // 🔥 UPDATED: GENERATION ENGINE (4 ELEMENTS)
     // ============================================
     function generateWorld() {
       var brief = document.getElementById('brief').value.trim();
@@ -849,30 +1128,20 @@ START OUTPUT NOW:`;
       })
       .then(function(data) {
         var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
+        var w;
+        try { w = JSON.parse(raw); } catch(e) { throw new Error('Parse failed'); }
         
-        // 🔥 LOG RAW OUTPUT (debugging)
-        console.log("🧠 RAW MODEL OUTPUT (first 300 chars):", raw.substring(0, 300));
+        console.log('✅ PASS 1: Structure generated (' + (w.elements ? w.elements.length : 0) + ' elements)');
         
-        // 🔥 V2: Parse plain text output (no JSON)
-        var w = parseOutput(raw, brief);
-        if (!w || !w.elements || w.elements.length === 0) {
-          console.warn('⚠️ Parse failed or empty, using fallback');
-          w = { elements: fallbackElements() };
-        }
-        
-        console.log('✅ Parsed (' + w.elements.length + ' elements)');
-        
-        return w;
+        // 🔥 USE ENFORCED REALITY LOOP with conceptType
+        return enforceReality(w, brief, conceptType);
       })
       .then(function(validatedWorld) {
         console.log('✅ VALIDATION: Complete');
-        
-        // 🔥 REFINE STEP DISABLED (reduces JSON transformation complexity)
-        // return refineWorld(validatedWorld, brief);
-        return validatedWorld;
+        return refineWorld(validatedWorld, brief);
       })
       .then(function(w) {
-        console.log('✅ Generation complete (refine disabled)');
+        console.log('✅ PASS 2: Refinement complete');
         
         var generation = {
           id: Date.now(),
@@ -1147,10 +1416,31 @@ START OUTPUT NOW:`;
     function fetchImage(query, card, el, brief, imageIndex) {
       var finalQuery = query.trim() || "person hands action";
       
-      // 🔥 FIX 3: LOG QUERY (see what we're sending)
-      console.log("🔍 Unsplash Query for '" + el.element_name + "':", finalQuery);
+      var globalStyle = worldData.color_texture || "";
+      if (globalStyle) {
+        finalQuery = finalQuery + " " + globalStyle;
+      }
       
-      // Fetch 10 images for better diversity
+      // 🔥 FORCE VISUAL DIVERSITY - add random modifiers to break repetition
+      var diversityTags = [
+        "close up hands",
+        "side profile person",
+        "wide shot environment",
+        "overhead view",
+        "low angle shot",
+        "through glass",
+        "motion blur",
+        "harsh lighting",
+        "soft natural light",
+        "cinematic lighting",
+        "shallow depth of field",
+        "environmental context"
+      ];
+      
+      var diversityMod = diversityTags[Math.floor(Math.random() * diversityTags.length)];
+      finalQuery = finalQuery + " " + diversityMod;
+      
+      // Fetch 10 images for better diversity (not just 3)
       fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(finalQuery) + '&per_page=10&orientation=portrait', {
         headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
       })
@@ -1160,18 +1450,22 @@ START OUTPUT NOW:`;
       })
       .then(function(data) {
         if (!data.results || data.results.length === 0) {
-          // 🔥 FIX 2: HARD FALLBACK - always return something useful
-          console.warn("⚠️ No results for query, using hard fallback");
-          return fetch('https://api.unsplash.com/search/photos?query=human hands action candid real life&per_page=10&orientation=portrait', {
+          // 🔥 SMARTER FALLBACK: Alternative phrasing instead of truncation
+          var altQuery = finalQuery
+            .replace(/elevator/g, "indoor building lift")
+            .replace(/airport/g, "terminal travel")
+            .replace(/bag/g, "luggage carry");
+          
+          return fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(altQuery) + '&per_page=10&orientation=portrait', {
             headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
           }).then(function(r) { return r.json(); });
         }
         return data;
       })
       .then(function(data) {
-        if (!data.results || data.results.length === 0) throw new Error("No results after hard fallback");
+        if (!data.results || data.results.length === 0) throw new Error("No results after retry");
         
-        // Pick random image from top 10
+        // 🔥 INCREASED RANDOMNESS: Pick from top 10 instead of top 3
         var photo = data.results[Math.floor(Math.random() * Math.min(data.results.length, 10))];
         var sk = card.querySelector('.skeleton-ph');
         if (sk) {
