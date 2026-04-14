@@ -400,119 +400,53 @@
     // ============================================
     // 🔥 UPDATED: HUMAN-FIRST SYSTEM PROMPT (4 ELEMENTS)
     // ============================================
-    var SYSTEM_PROMPT = `You generate only real human micro-moments.
+    var SYSTEM_PROMPT = `Generate human micro-behaviors only.
 
-CRITICAL: You MUST return JSON in this EXACT structure:
+RULES:
+- Show physical action (not situation or place)
+- Include visible imperfection (mistake, hesitation, retry)
+- No aesthetic descriptions
+- No scene names ("coffee shop", "gate area", "bench")
+
+BANNED OUTPUTS:
+- Location names
+- Emotion labels ("confident", "nervous")
+- Clean perfect actions
+- Abstract concepts
+
+REQUIRED:
+- Human visible
+- Specific action
+- Something goes wrong
+
+JSON STRUCTURE:
 
 {
   "elements": [
     {
-      "element_name": "string",
-      "insight_line": "string",
-      "direction_label": "string",
-      "unsplash_query": "string"
+      "element_name": "action + imperfection (4-6 words)",
+      "insight_line": "physical behavior (8 words max)",
+      "direction_label": "VERB AND VERB",
+      "unsplash_query": "human + action + environment"
     }
   ],
   "core_feeling": "string",
   "human_insight": "string",
   "color_texture": "string",
   "sound_direction": "string",
-  "color_palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"],
+  "color_palette": ["#hex", "#hex", "#hex", "#hex", "#hex"],
   "avoid": ["string", "string", "string"]
 }
 
-JSON RULES (NON-NEGOTIABLE):
-- elements must be exactly 4 items
-- no trailing commas
-- all keys must be in double quotes
-- no extra text before or after JSON
-- no markdown code blocks
-- no explanations
+EXAMPLES:
+✅ "Types, Stops, Deletes Word"
+✅ "Checks Pocket, Looks Again"
+✅ "Presses Button Twice Fast"
+❌ "Coffee shop moment"
+❌ "Traveler waiting"
+❌ "Confident stance"
 
-Each output MUST include:
-- one identifiable human
-- one specific physical action  
-- one visible imperfection (mistake, hesitation, correction)
-
-HARD RULES (NON-NEGOTIABLE):
-
-1. NO GENERIC LABELS
-   Reject: preparation, interaction, experience, moment, journey
-   These are ideas, not observations.
-
-2. NO CLEAN OR PERFECT ACTIONS
-   Every action must include friction, hesitation, or correction.
-   If it can be done smoothly -> INVALID.
-
-3. NO MULTI-STEP SEQUENCES
-   Show one micro-loop only: [action] -> [variation] -> [repeat/correct]
-   Not: step 1 -> step 2 -> step 3
-
-4. NO STORYTELLING OR ATMOSPHERE
-   No mood. No context. No "busy shop" or "quiet moment".
-   Only: human + action + imperfection.
-
-5. NO EMOTION LABELS
-   If it can be described in one word (confident, nervous, happy) -> INVALID.
-   Show physical behavior only.
-
-SELF-CHECK BEFORE OUTPUT:
-
-Before finalizing, validate each element:
-1. Is there a human clearly present? (YES/NO)
-2. Is the action specific and visible? (YES/NO)  
-3. Is there a real imperfection? (YES/NO)
-
-If any answer is NO -> regenerate that element internally.
-
-LANGUAGE RULES:
-
-- Use minimal, observational language
-- Avoid adjectives unless physically necessary
-- Avoid emotional or interpretive words
-- Format: [action] -> [pause/change] -> [continuation]
-
-VARIATION ENFORCEMENT:
-
-Avoid repeating across elements:
-- same verbs (adjusts, tries again, checks)
-- same action structures
-- same body parts (all hands, all feet)
-
-Each element must differ in physical behavior type.
-
-AUTO-REJECT EXAMPLES:
-
-These are INVALID outputs:
-❌ "A person enjoying coffee" -> emotion, no imperfection
-❌ "A busy shop scene" -> no specific human
-❌ "Someone interacting with a device" -> generic, no friction
-❌ "Confident stance" -> emotion label
-❌ "Preparation for departure" -> idea, not action
-
-VALID OUTPUT STRUCTURE:
-
-element_name: [body part] + [action] + [variation/correction] (4-6 words)
-insight_line: [observable motion sequence] (6-8 words)  
-direction_label: [VERB] AND [VERB]
-unsplash_query: [human] + [action] + [environment] + [no emotion words]
-
-Example:
-element_name: "Presses Button, Waits, Presses Again"
-insight_line: "Finger taps once, pauses, taps second time"
-direction_label: "TAP AND RETAP"
-
-Your output must feel like: raw observed moment, not a description or idea.
-
-OUTPUT FORMAT (CRITICAL):
-
-Return ONLY valid JSON.
-No explanations.
-No text outside JSON.
-No markdown code blocks.
-No comments.
-
-Generate 4 elements meeting ALL constraints.`;
+Return ONLY valid JSON. No markdown. No text outside JSON.`;
 
     // ============================================
     // STATE & CONFIG
@@ -534,29 +468,12 @@ Generate 4 elements meeting ALL constraints.`;
     // ============================================
     function safeParse(raw) {
       try {
-        return JSON.parse(raw);
+        var match = raw.match(/\{[\s\S]*\}/);
+        if (!match) return null;
+        return JSON.parse(match[0]);
       } catch (e) {
-        console.warn("⚠️ First parse failed, attempting cleanup...");
-        
-        try {
-          // Remove trailing commas
-          var cleaned = raw
-            .replace(/,\s*}/g, "}")
-            .replace(/,\s*]/g, "]");
-          
-          // 🔥 FIX UNQUOTED KEYS (common LLM mistake)
-          cleaned = cleaned.replace(/(\w+):/g, '"$1":');
-          
-          // Extract only JSON part if extra text exists
-          var match = cleaned.match(/\{[\s\S]*\}/);
-          if (match) cleaned = match[0];
-          
-          return JSON.parse(cleaned);
-        } catch (e2) {
-          console.error("❌ Safe parse failed completely:", e2.message);
-          console.error("Raw content:", raw.substring(0, 200));
-          return null;
-        }
+        console.error("❌ Parse failed:", e.message);
+        return null;
       }
     }
 
@@ -961,10 +878,17 @@ Return only valid JSON for this one element.`
       return text.trim().split(/\s+/).length > 6;
     }
     
-    // 🔥 UPGRADED: Dual-mode validation with STRICT friction + irrationality requirement
+    // 🔥 LIGHT VALIDATION (not strict - allow good outputs through)
     function isValidElement(element, conceptType) {
       var name = element.element_name || '';
       var insight = element.insight_line || '';
+      
+      // 🔥 REJECT ONLY OBVIOUS SCENE WORDS
+      var bannedSceneWords = /(bench|area|line|station|scene|space|view|sight|place)/i;
+      if (bannedSceneWords.test(name)) {
+        console.warn('🚫 REJECTED (scene word):', name);
+        return false;
+      }
       
       // KILL TOO NORMAL immediately
       if (isTooNormal(name) || isTooNormal(insight)) {
@@ -975,111 +899,57 @@ Return only valid JSON for this one element.`
         // INDIRECT MODE: Allow subtle presence
         var nameValid = (hasIndirectPresence(name) || hasFrictionAction(name)) && !feelsLikeHeadline(name);
         var insightValid = (hasIndirectPresence(insight) || hasPhysicalAction(insight)) && !feelsLikeHeadline(insight);
-        // Indirect mode doesn't require strong imperfection
         var hasSubtlety = hasIndirectPresence(name + " " + insight) || imperfectionScore(name + " " + insight) >= 1;
         return nameValid && insightValid && hasSubtlety;
       } else {
-        // PHYSICAL MODE: Require FRICTION + STRONG imperfection + IRRATIONALITY
+        // PHYSICAL MODE: Light validation - allow more through
         var nameValid = hasFrictionAction(name) && !feelsLikeHeadline(name);
         var insightValid = hasPhysicalAction(insight) && !feelsLikeHeadline(insight);
-        var strongImperfection = imperfectionScore(name + " " + insight) >= 2;
-        var irrational = hasIrrationality(name + " " + insight);
+        var hasImperfection = imperfectionScore(name + " " + insight) >= 1;  // Relaxed from 2
         
-        return nameValid && insightValid && strongImperfection && irrational;
+        return nameValid && insightValid && hasImperfection;  // Removed irrationality requirement
       }
     }
 
     // ============================================
     // 🔥 NEW: FORCED REWRITE LOOP (SELF-CORRECTING)
     // ============================================
+    // 🔥 SINGLE PASS VALIDATION (no loop - prevent degeneration)
     function enforceReality(worldData, brief, conceptType) {
-      var attempts = 0;
-      var maxAttempts = 3;
-      
-      function runLoop(data) {
-        if (attempts >= maxAttempts) {
-          console.warn('⚠️ Max validation attempts reached');
-          return Promise.resolve(data);
-        }
-        
-        return validateAndRewrite(data, brief, conceptType)
-          .then(function(validatedData) {
-            var allValid = (validatedData.elements || []).every(function(el) {
-              return isValidElement(el, conceptType);
-            });
-            
-            if (allValid) {
-              console.log('✅ All elements valid after ' + (attempts + 1) + ' passes (' + conceptType + ' mode)');
-              return validatedData;
-            }
-            
-            console.warn('🔁 Re-running validation loop... (attempt ' + (attempts + 2) + ')');
-            attempts++;
-            return runLoop(validatedData);
-          });
-      }
-      
-      return runLoop(worldData);
+      console.log('✅ Single-pass validation (multi-pass disabled)');
+      return validateAndRewrite(worldData, brief, conceptType);
     }
 
     function validateAndRewrite(worldData, brief, conceptType) {
       if (!worldData.elements) return Promise.resolve(worldData);
       
-      var rewritePromises = [];
       var rewriteCount = 0;
       
+      // 🔥 SINGLE PASS: Replace invalid elements with static fallback (no LLM rewrite)
       worldData.elements.forEach(function(el, idx) {
-        var needsRewrite = false;
-        var reasons = [];
-        
-        // DUAL-MODE REALITY CHECK
         if (!isValidElement(el, conceptType)) {
-          needsRewrite = true;
+          rewriteCount++;
+          console.warn('🔥 Element ' + (idx + 1) + ' invalid, using fallback');
           
           // 🔥 TRACK REJECTED PATTERNS
           rejectedPatterns.push(el.element_name);
           if (rejectedPatterns.length > 20) {
-            rejectedPatterns = rejectedPatterns.slice(-15); // Keep last 15
+            rejectedPatterns = rejectedPatterns.slice(-15);
           }
           
-          if (conceptType === 'physical') {
-            if (!hasFrictionAction(el.element_name)) reasons.push('no friction action in name');
-            if (!hasPhysicalAction(el.insight_line)) reasons.push('no physical action in insight');
-            if (imperfectionScore(el.element_name + " " + el.insight_line) < 2) reasons.push('imperfection too weak (need 2+)');
-            if (!hasIrrationality(el.element_name + " " + el.insight_line)) reasons.push('not irrational enough');
-            if (isTooNormal(el.element_name)) reasons.push('too normal (walking/standing/holding)');
-          } else {
-            if (!hasIndirectPresence(el.element_name) && !hasFrictionAction(el.element_name)) reasons.push('no indirect presence or friction action');
-            if (!hasIndirectPresence(el.insight_line) && !hasPhysicalAction(el.insight_line)) reasons.push('no subtle interaction');
-          }
-          
-          if (feelsLikeHeadline(el.element_name)) reasons.push('name too long (headline-like)');
-          if (feelsLikeHeadline(el.insight_line)) reasons.push('insight too long (headline-like)');
-        }
-        
-        if (needsRewrite) {
-          rewriteCount++;
-          console.warn('🔥 REWRITE NEEDED Element ' + (idx + 1) + ': ' + reasons.join(', '));
-          rewritePromises.push({
-            index: idx,
-            promise: dynamicRewrite(el, brief, idx)
-          });
-        } else {
-          rewritePromises.push({
-            index: idx,
-            promise: Promise.resolve(el)
-          });
+          // Use static fallback (deterministic, no JSON corruption)
+          worldData.elements[idx] = staticFallbackRewrite(el, idx);
         }
       });
       
       if (rewriteCount > 0) {
-        console.warn('🔥 Validation: ' + rewriteCount + ' elements being rewritten');
+        console.warn('🔥 Validation: ' + rewriteCount + ' elements replaced with fallback');
       } else {
-        console.log('✅ Validation: All elements passed reality filter');
+        console.log('✅ Validation: All elements passed');
       }
       
-      return Promise.all(rewritePromises.map(function(item) { return item.promise; }))
-        .then(function(rewrittenElements) {
+      return Promise.resolve(worldData);
+    }
           worldData.elements = rewrittenElements;
           return worldData;
         });
