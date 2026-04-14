@@ -477,6 +477,14 @@ direction_label: "TAP AND RETAP"
 
 Your output must feel like: raw observed moment, not a description or idea.
 
+OUTPUT FORMAT (CRITICAL):
+
+Return ONLY valid JSON.
+No explanations.
+No text outside JSON.
+No markdown code blocks.
+No comments.
+
 Generate 4 elements meeting ALL constraints.`;
 
     // ============================================
@@ -493,6 +501,34 @@ Generate 4 elements meeting ALL constraints.`;
     
     // 🔥 NEGATIVE MEMORY: Track rejected patterns
     var rejectedPatterns = [];
+
+    // ============================================
+    // 🔥 ROBUST JSON PARSER
+    // ============================================
+    function safeParse(raw) {
+      try {
+        return JSON.parse(raw);
+      } catch (e) {
+        console.warn("⚠️ First parse failed, attempting cleanup...");
+        
+        try {
+          // Remove trailing commas
+          var cleaned = raw
+            .replace(/,\s*}/g, "}")
+            .replace(/,\s*]/g, "]");
+          
+          // Extract only JSON part if extra text exists
+          var match = cleaned.match(/\{[\s\S]*\}/);
+          if (match) cleaned = match[0];
+          
+          return JSON.parse(cleaned);
+        } catch (e2) {
+          console.error("❌ Safe parse failed completely:", e2.message);
+          console.error("Raw content:", raw.substring(0, 200));
+          return null;
+        }
+      }
+    }
 
     // ============================================
     // INIT
@@ -721,12 +757,12 @@ Return the same JSON structure with improved elements.`
       })
       .then(function(data) {
         var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
-        try {
-          return JSON.parse(raw);
-        } catch(e) {
+        var refined = safeParse(raw);
+        if (!refined) {
           console.warn('⚠️ Refinement parse failed, using original');
           return worldData;
         }
+        return refined;
       })
       .catch(function(err) {
         console.error('Refinement error:', err);
@@ -806,14 +842,13 @@ Return only valid JSON for this one element.`
       })
       .then(function(data) {
         var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
-        try {
-          var rewritten = JSON.parse(raw);
-          console.log('✅ Rewrite successful:', rewritten.element_name);
-          return rewritten;
-        } catch(e) {
+        var rewritten = safeParse(raw);
+        if (!rewritten) {
           console.warn('⚠️ Rewrite parse failed, using fallback');
           return staticFallbackRewrite(element, elementIndex);
         }
+        console.log('✅ Rewrite successful:', rewritten.element_name);
+        return rewritten;
       })
       .catch(function(err) {
         console.error('Rewrite error:', err);
@@ -1066,8 +1101,8 @@ Return only valid JSON for this one element.`
       })
       .then(function(data) {
         var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
-        var w;
-        try { w = JSON.parse(raw); } catch(e) { throw new Error('Parse failed'); }
+        var w = safeParse(raw);
+        if (!w) throw new Error('Parse failed - invalid JSON from model');
         
         console.log('✅ PASS 1: Structure generated (' + (w.elements ? w.elements.length : 0) + ' elements)');
         
