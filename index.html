@@ -400,64 +400,37 @@
     // ============================================
     // 🔥 UPDATED: HUMAN-FIRST SYSTEM PROMPT (4 ELEMENTS)
     // ============================================
-    var SYSTEM_PROMPT = `STRICT BEHAVIOR MODE:
+    var SYSTEM_PROMPT = `YOU MUST FOLLOW THIS EXACT FORMAT.
 
-Do NOT describe locations explicitly.
-But allow behaviors that are clearly tied to a context.
+If you do not follow this format, your output is INVALID.
 
-Only output:
-- small human physical actions
-- micro behaviors (hands, body, movement)
-- imperfect actions (repeat, hesitate, undo)
+OUTPUT EXACTLY 8 MOMENTS.
+EACH MOMENT MUST BE EXACTLY 3 LINES.
 
-Each moment must describe WHAT A PERSON DOES, not WHERE they are.
+Format for EACH moment:
 
-Generate real human micro-behaviors.
+<action phrase>
+<physical detail>
+<action label>
 
-Avoid perfectly clean actions.
-Prefer actions that include hesitation, repetition, or interruption.
+Example:
 
-Each moment should feel slightly awkward or unplanned.
+Picks shirt up
+Fingers grab fabric, lift, then lower again
+LIFT AND LOWER
 
-Prefer:
-- stopping midway
-- repeating action
-- correcting action
-- hesitation or second-guessing
+Rules:
+- EXACTLY 8 moments
+- EXACTLY 3 lines per moment
+- NO blank lines between moments
+- NO extra text before or after
+- NO explanations
+- NO numbering (no "Moment 1:", no "1.", no numbering of any kind)
 
-Some moments can include reversal (does something, then undoes it).
+Generate human micro-behaviors.
+Each behavior should show slight imperfection: hesitation, repetition, or interruption.
 
-Prefer actions that feel real and observable, not polished or staged.
-
-Titles should describe the behavior clearly and specifically.
-
-Do not describe situations or events. Only describe small physical actions.
-
-Format:
-
-Line 1: short action phrase
-Line 2: what physically happens
-Line 3: short action label
-
-Return exactly 8 moments.
-Each moment should be 3 lines.
-
-No extra text.`;
-
-If an action completes cleanly, rewrite it to show interruption or repetition.
-
-Avoid:
-- generic scenes
-- abstract words (happy, anxious, etc.)
-
-Format:
-
-Title (3-5 words)
-Action (max 8 words)
-DIRECTION AND DIRECTION
-
-Return 4 moments.
-Plain text only.`;
+START OUTPUT NOW:`;
 
     // ============================================
     // STATE & CONFIG
@@ -488,6 +461,10 @@ Plain text only.`;
 
       var elements = [];
 
+      // DEBUG LOGGING
+      console.log("RAW OUTPUT:", text);
+      console.log("TOTAL LINES:", lines.length);
+
       for (var i = 0; i < lines.length; i += 3) {
         if (!lines[i + 2]) break;
 
@@ -495,12 +472,25 @@ Plain text only.`;
           element_name: lines[i],
           insight_line: lines[i + 1],
           direction_label: lines[i + 2],
-          unsplash_query: lines[i] + " hands interaction candid real moment"
+          unsplash_query: lines[i] + " person real candid " + (Math.random() > 0.5 ? "close up" : "wide shot")
         });
       }
 
+      console.log("ELEMENTS PARSED:", elements.length);
+
+      // Pad with fallback if we got fewer than 8
+      if (elements.length < 8) {
+        console.warn("⚠️ Only got " + elements.length + " elements, padding to 8");
+        var fallback = fallbackElements();
+        var needed = 8 - elements.length;
+        elements = elements.concat(fallback.slice(0, needed));
+      }
+
+      // Always return exactly 8
+      elements = elements.slice(0, 8);
+
       return {
-        elements: elements.slice(0, 4),
+        elements: elements,
         core_feeling: "Raw human imperfection",
         human_insight: "People repeat unnecessary actions",
         color_texture: "Natural light, muted tones",
