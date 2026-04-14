@@ -455,8 +455,8 @@ No extra text.`;
       console.log("RAW:", text);
       console.log("LINES:", lines.length);
 
-      // FIX 2: IMPROVED PARSER
-      for (var i = 0; i < lines.length - 2; i++) {
+      // FIX 2: IMPROVED PARSER WITH LOCKED GROUPING
+      for (var i = 0; i < lines.length; i += 3) {
         var l1 = lines[i];
         var l2 = lines[i + 1];
         var l3 = lines[i + 2];
@@ -470,8 +470,6 @@ No extra text.`;
           // FIX 4: BETTER IMAGE QUERIES WITH RANDOMIZATION
           unsplash_query: l1 + " person real candid " + (Math.random() > 0.5 ? "close up" : "wide shot")
         });
-
-        i += 2;
       }
 
       console.log("ELEMENTS PARSED:", elements.length);
@@ -492,6 +490,9 @@ No extra text.`;
       });
 
       console.log("AFTER QUALITY FILTER:", elements.length);
+
+      // FIX 4: HARD LIMIT TO 8 ELEMENTS
+      elements = elements.slice(0, 8);
 
       // FIX 3: EMERGENCY FALLBACK ONLY
       if (elements.length < 4) {
