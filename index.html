@@ -544,6 +544,9 @@ Generate 4 elements meeting ALL constraints.`;
             .replace(/,\s*}/g, "}")
             .replace(/,\s*]/g, "]");
           
+          // 🔥 FIX UNQUOTED KEYS (common LLM mistake)
+          cleaned = cleaned.replace(/(\w+):/g, '"$1":');
+          
           // Extract only JSON part if extra text exists
           var match = cleaned.match(/\{[\s\S]*\}/);
           if (match) cleaned = match[0];
@@ -1132,11 +1135,13 @@ Return only valid JSON for this one element.`
         // 🔥 LOG RAW OUTPUT (debugging)
         console.log("🧠 RAW MODEL OUTPUT (first 300 chars):", raw.substring(0, 300));
         
-        // 🔥 HARD GUARD: Check if output is JSON
-        if (!raw.startsWith("{")) {
-          console.error("❌ Model did not return JSON. Full output:", raw);
-          throw new Error("Model returned non-JSON response");
+        // 🔥 EXTRACT JSON (instead of strict startsWith check)
+        var match = raw.match(/\{[\s\S]*\}/);
+        if (!match) {
+          console.error("❌ No JSON found in output. Full response:", raw);
+          throw new Error("Model returned no JSON");
         }
+        raw = match[0];
         
         var w = safeParse(raw);
         if (!w) throw new Error('Parse failed - invalid JSON from model');
