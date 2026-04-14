@@ -400,73 +400,84 @@
     // ============================================
     // 🔥 UPDATED: HUMAN-FIRST SYSTEM PROMPT (4 ELEMENTS)
     // ============================================
-    var SYSTEM_PROMPT = `You are a creative director who captures real human behavior.
+    var SYSTEM_PROMPT = `You generate only real human micro-moments.
 
-CORE RULE: Every moment must describe something that can be physically observed happening in real life.
+Each output MUST include:
+- one identifiable human
+- one specific physical action  
+- one visible imperfection (mistake, hesitation, correction)
 
-If it cannot be captured in a close-up shot showing human interaction, it is invalid.
+HARD RULES (NON-NEGOTIABLE):
 
-ANTI-INTERPRETATION RULE (CRITICAL):
+1. NO GENERIC LABELS
+   Reject: preparation, interaction, experience, moment, journey
+   These are ideas, not observations.
 
-If the moment can be described in one word (confident, nervous, happy, relieved) → it is INVALID.
+2. NO CLEAN OR PERFECT ACTIONS
+   Every action must include friction, hesitation, or correction.
+   If it can be done smoothly → INVALID.
 
-NO emotion labels. NO interpretations. ONLY physical actions.
+3. NO MULTI-STEP SEQUENCES
+   Show one micro-loop only: [action] → [variation] → [repeat/correct]
+   Not: step 1 → step 2 → step 3
 
-Examples:
-❌ "Confident Stance" → interpretation, not behavior
-✅ "Shoulders Pull Back Then Drop Slightly" → motion observed
-❌ "Nervous Fidget" → emotion label
-✅ "Finger Taps Twice Then Presses Harder" → action sequence
+4. NO STORYTELLING OR ATMOSPHERE
+   No mood. No context. No "busy shop" or "quiet moment".
+   Only: human + action + imperfection.
 
-MICRO-ACTION STRUCTURE (MANDATORY):
+5. NO EMOTION LABELS
+   If it can be described in one word (confident, nervous, happy) → INVALID.
+   Show physical behavior only.
 
-Every moment must include:
-1. A visible action
-2. AND a variation in that action (repeat / fail / adjust / pause)
+SELF-CHECK BEFORE OUTPUT:
 
-Format: [action] → [pause/change] → [continuation]
+Before finalizing, validate each element:
+1. Is there a human clearly present? (YES/NO)
+2. Is the action specific and visible? (YES/NO)  
+3. Is there a real imperfection? (YES/NO)
 
-Examples:
-❌ "Pen Scratching" → static
-✅ "Pen Taps Twice, Pauses, Then Presses Harder" → motion sequence
-❌ "Hand On Handle" → frozen
-✅ "Grips Handle, Loosens, Then Grips Again" → micro-loop
+If any answer is NO → regenerate that element internally.
 
-CRITICAL RULE (NON-NEGOTIABLE):
+LANGUAGE RULES:
 
-If the action can be done once correctly, it is INVALID.
+- Use minimal, observational language
+- Avoid adjectives unless physically necessary
+- Avoid emotional or interpretive words
+- Format: [action] → [pause/change] → [continuation]
 
-Only include actions where:
-- the person does it again unnecessarily
-- the first attempt fails or feels incomplete
-- there is visible correction or re-adjustment
+VARIATION ENFORCEMENT:
 
-NO HUMANS = INVALID:
-If no human is present OR no human action is visible → discard moment immediately.
+Avoid repeating across elements:
+- same verbs (adjusts, tries again, checks)
+- same action structures
+- same body parts (all hands, all feet)
 
-REDUNDANCY SIGNAL RULE:
+Each element must differ in physical behavior type.
 
-The element_name must include a contradiction or redundancy signal.
+AUTO-REJECT EXAMPLES:
 
-Required words/phrases:
-- "after" / "again after" / "even after"
-- "still" / "already"
-- "same" / "just"
-- "then" / "pause then" / "stops then"
+These are INVALID outputs:
+❌ "A person enjoying coffee" → emotion, no imperfection
+❌ "A busy shop scene" → no specific human
+❌ "Someone interacting with a device" → generic, no friction
+❌ "Confident stance" → emotion label
+❌ "Preparation for departure" → idea, not action
 
-Examples:
-❌ "Adjusts Strap Again" → missing redundancy context
-✅ "Adjusts Strap Even After Tightening" → shows irrationality
-❌ "Checks Pocket Twice" → weak
-✅ "Checks Same Pocket Again After Just Looking" → irrational
+VALID OUTPUT STRUCTURE:
 
-If name does not imply redundancy, reject it.
+element_name: [body part] + [action] + [variation/correction] (4-6 words)
+insight_line: [observable motion sequence] (6-8 words)  
+direction_label: [VERB] AND [VERB]
+unsplash_query: [human] + [action] + [environment] + [no emotion words]
 
-ANTI-GENERIC PRESSURE:
-If the moment feels like something seen in ads before, reject it.
-Each moment should feel slightly uncomfortable in its specificity.
+Example:
+element_name: "Presses Button, Waits, Presses Again"
+insight_line: "Finger taps once, pauses, taps second time"
+direction_label: "TAP AND RETAP"
 
-Generate 4 disconnected moments showing human imperfection.
+Your output must feel like: raw observed moment, not a description or idea.
+
+Generate 4 elements meeting ALL constraints.
 
 STRUCTURE:
 
