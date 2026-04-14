@@ -402,7 +402,10 @@
     // ============================================
     var SYSTEM_PROMPT = `YOU MUST FOLLOW THIS EXACT FORMAT.
 
-If you do not follow this format, your output is INVALID.
+CRITICAL RULE:
+DO NOT WRITE WORDS LIKE "Moment", "One", "Two", OR ANY NUMBERING.
+
+If you include numbering, the output is INVALID.
 
 OUTPUT EXACTLY 8 MOMENTS.
 EACH MOMENT MUST BE EXACTLY 3 LINES.
@@ -422,13 +425,12 @@ LIFT AND LOWER
 Rules:
 - EXACTLY 8 moments
 - EXACTLY 3 lines per moment
-- NO blank lines between moments
-- NO extra text before or after
-- NO explanations
-- NO numbering (no "Moment 1:", no "1.", no numbering of any kind)
+- NO blank lines
+- NO numbering
+- NO labels like "Moment"
+- NO extra text
 
-Generate human micro-behaviors.
-Each behavior should show slight imperfection: hesitation, repetition, or interruption.
+Generate raw human micro-behaviors.
 
 START OUTPUT NOW:`;
 
@@ -454,39 +456,88 @@ START OUTPUT NOW:`;
     // 🔥 V2: PLAIN TEXT PARSER (CLEAN)
     // ============================================
     function parseOutput(text) {
-      var lines = text
+      // 🔥 NORMALIZE LINE BREAKS (handles ↵, \r\n, \r)
+      var normalized = text
+        .replace(/↵/g, "\n")        // handle arrow newline
+        .replace(/\r\n/g, "\n")     // Windows
+        .replace(/\r/g, "\n");      // Mac old
+
+      var lines = normalized
         .split("\n")
         .map(function(l) { return l.trim(); })
         .filter(function(l) { return l.length > 0; });
 
-      var elements = [];
-
-      // DEBUG LOGGING
-      console.log("RAW OUTPUT:", text);
       console.log("TOTAL LINES:", lines.length);
 
+      // 🔥 STRUCTURE GUARD
+      if (lines.length !== 24) {
+        console.warn("⚠️ INVALID STRUCTURE: Expected 24 lines, got", lines.length);
+        return {
+          elements: fallbackElements(),
+          core_feeling: "Raw human imperfection",
+          human_insight: "People repeat unnecessary actions",
+          color_texture: "Natural light, muted tones",
+          sound_direction: "Ambient human sounds",
+          color_palette: ["#8B7355", "#A0826D", "#C9ADA7", "#E8DDD3", "#F4EDE8"],
+          avoid: ["perfection", "beauty", "confidence"]
+        };
+      }
+
+      var elements = [];
+
       for (var i = 0; i < lines.length; i += 3) {
-        if (!lines[i + 2]) break;
+        if (!lines[i] || !lines[i+1] || !lines[i+2]) {
+          console.warn("⚠️ Incomplete triplet at index", i);
+          continue;
+        }
+
+        // 🔥 OBJECT-AWARE QUERY BUILDER
+        var context = "person";
+        var lowerBrief = brief.toLowerCase();
+        
+        if (lowerBrief.match(/mall|shopping|store|retail/)) {
+          context = "shopping mall";
+        } else if (lowerBrief.match(/airport|travel|terminal|flight/)) {
+          context = "airport terminal";
+        } else if (lowerBrief.match(/cafe|coffee|restaurant|food/)) {
+          context = "cafe";
+        }
+        
+        var actionText = (lines[i] + " " + lines[i + 1]).toLowerCase();
+        var objectAnchor = "action";
+        
+        if (actionText.match(/jacket|coat|clothes|shirt|try/)) {
+          objectAnchor = "trying clothes";
+        } else if (actionText.match(/phone|screen|text|call/)) {
+          objectAnchor = "using phone";
+        } else if (actionText.match(/bag|luggage|backpack|carry/)) {
+          objectAnchor = "holding bag";
+        } else if (actionText.match(/food|eat|drink|cup|coffee/)) {
+          objectAnchor = "eating drinking";
+        } else if (actionText.match(/shoe|feet|walk/)) {
+          objectAnchor = "walking";
+        } else if (actionText.match(/door|handle|enter/)) {
+          objectAnchor = "using door";
+        } else if (actionText.match(/hand|finger|touch/)) {
+          objectAnchor = "hands action";
+        }
+        
+        var imageQuery = context + " person " + objectAnchor + ", candid, real life";
 
         elements.push({
           element_name: lines[i],
           insight_line: lines[i + 1],
           direction_label: lines[i + 2],
-          unsplash_query: lines[i] + " person real candid " + (Math.random() > 0.5 ? "close up" : "wide shot")
+          unsplash_query: imageQuery
         });
       }
 
       console.log("ELEMENTS PARSED:", elements.length);
 
-      // Pad with fallback if we got fewer than 8
-      if (elements.length < 8) {
-        console.warn("⚠️ Only got " + elements.length + " elements, padding to 8");
-        var fallback = fallbackElements();
-        var needed = 8 - elements.length;
-        elements = elements.concat(fallback.slice(0, needed));
+      // Ensure exactly 8 elements
+      while (elements.length < 8) {
+        elements = elements.concat(fallbackElements());
       }
-
-      // Always return exactly 8
       elements = elements.slice(0, 8);
 
       return {
@@ -1087,31 +1138,10 @@ START OUTPUT NOW:`;
     function fetchImage(query, card, el, brief, imageIndex) {
       var finalQuery = query.trim() || "person hands action";
       
-      var globalStyle = worldData.color_texture || "";
-      if (globalStyle) {
-        finalQuery = finalQuery + " " + globalStyle;
-      }
+      // 🔥 FIX 3: LOG QUERY (see what we're sending)
+      console.log("🔍 Unsplash Query for '" + el.element_name + "':", finalQuery);
       
-      // 🔥 FORCE VISUAL DIVERSITY - add random modifiers to break repetition
-      var diversityTags = [
-        "close up hands",
-        "side profile person",
-        "wide shot environment",
-        "overhead view",
-        "low angle shot",
-        "through glass",
-        "motion blur",
-        "harsh lighting",
-        "soft natural light",
-        "cinematic lighting",
-        "shallow depth of field",
-        "environmental context"
-      ];
-      
-      var diversityMod = diversityTags[Math.floor(Math.random() * diversityTags.length)];
-      finalQuery = finalQuery + " " + diversityMod;
-      
-      // Fetch 10 images for better diversity (not just 3)
+      // Fetch 10 images for better diversity
       fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(finalQuery) + '&per_page=10&orientation=portrait', {
         headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
       })
@@ -1121,22 +1151,18 @@ START OUTPUT NOW:`;
       })
       .then(function(data) {
         if (!data.results || data.results.length === 0) {
-          // 🔥 SMARTER FALLBACK: Alternative phrasing instead of truncation
-          var altQuery = finalQuery
-            .replace(/elevator/g, "indoor building lift")
-            .replace(/airport/g, "terminal travel")
-            .replace(/bag/g, "luggage carry");
-          
-          return fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(altQuery) + '&per_page=10&orientation=portrait', {
+          // 🔥 FIX 2: HARD FALLBACK - always return something useful
+          console.warn("⚠️ No results for query, using hard fallback");
+          return fetch('https://api.unsplash.com/search/photos?query=human hands action candid real life&per_page=10&orientation=portrait', {
             headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
           }).then(function(r) { return r.json(); });
         }
         return data;
       })
       .then(function(data) {
-        if (!data.results || data.results.length === 0) throw new Error("No results after retry");
+        if (!data.results || data.results.length === 0) throw new Error("No results after hard fallback");
         
-        // 🔥 INCREASED RANDOMNESS: Pick from top 10 instead of top 3
+        // Pick random image from top 10
         var photo = data.results[Math.floor(Math.random() * Math.min(data.results.length, 10))];
         var sk = card.querySelector('.skeleton-ph');
         if (sk) {
