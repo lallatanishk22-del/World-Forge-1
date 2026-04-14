@@ -402,26 +402,24 @@
     // ============================================
     var SYSTEM_PROMPT = `Generate simple human actions.
 
-Each moment must show:
-- a repeated action OR
-- an interrupted action
+Each moment must show a small physical action with slight imperfection (repeat, pause, or interruption).
 
-Keep actions physical and visible.
+Keep actions real and observable.
 
 Avoid:
 - emotions
 - storytelling
 - abstract words
 
-Format STRICTLY:
+Format:
 
-Line 1: 3-5 word action
-Line 2: visible interaction (max 8 words)
-Line 3: ACTION AND ACTION
+Line 1: short action phrase
+Line 2: what physically happens
+Line 3: short action label
 
 Return exactly 8 moments.
-Each moment must be exactly 3 lines.
-Total 24 lines only.
+Each moment should be 3 lines.
+
 No extra text.`;
 
     // ============================================
@@ -453,30 +451,52 @@ No extra text.`;
 
       var elements = [];
 
-      for (var i = 0; i < lines.length - 2; i += 3) {
+      // FIX 6: DEBUG LOGGING
+      console.log("RAW:", text);
+      console.log("LINES:", lines.length);
+
+      // FIX 2: IMPROVED PARSER
+      for (var i = 0; i < lines.length - 2; i++) {
         var l1 = lines[i];
         var l2 = lines[i + 1];
         var l3 = lines[i + 2];
 
-        // 🔥 STRICT VALIDATION
-        if (!l1 || !l2 || !l3) continue;
-        if (l1.split(" ").length < 2) continue;
-        // Accept AND, &, or "and" in any case
-        if (!l3.match(/and|&/i)) continue;
+        if (!l1 || !l2) continue;
 
         elements.push({
           element_name: l1,
           insight_line: l2,
-          direction_label: l3,
-          unsplash_query: l1 + " hands interaction candid real moment"
+          direction_label: l3 || "DO AND REDO",
+          // FIX 4: BETTER IMAGE QUERIES WITH RANDOMIZATION
+          unsplash_query: l1 + " person real candid " + (Math.random() > 0.5 ? "close up" : "wide shot")
         });
+
+        i += 2;
       }
 
-      // 🔥 GUARANTEE 8 ELEMENTS
-      if (elements.length < 8) {
-        var needed = 8 - elements.length;
-        var fallback = fallbackElements();
-        elements = elements.concat(fallback.slice(0, needed));
+      console.log("ELEMENTS PARSED:", elements.length);
+
+      // FIX 2: SOFT CLEANING (instead of deleting)
+      elements = elements.map(function(el) {
+        return {
+          element_name: el.element_name.trim(),
+          insight_line: el.insight_line.trim(),
+          direction_label: el.direction_label || "DO AND REDO",
+          unsplash_query: el.unsplash_query
+        };
+      });
+
+      // FIX 1: MINIMAL QUALITY FILTER (preserve good data)
+      elements = elements.filter(function(el) {
+        return el.element_name && el.insight_line;
+      });
+
+      console.log("AFTER QUALITY FILTER:", elements.length);
+
+      // FIX 3: EMERGENCY FALLBACK ONLY
+      if (elements.length < 4) {
+        console.warn("⚠️ Severe failure, using fallback");
+        elements = fallbackElements();
       }
 
       return {
