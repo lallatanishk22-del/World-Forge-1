@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Worldforge v1.1</title>
+  <title>Worldforge</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
@@ -16,6 +16,7 @@
     body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; min-height: 100vh; overflow-x: hidden; }
     body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9; opacity: 0.3; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); }
 
+    /* SETTINGS */
     .settings-btn { position: fixed; top: 20px; right: 20px; z-index: 500; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 8px 16px; cursor: pointer; transition: all 0.2s; }
     .settings-btn:hover { border-color: var(--accent-dim); color: var(--accent); }
     .settings-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 600; align-items: center; justify-content: center; }
@@ -34,6 +35,7 @@
     .key-status { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; background: #c0392b; vertical-align: middle; }
     .key-status.set { background: #27ae60; }
 
+    /* HERO */
     .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; position: relative; }
     .hero::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(201,169,110,0.05) 0%, transparent 70%); pointer-events: none; }
     .logo-mark { font-family: 'Cormorant Garamond', serif; font-size: 11px; font-weight: 300; letter-spacing: 6px; text-transform: uppercase; color: var(--accent); margin-bottom: 48px; opacity: 0.8; }
@@ -41,6 +43,7 @@
     h1 em { font-style: italic; color: var(--accent); }
     .tagline { font-size: 13px; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 64px; text-align: center; }
     
+    /* ANGLE SELECTOR */
     .angle-selector { width: 100%; max-width: 680px; margin-bottom: 20px; display: none; background: var(--surface); border: 1px solid var(--border); padding: 16px 20px; }
     .angle-selector.visible { display: block; }
     .angle-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 10px; }
@@ -50,6 +53,7 @@
     .angle-pill.active { background: var(--accent); color: #0a0a0a; border-color: var(--accent); font-weight: 600; }
     .angle-description { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: var(--text-muted); margin-top: 10px; line-height: 1.5; }
     
+    /* GENERATION HISTORY */
     .gen-history { margin-bottom: 24px; display: none; }
     .gen-history-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 12px; }
     .gen-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -78,16 +82,20 @@
     .status { margin-top: 40px; font-size: 12px; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; text-align: center; min-height: 20px; opacity: 0; transition: opacity 0.4s; }
     .status.visible { opacity: 1; }
 
+    /* EXPORT BUTTON */
     .export-btn { position: fixed; bottom: 24px; right: 24px; z-index: 500; background: var(--accent); color: #0a0a0a; border: none; padding: 12px 24px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.2s; display: none; }
     .export-btn:hover { background: #d4b47a; }
 
+    /* OUTPUT */
     .output { display: none; padding-bottom: 80px; }
 
+    /* DIRECTION SECTION */
     .dir-section { max-width: 1400px; margin: 0 auto; padding: 64px 24px 48px; }
     .dir-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
     .dir-title { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); }
     .dir-brief { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: var(--text-muted); }
 
+    /* CORE ROW */
     .core-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; margin-bottom: 24px; }
     @media(max-width:900px) { .core-row { grid-template-columns: repeat(2,1fr); } }
     @media(max-width:500px) { .core-row { grid-template-columns: 1fr; } }
@@ -96,6 +104,7 @@
     .c-value { font-family: 'Cormorant Garamond', serif; font-size: 17px; line-height: 1.6; color: var(--text); }
     .c-value.big { font-size: 24px; font-style: italic; font-weight: 300; color: #fff; }
 
+    /* EXECUTION */
     .exec-wrap { border: 1px solid var(--border); margin-bottom: 24px; }
     .exec-header { display: flex; align-items: center; gap: 14px; padding: 14px 22px; border-bottom: 1px solid var(--border); }
     .role-tag { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; padding: 5px 12px; font-weight: 700; border-radius: 2px; }
@@ -117,12 +126,13 @@
     .e-value { font-family: 'Cormorant Garamond', serif; font-size: 16px; line-height: 1.7; color: var(--text-dim); }
     .e-list { list-style: none; }
     .e-list li { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); line-height: 1.7; padding-left: 16px; position: relative; margin-bottom: 3px; }
-    .e-list li::before { content: '->'; position: absolute; left: 0; color: var(--accent-dim); font-size: 11px; top: 4px; }
+    .e-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 11px; top: 4px; }
 
     .avoid-bar { display: flex; align-items: flex-start; gap: 14px; padding: 14px 22px; background: var(--surface); border-top: 2px solid var(--bg); }
     .avoid-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #c0392b; white-space: nowrap; margin-top: 2px; }
     .avoid-value { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-dim); line-height: 1.6; }
 
+    /* VISUAL WORLD */
     .visual-section { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
     .section-head { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 16px; }
     .section-head::after { content: ''; flex: 1; height: 1px; background: var(--border); }
@@ -133,8 +143,10 @@
     @media(max-width:768px) { .world-grid { grid-template-columns: repeat(2,1fr); } }
     @media(max-width:480px) { .world-grid { grid-template-columns: 1fr; } }
 
+    /* CARD */
     .card { position: relative; overflow: hidden; cursor: pointer; opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; background: #0d0d0d; border: 1px solid var(--border); }
     .card.visible { opacity: 1; transform: translateY(0); }
+    .card.generic-warning { border-color: #c0392b; }
     .card-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.4,0,0.2,1); filter: brightness(0.85) contrast(1.05); }
     .card:hover .card-img { transform: scale(1.08); filter: brightness(1) contrast(1); }
     .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.96) 0%, rgba(0,0,0,0.05) 60%, transparent 100%); pointer-events: none; transition: background 0.3s; }
@@ -142,7 +154,9 @@
     .card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 22px 18px 18px; }
     .card-num { font-size: 10px; letter-spacing: 3px; color: var(--accent); margin-bottom: 6px; font-weight: 600; }
     .card-name { font-family: 'Cormorant Garamond', serif; font-size: 21px; color: #fff; line-height: 1.15; margin-bottom: 8px; font-weight: 400; }
+    .card-name.generic-flag { color: #e74c3c; }
     .card-insight { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: rgba(255,255,255,0.6); line-height: 1.5; margin-bottom: 10px; }
+    .card-insight.generic-flag { color: #e74c3c; }
     .card-label { display: inline-block; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); background: rgba(201,169,110,0.08); border: 1px solid rgba(201,169,110,0.2); padding: 4px 10px; }
     .card-click-hint { position: absolute; top: 14px; left: 14px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.6); background: rgba(0,0,0,0.7); padding: 5px 12px; opacity: 0; transition: opacity 0.3s; border: 1px solid rgba(255,255,255,0.12); }
     .card:hover .card-click-hint { opacity: 1; }
@@ -151,11 +165,13 @@
     .img-skeleton { width: 100%; aspect-ratio: 3/4; background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
+    /* PALETTE */
     .palette-row { max-width: 1400px; margin: 28px auto 0; padding: 0 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .palette-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); }
     .swatch { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.2s; cursor: default; }
     .swatch:hover { transform: scale(1.2); }
 
+    /* SIDE PANEL */
     .panel { position: fixed; right: 0; top: 0; bottom: 0; width: 380px; background: #0d0d0d; border-left: 1px solid var(--border); z-index: 400; transform: translateX(100%); transition: transform 0.32s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; overflow: hidden; }
     .panel.open { transform: translateX(0); }
     @media(max-width:500px) { .panel { width: 100%; } }
@@ -170,7 +186,7 @@
     .p-value { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--text-dim); line-height: 1.7; }
     .p-list { list-style: none; }
     .p-list li { font-family: 'Cormorant Garamond', serif; font-size: 13px; color: var(--text-dim); line-height: 1.7; padding-left: 14px; position: relative; margin-bottom: 2px; }
-    .p-list li::before { content: '->'; position: absolute; left: 0; color: var(--accent-dim); font-size: 10px; top: 4px; }
+    .p-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 10px; top: 4px; }
 
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
@@ -218,6 +234,7 @@
         <button class="generate-btn" id="generateBtn" onclick="generateWorld()">Generate</button>
       </div>
       
+      <!-- ANGLE SELECTOR -->
       <div class="angle-selector" id="angleSelector">
         <div class="angle-label">Creative Angle</div>
         <div class="angle-pills" id="anglePills"></div>
@@ -292,7 +309,7 @@
 
   <script>
     // ============================================
-    // 🔥 UPDATED: HUMAN-FIRST CATEGORIES (4 ELEMENTS)
+    // INTERPRETATION DATABASE (LEAN VERSION)
     // ============================================
     var CATEGORIES = {
       luggage: {
@@ -300,19 +317,19 @@
         triggers: ['bag', 'luggage', 'suitcase', 'backpack', 'travel', 'airport', 'skybag', 'american tourister', 'samsonite'],
         angles: [
           {
-            name: 'Human Mistakes',
-            description: 'Person fumbling with bag',
-            interpretation: 'Show human making mistakes: hand misses zipper pull (reaches twice, finally catches), adjusts strap (pulls tight, still loose, tries again), checks pocket (opens same pocket twice in 3 seconds), picks up bag awkwardly (drops, catches before hitting ground). Every moment must show human hands/body making repeated action or mistake. NO bag-only shots.'
+            name: 'Bag Journey',
+            description: 'Object POV — endurance through mishandling',
+            interpretation: 'Show the bag being overpacked (clothes stuffed in, zipper struggling), dragged across rough airport floors (wheels catching), thrown onto conveyor belts (landing hard, tumbling), left alone in baggage claim (waiting, ignored), and picked up again (owner grabs handle, walks away). Focus on physical wear, not passenger emotions.'
           },
           {
-            name: 'Anxious Checking',
-            description: 'Repeated unnecessary checks',
-            interpretation: 'Show human anxiety through repetition: touches bag handle while walking (grabs, lets go, grabs again), checks boarding pass (looks at it, puts away, checks again immediately), adjusts something already adjusted (re-zips closed pocket, re-tightens tight strap). Focus on unnecessary repeated actions. Must show human hands in every frame.'
+            name: 'Stress Relief',
+            description: 'Passenger chaos vs bag calm',
+            interpretation: 'Show passenger rushing (running through terminal, checking time frantically, sweating), losing things (boarding pass drops, phone almost slips), panicking at gate (last call announcement, fumbling with carry-on) — while bag stays intact (zippers closed, wheels rolling smooth, no damage). Contrast human stress with object reliability.'
           },
           {
-            name: 'Careless Recovery',
-            description: 'Near-mistakes + quick saves',
-            interpretation: 'Show human carelessness: almost drops bag (fumbles, catches last second), overstuffs pocket (item falls out, picks up, tries different pocket), drags bag carelessly (wheel catches on curb, stops, lifts bag over). Focus on human body causing near-mistake then recovering. Always show person, not just object.'
+            name: 'Abuse Test',
+            description: 'Owner neglect vs product survival',
+            interpretation: 'Show owner overstuffing bag (forcing items in, sitting on it to close), tossing it (into trunk, onto bed, down stairs), stepping on it (using as stool, kid jumping on it), leaving it in rain (wet, dragged through puddles) — but bag still works (zippers intact, no tears, wheels turn). Human carelessness vs object durability.'
           }
         ],
         default_angle: 0
@@ -322,19 +339,19 @@
         triggers: ['glasses', 'sunglasses', 'spectacles', 'eyewear', 'frames', 'lenskart', 'ray-ban', 'oakley', 'warby parker'],
         angles: [
           {
-            name: 'Squinting Struggle',
-            description: 'Person struggling without glasses',
-            interpretation: 'Show human difficulty: squints at phone (leans closer, still can\'t read, gives up), reaches for cup (hand misses, tries again, knocks it slightly), types message (looks close at keyboard, deletes, retypes). Then WITH glasses: reads phone normal distance, grabs cup first try. Focus on repeated failed attempts then success. Must show face struggling.'
+            name: 'Before/After',
+            description: 'Blurred struggle vs sharp clarity',
+            interpretation: 'Show life before glasses: squinting at menu (leaning close, can\'t read), missing small details (doesn\'t notice friend waving across street), straining at laptop (rubbing eyes, leaning forward). Then after: sees menu clearly (sits back, orders confidently), notices details (waves back immediately), works comfortably (relaxed posture, no strain). Focus on what becomes visible.'
           },
           {
-            name: 'Fidget Shift',
-            description: 'Body language change',
-            interpretation: 'Show human behavior shift: BEFORE glasses (fidgets with hands, looks down when talking, shifts weight), puts glasses on (adjusts frames twice, touches bridge), AFTER (hands still, makes eye contact longer, stands steadier). Focus on unconscious body adjustments. Must show full figure, not close-up of glasses.'
+            name: 'Identity Shift',
+            description: 'Who you become wearing them',
+            interpretation: 'Show transformation: person without glasses (looking down, avoiding eye contact, blending in) puts on glasses and shifts (makes eye contact, speaks up in meeting, gets noticed). Not vision correction — identity upgrade. Show confidence change through body language, not words.'
           },
           {
-            name: 'Panic Search',
-            description: 'Frantic when missing',
-            interpretation: 'Show human panic: reaches for glasses (not there, pats head), checks pockets (front, back, front again), tries to function (squints at phone, holds it far away, gives up). Focus on repeated checking same spots. Must show hands frantically searching body/surfaces.'
+            name: 'Lost Without',
+            description: 'Panic when glasses go missing',
+            interpretation: 'Show the moment glasses are lost or broken: person reaches for glasses (not there, panic starts), pats pockets frantically (can\'t find them), tries to function without them (bumps into door, can\'t read phone, walks wrong direction). Sudden helplessness. Focus on dependency revealed through struggle.'
           }
         ],
         default_angle: 0
@@ -344,19 +361,19 @@
         triggers: ['jeans', 'shirt', 'dress', 'clothing', 'apparel', 'outfit', 'levis', 'zara', 'h&m', 'uniqlo'],
         angles: [
           {
-            name: 'Zero Adjustments',
-            description: 'Never touching clothes all day',
-            interpretation: 'Show human NOT doing actions: person sits, stands, moves, reaches — never pulls waistband, never adjusts shirt, never checks mirror, never tugs anything. Show full day of movement with zero clothing adjustments. Focus on absence of fidgeting. Must show body in various positions doing normal tasks.'
+            name: 'Invisible Fit',
+            description: 'Clothes you forget wearing',
+            interpretation: 'Show person wearing clothing but never adjusting it (no tugging waistband, no pulling shirt down, no checking mirror). Goes through full day (sitting, standing, moving) without thinking about outfit. Perfect fit = forgotten presence. Focus on absence of adjustment behavior.'
           },
           {
-            name: 'Pre-Meeting Ritual',
-            description: 'Repeated mirror checks',
-            interpretation: 'Show human preparation: checks mirror (adjusts collar), walks away, returns to mirror (adjusts same collar again), checks phone time, back to mirror third time (touches collar, leaves it). Focus on unnecessary repeated checking. Must show person approaching/leaving mirror multiple times.'
+            name: 'Confidence Armor',
+            description: 'What you wear to face pressure',
+            interpretation: 'Show person choosing specific outfit for high-stakes moment (job interview, first date, important presentation). Watch them put it on (checking mirror multiple times, adjusting collar), then face the moment (walking in confident, maintaining posture). Clothing as psychological shield. Show outfit selection and body language shift.'
           },
           {
-            name: 'Stain Recognition',
-            description: 'Finding old marks',
-            interpretation: 'Show human noticing: looks down at shirt, sees stain, touches it (remembers when it happened), sees another mark (different memory), finds third spot. Focus on hand touching different imperfections + face showing recognition. Must show clothing with visible wear + human hand pointing/touching each spot.'
+            name: 'Worn Stories',
+            description: 'Every mark tells history',
+            interpretation: 'Show clothing with visible wear: faded concert t-shirt (specific stain from that night), ripped jeans (tear from climbing fence), coffee stain on sleeve (from important meeting). Person sees these marks and remembers. Imperfection = narrative. Focus on specific damage and memory trigger.'
           }
         ],
         default_angle: 0
@@ -366,19 +383,19 @@
         triggers: ['food', 'restaurant', 'cafe', 'coffee', 'tea', 'meal', 'dish', 'recipe', 'starbucks', 'mcdonalds', 'dominos'],
         angles: [
           {
-            name: 'Phone Eating',
-            description: 'Distracted vs present',
-            interpretation: 'Show human attention: person eating while scrolling phone (fork misses mouth slightly, looks down, tries again), chews while reading, doesn\'t taste anything. Then: same person, no phone, takes bite, chews slowly, puts fork down between bites. Focus on fork coordination + chewing pace difference. Must show face + hands + phone.'
+            name: 'Ritual vs Rush',
+            description: 'Intentional eating vs survival fuel',
+            interpretation: 'Show two versions: Ritual (person sits down, arranges plate, takes photo, eats slowly, talks between bites) vs Rush (eating while walking, checking phone, finishes in 3 minutes, doesn\'t remember taste). Same food, different presence. Focus on speed and attention contrast.'
           },
           {
-            name: 'First Bite Reaction',
-            description: 'Taste hits immediately',
-            interpretation: 'Show human response: person lifts fork, takes bite, chews once (eyes change — widen OR narrow), immediate second reaction (takes another bite fast OR puts fork down slowly). Focus on micro-expressions during chewing. Must show face close enough to see eye/mouth changes.'
+            name: 'First Bite',
+            description: 'Moment taste reveals truth',
+            interpretation: 'Show exact moment flavor hits: person takes first bite, chews, expression changes (eyes widen OR face drops), immediate reaction (takes second bite fast OR puts fork down). Anticipation → verdict. No words, just physical reaction to taste quality.'
           },
           {
-            name: 'Conversation Stop',
-            description: 'Talk -> silence -> talk',
-            interpretation: 'Show human group: three people talking (hands gesturing, laughing), food arrives, all take first bite at same time, talking stops (just chewing, eye contact between them, small nods), 10 seconds later talking resumes. Focus on sound gap. Must show multiple faces + moment of synchronized silence.'
+            name: 'Food Silence',
+            description: 'When taste stops conversation',
+            interpretation: 'Show group eating together, talking (laughing, gestures), then food arrives. Everyone takes first bite and conversation stops (no talking, just chewing, occasional eye contact, nods). Not awkward silence — reverent silence. Taste > words. Show conversation pause caused by food quality.'
           }
         ],
         default_angle: 0
@@ -388,31 +405,9 @@
         triggers: [],
         angles: [
           {
-            name: 'Human Fumble',
-            description: 'Mistakes under pressure',
-            interpretation: 'Find 4 moments where human makes mistake: drops something (catches it), checks something twice, hesitates before action, does unnecessary repeated action. Every moment must show human body making imperfect choice. Focus on hands fumbling, face showing uncertainty, body hesitating.'
-          }
-        ],
-        default_angle: 0
-      },
-      pilot_final: {
-        name: 'Aviation Transition',
-        triggers: ['pilot', 'cockpit', 'flight', 'solo', 'last', 'final', 'aviation', 'flying', 'aircraft', 'transition', 'commercial', 'alone'],
-        angles: [
-          {
-            name: 'Routine vs Recognition',
-            description: 'Automatic movements vs deliberate awareness',
-            interpretation: 'Show pilot touching controls with "last time alone" awareness: fingers trace surfaces (throttle edge slowly, yoke rim gently, switch guard carefully) before using them, palm rests on familiar objects 2-3 seconds longer than needed, hand lingers on instruments after completing action. Each touch must show THREE stages: automatic reach → conscious pause → deliberate completion. NOT dramatic farewell — quiet recognition. Example: hand reaches for throttle (automatic), stops and traces edge with index finger (awareness), then grips normally (completion). Focus on gentle, slightly-slower-than-normal handling with micro-pauses.'
-          },
-          {
-            name: 'Muscle Memory vs Mind',
-            description: 'Body knows vs brain interrupts',
-            interpretation: 'Show autopilot interrupted by awareness: hand reaches for switch automatically (muscle memory starts movement), stops mid-reach (brain interrupts with "wait, this is the last time"), completes action deliberately (conscious choice replaces habit). Pattern repeats: adjusting headset (does it automatically, realizes, does it again slowly), checking instruments (quick scan from habit, then slower intentional look), gripping controls (normal grip, releases, re-grips with full awareness). Every action must show DOUBLE-ACTION: automatic first attempt → pause → deliberate second attempt. Focus on the interruption moment between muscle memory and conscious choice.'
-          },
-          {
-            name: 'Private Rituals',
-            description: 'Personal habits done final time',
-            interpretation: 'Show small personal rituals unique to this pilot: tapping specific instrument twice before action (done every flight for years, this time tap lingers into press), adjusting seat the exact same way (familiar three-point adjustment, each movement slower), touching "lucky spot" on panel (brief superstitious touch becomes longer press with palm). These are NOT standard procedures — personal quirks/superstitions developed over time. Focus on tiny repeated behaviors that only this pilot does, performed with extra time and awareness. Show familiar ritual slowed down by recognition of finality.'
+            name: 'Human Tension',
+            description: 'Real behavior under pressure',
+            interpretation: 'Find the mistake, hesitation, or wrong choice in this situation. Show what people do wrong when stressed, not what they should do. Focus on delay, denial, or distraction leading to consequence.'
           }
         ],
         default_angle: 0
@@ -420,359 +415,92 @@
     };
 
     // ============================================
-    // VALIDATION ARRAYS (BANNED WORDS + RESISTANCE)
+    // SYSTEM PROMPT (BRUTAL CREATIVE DIRECTOR MODE)
     // ============================================
-    var BANNED_WORDS = [
-      'chaos', 'journey', 'experience', 'perfect', 'complete',
-      'freedom', 'adventure', 'destination', 'arrival'
-    ];
-    
-    var BANNED_PHRASES = [
-      'pre flight', 'post flight', 'mid flight',
-      'we made it', 'left behind', 'hold on', 'next time'
-    ];
+    var SYSTEM_PROMPT = `You are a creative director who rejects generic work.
 
-    var RESISTANCE_WORDS = [
-      'stuck', 'slip', 'catch', 'miss', 'drop', 'struggle', 'hesitate',
-      'tight', 'loose', 'almost', 'barely', 'fumble', 'grab', 'reach',
-      'twice', 'again', 'repeat', 'adjust', 'shift', 'correct', 'hover',
-      'linger', 'delay', 'recheck', 'double'
-    ];
+Generate emotionally real ad moments with strict structural enforcement.
 
-    function hasResistance(text) {
-      var lower = text.toLowerCase();
-      return RESISTANCE_WORDS.some(function(word) {
-        return lower.includes(word);
-      });
+MANDATORY STRUCTURE - EVERY ELEMENT:
+
+element_name: Must describe physical interaction (object + action)
+  ✅ VALID: "Zip Stuck Halfway" / "Wheel Catches On Tile" / "Handle Slips From Grip"
+  ❌ INVALID: "Check-in Chaos" / "Journey Begins" / "Safe Arrival"
+
+insight_line: Must describe visible reaction or consequence
+  ✅ VALID: "Force it closed, elbow pressed down" / "Bag tips forward, owner catches fast"
+  ❌ INVALID: "Overpack at your own risk" / "We made it" / "Hold on tight"
+
+direction_label: Must be verb-based action phrase
+  ✅ VALID: "PRESS AND STRAIN" / "TIP AND CATCH" / "SLIP AND DRAG"
+  ❌ INVALID: "DRAG AND DROP" / "STAND AND WAIT" / "RUN AND RUSH"
+
+CRITICAL CONSTRAINT - INTERACTION + RESISTANCE:
+
+Each moment MUST include:
+1. INTERACTION: Object + specific physical action
+2. RESISTANCE: Something goes slightly wrong
+
+Examples of resistance:
+- Slipping (grip loosens, foot slides, object drops)
+- Missing (hand reaches but misses, timing off)
+- Catching (thing falling, last-second save)
+- Struggling (zipper stuck, wheel caught, strap tight)
+- Hesitation (pause before action, uncertain grip)
+
+If an element lacks resistance → it's too clean → REWRITE IT
+
+BANNED CONTENT:
+
+Abstract words: chaos, journey, arrival, moment, experience, relief, stress, freedom, adventure
+Summary phrases: "we made it", "left behind", "hold on", "next time", "in sight"
+Perfect outcomes: safe, complete, perfect, smooth, easy
+
+VALIDATION BEFORE RETURN:
+
+Scan each element for:
+1. Does element_name contain object + action? (not concept)
+2. Does insight_line show visible behavior? (not feeling)
+3. Does element include resistance? (not smooth flow)
+
+If NO to any → REWRITE that element before returning JSON
+
+Return valid JSON with exactly 8 elements. No preamble, no explanation.
+
+JSON structure:
+{
+  "core_feeling": "3-5 words with tension/contrast",
+  "human_insight": "1 sharp line about real behavior",
+  "color_texture": "lighting + material + color",
+  "sound_direction": "ambient sounds, not music",
+  "first_action": {
+    "subject": "who/what",
+    "action": "command form",
+    "camera": "shot type",
+    "duration": "seconds",
+    "environment": "where"
+  },
+  "shots": ["shot 1", "shot 2", "shot 3", "shot 4"],
+  "sequence": ["step 1", "step 2", "step 3"],
+  "pacing": "timing",
+  "style": "camera approach",
+  "audio": "dominant sound",
+  "positioning": "brand role",
+  "tone": "2-3 words",
+  "example_messaging": ["line 1", "line 2"],
+  "layout": "spatial direction",
+  "typography": "Font + Font — feeling",
+  "avoid": ["avoid 1", "avoid 2", "avoid 3"],
+  "color_palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"],
+  "elements": [
+    {
+      "element_name": "object + action (2-4 words)",
+      "insight_line": "visible behavior, max 8 words",
+      "direction_label": "VERB AND VERB",
+      "unsplash_query": "person + action + imperfection + location + lighting (10-15 words)"
     }
-
-    function isGenericName(text) {
-      var lower = text.toLowerCase();
-      return BANNED_WORDS.some(function(word) {
-        return lower.includes(word);
-      }) || BANNED_PHRASES.some(function(phrase) {
-        return lower.includes(phrase);
-      });
-    }
-
-    // ============================================
-    // DUAL-PASS REFINEMENT SYSTEM
-    // ============================================
-    
-    function refineWorld(worldData, brief) {
-      setStatus('🔥 Adding imperfection layer…');
-      
-      return fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            {
-              role: 'system',
-              content: `You are a creative reviewer who ADDS human imperfection.
-
-Your job: Make actions feel LESS perfect, MORE human.
-
-For each moment:
-- If action is smooth → ADD hesitation or repetition
-- If action is clean → ADD correction or double-checking
-- If action is direct → ADD pause or adjustment
-
-EMOTION THROUGH IMPERFECTION:
-- Bittersweet → reaches twice, checks again
-- Aware → pauses mid-action, lingers after
-- Uncertain → adjusts grip, rechecks unnecessarily
-
-DO NOT:
-- Remove repetition ("twice" "again")
-- Remove hesitation ("pauses" "stops")
-- Remove checking ("checks" "looks again")
-- Make actions cleaner or smoother
-
-DO:
-- Add timing details ("mid-air" "before releasing")
-- Add repetition if missing ("then again")
-- Keep 4-line structure exact
-
-Return improved plain text showing MORE imperfection.`
-            },
-            {
-              role: 'user',
-              content: 'Brief: "' + brief + '"\n\nFirst-pass output:\n\n' + formatElementsAsPlainText(worldData.elements) + '\n\nAdd more imperfection. Return plain text only.'
-            }
-          ],
-          temperature: 0.6,
-          max_tokens: 1000
-        })
-      })
-      .then(function(res) {
-        if (!res.ok) throw new Error('Refinement failed');
-        return res.json();
-      })
-      .then(function(data) {
-        var raw = data.choices[0].message.content.replace(/```/g, '').trim();
-        console.log('✅ REFINEMENT: Added imperfection layer');
-        var refined = parseOutput(raw);
-        if (refined && refined.elements && refined.elements.length > 0) {
-          return refined;
-        }
-        console.warn('⚠️ Refinement parse failed, using original');
-        return worldData;
-      })
-      .catch(function(err) {
-        console.error('Refinement error:', err);
-        return worldData;
-      });
-    }
-
-    function formatElementsAsPlainText(elements) {
-      return elements.map(function(el) {
-        return el.element_name + '\n' + 
-               el.insight_line + '\n' + 
-               el.direction_label + '\n' + 
-               el.unsplash_query;
-      }).join('\n\n');
-    }
-
-    function dynamicRewrite(element, brief) {
-      console.log('🔄 Dynamic rewrite triggered for:', element.element_name);
-      
-      return fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            {
-              role: 'system',
-              content: `Rewrite this generic element to be specific and emotional.
-
-REQUIREMENTS (LEARN BY EXAMPLE):
-
-Element name:
-  ✅ "Fingers Trace Throttle Edge" (body part + action + object)
-  ✅ "Palm Settles On Yoke" (body part + deliberate verb + control)
-  ❌ "Pre Flight Pause" (contains banned "pause")
-  ❌ "Index Finger Check" (contains banned "check")
-  ❌ "Right Hand Hover" (vague, contains banned "hover")
-
-Insight:
-  ✅ "index finger runs along edge slowly, then grips"
-  ✅ "left palm settles on yoke, pauses, grips"
-  ❌ "pilot prepares for action" (summary, not physical)
-
-Direction:
-  ✅ "TRACE AND GRIP"
-  ❌ "CHECK AND VERIFY" (contains banned word)
-
-Unsplash query:
-  ✅ "pilot fingers tracing throttle edge gently cockpit soft light"
-  ❌ "hand checking controls" (contains "checking")
-
-BANNED WORDS (must not appear):
-pause, moment, gaze, check, scan, hover, review, observe
-
-MUST INCLUDE:
-- Specific body part (index finger, left hand, thumb)
-- Deliberate action verb (trace, settle, brush, linger)
-- Specific object (throttle, yoke, switch, dial)
-- Emotional timing (slowly, gently, deliberately)
-
-Return 4-line plain text format only.`
-            },
-            {
-              role: 'user',
-              content: 'Brief: "' + brief + '"\n\nGeneric element:\n' + 
-                       element.element_name + '\n' + 
-                       element.insight_line + '\n' + 
-                       element.direction_label + '\n' + 
-                       element.unsplash_query + 
-                       '\n\nRewrite with specific body part + deliberate action + emotional timing.'
-            }
-          ],
-          temperature: 0.7,
-          max_tokens: 150
-        })
-      })
-      .then(function(res) {
-        if (!res.ok) throw new Error('Rewrite failed');
-        return res.json();
-      })
-      .then(function(data) {
-        var raw = data.choices[0].message.content.replace(/```/g, '').trim();
-        var lines = raw.split('\n').filter(function(l) { return l.trim(); });
-        
-        if (lines.length >= 4) {
-          console.log('✅ Rewrite successful:', lines[0]);
-          return {
-            element_name: lines[0],
-            insight_line: lines[1],
-            direction_label: lines[2],
-            unsplash_query: lines[3]
-          };
-        }
-        
-        console.warn('⚠️ Rewrite parse failed, using fallback');
-        return staticFallback(element);
-      })
-      .catch(function(err) {
-        console.error('Rewrite error:', err);
-        return staticFallback(element);
-      });
-    }
-
-    function staticFallback(element) {
-      // Keep original but mark
-      return {
-        element_name: element.element_name + ' [fallback]',
-        insight_line: element.insight_line,
-        direction_label: element.direction_label,
-        unsplash_query: element.unsplash_query
-      };
-    }
-
-    function validateAndRewrite(elements, brief) {
-      var rewritePromises = [];
-      var rewriteCount = 0;
-      
-      elements.forEach(function(el, idx) {
-        var needsRewrite = false;
-        var reasons = [];
-        
-        if (isGenericName(el.element_name)) {
-          needsRewrite = true;
-          reasons.push('generic name: ' + el.element_name);
-        }
-        
-        var hasResistanceInName = hasResistance(el.element_name);
-        var hasResistanceInInsight = hasResistance(el.insight_line);
-        
-        if (!hasResistanceInName && !hasResistanceInInsight) {
-          console.log('⚠️ Element ' + (idx + 1) + ' lacks resistance (acceptable)');
-        }
-        
-        if (needsRewrite) {
-          rewriteCount++;
-          console.warn('🔥 REWRITE Element ' + (idx + 1) + ': ' + reasons.join(', '));
-          rewritePromises.push(dynamicRewrite(el, brief));
-        } else {
-          rewritePromises.push(Promise.resolve(el));
-        }
-      });
-      
-      if (rewriteCount > 0) {
-        console.warn('🔥 Validation: ' + rewriteCount + ' elements being rewritten');
-      } else {
-        console.log('✅ Validation: All elements passed');
-      }
-      
-      return Promise.all(rewritePromises);
-    }
-
-    // ============================================
-    // 🔥 FIXED SYSTEM PROMPT (CONTROLLED IMPERFECTION)
-    // ============================================
-    var SYSTEM_PROMPT = `You are a creative director who captures human imperfection.
-
-Your job is to generate emotionally real moments with controlled inefficiency.
-
-MANDATORY STRUCTURE:
-
-LINE 1 - Element Name (3-5 words):
-  Title must capture the BEHAVIOR, not anatomy.
-  
-  ✅ VALID: "Hand Reaches Twice For Switch" (shows repetition)
-  ✅ VALID: "Grip Tightens Then Loosens" (shows correction)
-  ✅ VALID: "Checks Dial Again Unnecessarily" (shows hesitation)
-  
-  ❌ AVOID: "Left Index Finger On Throttle" (just anatomy)
-  ❌ AVOID: "Right Hand Gripping Yoke" (just position)
-  
-  Avoid naming body parts UNLESS it adds behavioral meaning.
-
-LINE 2 - Insight (max 8 words):
-  Must show PHYSICAL SEQUENCE with timing.
-  
-  ✅ VALID: "reaches, stops mid-air, reaches again"
-  ✅ VALID: "grips tight, releases, grips again looser"
-  ✅ VALID: "taps dial twice, pauses, taps once more"
-  
-  ❌ AVOID: "touches controls gently" (too clean)
-  ❌ AVOID: "pilot prepares deliberately" (summary)
-
-LINE 3 - Direction Label (uppercase, 2-4 words):
-  ✅ VALID: "REACH AND HESITATE"
-  ✅ VALID: "GRIP AND CORRECT"
-  ✅ VALID: "TAP AND REPEAT"
-
-LINE 4 - Unsplash Query:
-  FORMULA: "pilot hand [imperfect action] [object] cockpit natural light candid"
-  
-  ✅ VALID: "pilot hand reaching twice for switch cockpit natural light"
-  ✅ VALID: "pilot fingers adjusting grip control stick cockpit candid"
-  ✅ VALID: "pilot hand checking dial repeatedly cockpit soft light"
-
-EMOTION RULE (HIGHEST PRIORITY):
-
-Every action must feel SLIGHTLY INEFFICIENT.
-
-Each element must include at least ONE:
-- REPETITION (does it twice)
-- HESITATION (pauses mid-action)
-- CORRECTION (adjusts after doing)
-- CHECKING (looks, then looks again)
-
-If the action feels CLEAN or SMOOTH → it's WRONG → rewrite it.
-
-Examples of inefficiency:
-- reaches for switch → hand stops mid-air → reaches again
-- grips yoke → loosens grip → grips tighter
-- checks instrument → looks away → checks again
-- adjusts headset → still not right → adjusts again
-
-CRITICAL CONSTRAINTS:
-
-1. PHYSICAL INTERACTION (mandatory):
-   - Must show WHAT happens (reach, grip, tap, check)
-   - Must show WHEN it happens (twice, again, mid-action)
-   - Must show HOW it changes (tighter, slower, again)
-
-2. EMOTIONAL LAYER (show through timing):
-   - Aware = checking twice
-   - Uncertain = hesitating mid-action
-   - Final = lingering after completion
-   
-   DO NOT use emotion words. SHOW emotion through imperfect timing.
-
-3. BANNED WORDS (only abstract concepts):
-   journey, experience, perfect, complete, freedom, adventure, destination, arrival
-   
-   (pause, check, hesitate, adjust are ALLOWED - they show human behavior)
-
-SELF-VALIDATION BEFORE RETURN:
-
-Scan EVERY element:
-1. Does it show repetition, hesitation, or correction?
-2. Does insight show physical sequence with timing?
-3. Does it feel slightly inefficient?
-
-If action feels TOO SMOOTH → ADD imperfection.
-
-OUTPUT FORMAT (STRICT):
-
-Generate EXACTLY 8 moments.
-Each moment = EXACTLY 4 lines.
-No numbering. No explanations. No empty lines.
-
-STRUCTURE EXAMPLE:
-
-Hand Reaches Twice For Switch
-reaches, stops mid-air, reaches again
-REACH AND HESITATE
-pilot hand reaching twice for switch cockpit natural light
-
-Generate exactly 8 moments. Plain text only.`;
+  ]
+}`;
 
     // ============================================
     // STATE & CONFIG
@@ -785,44 +513,6 @@ Generate exactly 8 moments. Plain text only.`;
     var worldData = null;
     var generations = [];
     var currentGenerationIndex = -1;
-    
-    // ============================================
-    // 🔥 V2 PLAIN TEXT PARSER (NO JSON FRAGILITY)
-    // ============================================
-    // ============================================
-    // 🔥 V2: PLAIN TEXT PARSER (4-LINE FORMAT)
-    // ============================================
-    function parseOutput(text) {
-      var lines = text
-        .split("\n")
-        .map(function(l) { return l.trim(); })
-        .filter(function(l) { return l.length > 0; });
-
-      var elements = [];
-
-      // Each element is now 4 lines: title, action, direction, unsplash_query
-      for (var i = 0; i < lines.length; i += 4) {
-        // Safety check: ensure all 4 lines exist before creating element
-        if (lines[i] && lines[i + 1] && lines[i + 2] && lines[i + 3]) {
-          elements.push({
-            element_name: lines[i],
-            insight_line: lines[i + 1],
-            direction_label: lines[i + 2],
-            unsplash_query: lines[i + 3] // Use model's query EXACTLY - no modification
-          });
-        }
-      }
-
-      return {
-        elements: elements.slice(0, 8),  // 8 moments
-        core_feeling: "Raw human imperfection",
-        human_insight: "People repeat unnecessary actions",
-        color_texture: "Natural light, muted tones",
-        sound_direction: "Ambient human sounds",
-        color_palette: ["#8B7355", "#A0826D", "#C9ADA7", "#E8DDD3", "#F4EDE8"],
-        avoid: ["perfection", "beauty", "confidence"]
-      };
-    }
 
     // ============================================
     // INIT
@@ -857,46 +547,44 @@ Generate exactly 8 moments. Plain text only.`;
     }
     function closePanel() { document.getElementById('sidePanel').classList.remove('open'); }
 
+    // ============================================
+    // DYNAMIC ANGLE SELECTION
+    // ============================================
     function scoreAngle(angles, brief) {
       var lowerBrief = brief.toLowerCase();
+      
+      // Score each angle based on brief keywords
       var scores = angles.map(function(angle, index) {
         var score = 0;
+        
+        // Angle 0 triggers: journey, story, experience, perspective
         if (index === 0) {
           if (lowerBrief.match(/journey|story|experience|perspective|through/)) score += 2;
         }
+        
+        // Angle 1 triggers: stress, rush, panic, pressure, chaos
         if (index === 1) {
           if (lowerBrief.match(/stress|rush|panic|pressure|chaos|urgent/)) score += 2;
         }
+        
+        // Angle 2 triggers: abuse, test, durability, tough, survive
         if (index === 2) {
           if (lowerBrief.match(/abuse|test|durability|tough|survive|endure/)) score += 2;
         }
+        
         return { index: index, score: score };
       });
+      
+      // Sort by score descending
       scores.sort(function(a, b) { return b.score - a.score; });
+      
+      // Return highest scoring angle, or default to 0
       return scores[0].score > 0 ? scores[0].index : 0;
     }
 
     // ============================================
-    // 🔥 CONCEPT TYPE DETECTION (PHYSICAL vs INDIRECT)
+    // CATEGORY DETECTION
     // ============================================
-    function detectConceptType(brief) {
-      var lowerBrief = brief.toLowerCase();
-      
-      // INDIRECT PRESENCE triggers
-      var indirectTriggers = [
-        'scent', 'perfume', 'fragrance', 'smell', 'aroma',
-        'memory', 'remember', 'recall', 'nostalgia',
-        'presence', 'atmosphere', 'ambiance', 'feeling',
-        'influence', 'subtle', 'background', 'quiet'
-      ];
-      
-      var hasIndirectTrigger = indirectTriggers.some(function(trigger) {
-        return lowerBrief.includes(trigger);
-      });
-      
-      return hasIndirectTrigger ? 'indirect' : 'physical';
-    }
-
     function detectCategory(brief) {
       var lowerBrief = brief.toLowerCase();
       for (var catKey in CATEGORIES) {
@@ -910,6 +598,9 @@ Generate exactly 8 moments. Plain text only.`;
       return 'generic';
     }
 
+    // ============================================
+    // ANGLE SELECTOR UI
+    // ============================================
     function showAngleSelector(categoryKey) {
       var category = CATEGORIES[categoryKey];
       var selector = document.getElementById('angleSelector');
@@ -946,141 +637,357 @@ Generate exactly 8 moments. Plain text only.`;
     }
 
     // ============================================
-    // 🔥 UPDATED: PROMPT BUILDER (4 ELEMENTS, HUMAN-FIRST)
+    // PROMPT BUILDER (WITH STRUCTURAL CONSTRAINTS)
     // ============================================
-    function buildPrompt(brief, categoryKey, angleIndex, conceptType) {
+    function buildPrompt(brief, categoryKey, angleIndex) {
       var category = CATEGORIES[categoryKey];
       var angle = category.angles[angleIndex];
       
-      var prompt = 'Brief: "' + brief + '"\n\n';
-      
-      if (conceptType === 'indirect') {
-        // 🔥 INDIRECT PRESENCE MODE
-        prompt += 'MODE: INDIRECT PRESENCE\n\n';
-        prompt += 'This concept is intangible (scent/memory/presence/atmosphere).\n\n';
-        prompt += 'DO NOT show direct actions.\n\n';
-        prompt += 'SHOW:\n';
-        prompt += '- Proximity (passing close, leaning in)\n';
-        prompt += '- Pausing (stopping mid-action, lingering)\n';
-        prompt += '- Subtle adjustments (turning slightly, glancing)\n';
-        prompt += '- Moments almost missed (walking by, leaving)\n\n';
-        prompt += 'The subject should NOT be central.\n';
-        prompt += 'It should feel like a background influence that people notice late.\n\n';
-        prompt += 'EXAMPLES:\n';
-        prompt += '✅ "Passenger Pauses Mid-Aisle"\n';
-        prompt += '   insight: "Stops walking, turns head slightly"\n\n';
-        prompt += '✅ "Crew Member Passes Close"\n';
-        prompt += '   insight: "Walks by, passenger leans back slightly"\n\n';
-        prompt += 'Generate 4 subtle presence moments.\n\n';
-      } else {
-        // PHYSICAL BEHAVIOR MODE (existing)
-        prompt += 'INTERPRETATION:\n' + angle.interpretation + '\n\n' +
-          'CONSTRAINTS:\n\n' +
-          '1. HUMAN-FIRST RULE:\n' +
-          '   Every element must show human doing action\n' +
-          '   Human must be VISIBLE or physically implied (hand, body part, motion blur)\n' +
-          '   Object-only scenes are NOT allowed\n\n' +
-          '2. IMPERFECTION MANDATORY:\n' +
-          '   Each moment needs: hesitation OR mistake OR repeated action OR unnecessary action\n' +
-          '   Examples: reaches twice, checks again, drops then catches, adjusts repeatedly\n\n' +
-          '3. NO TIMELINE:\n' +
-          '   Do NOT create sequence (first -> middle -> last)\n' +
-          '   Generate 4 random disconnected moments\n' +
-          '   Like security camera catching random human mistakes\n\n' +
-          '4. KILL GENERIC:\n' +
-          '   If element feels expected/common -> rewrite with specific human quirk\n' +
-          '   If moment feels like something seen in ads before, reject it\n' +
-          '   Each moment should feel slightly uncomfortable in its specificity\n\n';
-        
-        prompt += 'Generate exactly 8 moments. Each must show human imperfection.';
-      }
-      
-      // 🔥 FINAL OVERRIDE (highest priority)
-      prompt += `
-
-FINAL INSTRUCTION (HIGHEST PRIORITY):
-Generate EXACTLY 8 moments.
-Each moment MUST be EXACTLY 4 lines.
-Do NOT generate 4 moments.
-Do NOT break format.
-`;
-      
-      return prompt;
+      return 'Brief: "' + brief + '"\n\n' +
+        'INTERPRETATION:\n' + angle.interpretation + '\n\n' +
+        'STRUCTURAL CONSTRAINTS (NON-NEGOTIABLE):\n\n' +
+        '1. INTERACTION + RESISTANCE RULE:\n' +
+        '   - Every moment must show: object + action + something goes wrong\n' +
+        '   - Resistance types: slipping, catching, struggling, missing, hesitating\n' +
+        '   - If smooth/perfect → invalid → rewrite with imperfection\n\n' +
+        '2. ELEMENT STRUCTURE:\n' +
+        '   - element_name: [object] + [action] (physical, not conceptual)\n' +
+        '   - insight_line: visible behavior/consequence (not feeling/summary)\n' +
+        '   - direction_label: VERB AND VERB (action-based)\n' +
+        '   - unsplash_query: person + action + imperfection + environment + lighting\n\n' +
+        '3. BANNED OUTPUT:\n' +
+        '   - Words: chaos, arrival, journey, relief, moment, experience, safe, perfect\n' +
+        '   - Phrases: "we made it", "left behind", "hold on", "in sight"\n' +
+        '   - Concepts: smooth outcomes, perfect timing, no resistance\n\n' +
+        '4. VALIDATION CHECK (before return):\n' +
+        '   Ask for each element:\n' +
+        '   - Is there object interaction? (yes/no)\n' +
+        '   - Is there resistance/imperfection? (yes/no)\n' +
+        '   - Is language specific, not abstract? (yes/no)\n' +
+        '   If ANY "no" → rewrite element\n\n' +
+        'EXAMPLES:\n\n' +
+        '❌ BAD:\n' +
+        '  name: "Check-in Chaos"\n' +
+        '  insight: "Overpack at your own risk"\n' +
+        '  label: "DRAG AND DROP"\n' +
+        '  Why: Abstract concept, summary phrase, no resistance\n\n' +
+        '✅ GOOD:\n' +
+        '  name: "Zip Stuck Halfway"\n' +
+        '  insight: "Force it closed, elbow pressed down"\n' +
+        '  label: "PRESS AND STRAIN"\n' +
+        '  Why: Object + action, visible behavior, resistance present\n\n' +
+        '❌ BAD:\n' +
+        '  name: "Safe Arrival"\n' +
+        '  insight: "We made it"\n' +
+        '  label: "STAND AND BREATHE"\n' +
+        '  Why: Summary concept, banned phrase, no interaction\n\n' +
+        '✅ GOOD:\n' +
+        '  name: "Wheel Catches On Tile"\n' +
+        '  insight: "Bag tips forward, owner grabs handle fast"\n' +
+        '  label: "TIP AND CATCH"\n' +
+        '  Why: Object + action, reaction visible, resistance (catching)\n\n' +
+        'Generate exactly 8 moments. Each must pass validation.';
     }
 
     // ============================================
-    // 🔥 V2: MINIMAL FALLBACK (only if generation completely fails)
+    // DUAL-PASS GENERATION SYSTEM
     // ============================================
-    function fallbackElements() {
-      return [
+    
+    function refineWorld(worldData, brief) {
+      // SECOND PASS: Taste refinement
+      setStatus('Refining creative direction…');
+      
+      return fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            {
+              role: 'system',
+              content: `You are a brutal creative reviewer improving first-pass creative work.
+
+Your job:
+- Increase specificity (vague → precise physical detail)
+- Add more resistance (smooth → imperfect, catching, struggling)
+- Remove safe/predictable moments (generic → surprising)
+- Ensure every moment has tension
+
+For each element, ask:
+1. Is the action too smooth? → Add resistance
+2. Is the language too clean? → Add imperfection
+3. Could this be more specific? → Add micro-detail
+
+Rewrite elements that feel safe or generic. Keep the good ones.
+
+Return the same JSON structure with improved elements.`
+            },
+            {
+              role: 'user',
+              content: 'Brief: "' + brief + '"\n\nFirst-pass output:\n' + JSON.stringify(worldData) + '\n\nImprove specificity, resistance, and tension. Return refined JSON.'
+            }
+          ],
+          temperature: 0.6,  // Lower temp for refinement
+          max_tokens: 1500
+        })
+      })
+      .then(function(res) {
+        if (!res.ok) throw new Error('Refinement failed');
+        return res.json();
+      })
+      .then(function(data) {
+        var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
+        try {
+          return JSON.parse(raw);
+        } catch(e) {
+          console.warn('⚠️ Refinement parse failed, using original');
+          return worldData;
+        }
+      })
+      .catch(function(err) {
+        console.error('Refinement error:', err);
+        return worldData; // Fallback to original
+      });
+    }
+
+    // ============================================
+    // DYNAMIC REWRITE ENGINE (CONTEXT-AWARE)
+    // ============================================
+    
+    function dynamicRewrite(element, brief, elementIndex) {
+      // CONTEXT-AWARE rewrite using API, not static templates
+      console.log('🔄 Dynamic rewrite for element ' + (elementIndex + 1));
+      
+      return fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            {
+              role: 'system',
+              content: `Rewrite this creative element to be non-generic.
+
+Requirements:
+- element_name: object + action (4 words max, physical interaction)
+- insight_line: visible behavior/consequence (8 words max, no abstractions)
+- direction_label: VERB AND VERB (action-based)
+- Include resistance: slipping, catching, struggling, missing
+
+Banned: chaos, arrival, journey, relief, safe, perfect
+Banned phrases: "we made it", "left behind", "hold on"
+
+Return only valid JSON for this one element.`
+            },
+            {
+              role: 'user',
+              content: 'Brief: "' + brief + '"\n\nGeneric element:\n' + JSON.stringify(element) + '\n\nRewrite with object + action + resistance.'
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 200
+        })
+      })
+      .then(function(res) {
+        if (!res.ok) throw new Error('Rewrite failed');
+        return res.json();
+      })
+      .then(function(data) {
+        var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
+        try {
+          var rewritten = JSON.parse(raw);
+          console.log('✅ Rewrite successful:', rewritten.element_name);
+          return rewritten;
+        } catch(e) {
+          console.warn('⚠️ Rewrite parse failed, using fallback');
+          return staticFallbackRewrite(element, elementIndex);
+        }
+      })
+      .catch(function(err) {
+        console.error('Rewrite error:', err);
+        return staticFallbackRewrite(element, elementIndex);
+      });
+    }
+
+    function staticFallbackRewrite(element, elementIndex) {
+      // FALLBACK: Static rewrites (only used if API fails)
+      var rewrites = [
+        { element_name: "Zip Stuck Halfway", insight_line: "Force it closed, elbow pressed down", direction_label: "PRESS AND STRAIN" },
+        { element_name: "Wheel Catches On Tile", insight_line: "Bag tips forward, owner grabs handle fast", direction_label: "TIP AND CATCH" },
+        { element_name: "Strap Slips Off Shoulder", insight_line: "Reaches back, catches before it falls", direction_label: "SLIP AND CATCH" },
+        { element_name: "Handle Pulls Too Tight", insight_line: "Adjusts grip, fingers readjust pressure", direction_label: "GRIP AND SHIFT" },
+        { element_name: "Bag Tips Onto Side", insight_line: "Owner sets it upright, walks away", direction_label: "TIP AND RESET" },
+        { element_name: "Zipper Jams Halfway", insight_line: "Pull harder, teeth catch then release", direction_label: "JAM AND FORCE" },
+        { element_name: "Pocket Flap Hangs Open", insight_line: "Notice it later, tuck back in quickly", direction_label: "NOTICE AND FIX" },
+        { element_name: "Tag Catches On Hook", insight_line: "Tug once, twice, comes free", direction_label: "SNAG AND FREE" }
+      ];
+      
+      var rewrite = rewrites[elementIndex % rewrites.length];
+      return {
+        element_name: rewrite.element_name,
+        insight_line: rewrite.insight_line,
+        direction_label: rewrite.direction_label,
+        unsplash_query: element.unsplash_query
+      };
+    }
+
+    // ============================================
+    // OUTPUT VALIDATION LAYER (WITH DYNAMIC REWRITE)
+    // ============================================
+    var BANNED_WORDS = [
+      'chaos', 'arrival', 'journey', 'moment', 'experience', 'relief', 'stress',
+      'freedom', 'adventure', 'destination', 'departure', 'final', 'next',
+      'beginning', 'end', 'start', 'finish', 'safe', 'perfect', 'complete'
+    ];
+    
+    var BANNED_PHRASES = [
+      'we made it', 'made it', 'in sight', 'running out', 'left behind',
+      'hold on', 'at your own', 'own risk', 'next time', 'until next'
+    ];
+
+    var RESISTANCE_WORDS = [
+      'stuck', 'slip', 'catch', 'miss', 'drop', 'struggle', 'hesitate',
+      'tight', 'loose', 'almost', 'barely', 'fumble', 'grab', 'reach'
+    ];
+
+    function hasResistance(text) {
+      var lower = text.toLowerCase();
+      return RESISTANCE_WORDS.some(function(word) {
+        return lower.includes(word);
+      });
+    }
+
+    function isGenericName(text) {
+      var lower = text.toLowerCase();
+      return BANNED_WORDS.some(function(word) {
+        return lower.includes(word);
+      });
+    }
+
+    function isGenericInsight(text) {
+      var lower = text.toLowerCase();
+      return BANNED_PHRASES.some(function(phrase) {
+        return lower.includes(phrase);
+      });
+    }
+
+    function autoRewrite(element, elementIndex) {
+      // FALLBACK REWRITES based on element position
+      var rewrites = [
         {
-          element_name: "Checks pocket again",
-          insight_line: "Hand goes in, comes out, goes again",
-          direction_label: "CHECK AND RECHECK",
-          unsplash_query: "close up hands checking pocket repeatedly indoor candid"
+          element_name: "Zip Stuck Halfway",
+          insight_line: "Force it closed, elbow pressed down",
+          direction_label: "PRESS AND STRAIN"
         },
         {
-          element_name: "Presses button twice",
-          insight_line: "Finger taps, pauses, taps again",
-          direction_label: "PRESS AND REPRESS",
-          unsplash_query: "close up finger pressing button twice candid natural light"
+          element_name: "Wheel Catches On Tile",
+          insight_line: "Bag tips forward, owner grabs handle fast",
+          direction_label: "TIP AND CATCH"
         },
         {
-          element_name: "Adjusts grip mid-hold",
-          insight_line: "Fingers shift, tighten slightly",
-          direction_label: "SHIFT AND TIGHTEN",
-          unsplash_query: "close up hands adjusting grip object candid"
+          element_name: "Strap Slips Off Shoulder",
+          insight_line: "Reaches back, catches before it falls",
+          direction_label: "SLIP AND CATCH"
         },
         {
-          element_name: "Starts sip, stops",
-          insight_line: "Cup lifts, pauses, lowers again",
-          direction_label: "LIFT AND LOWER",
-          unsplash_query: "person drinking coffee pause hesitate candid indoor"
+          element_name: "Handle Pulls Too Tight",
+          insight_line: "Adjusts grip, fingers readjust pressure",
+          direction_label: "GRIP AND SHIFT"
         },
         {
-          element_name: "Touches face, pulls back",
-          insight_line: "Fingers reach, hesitate, withdraw",
-          direction_label: "REACH AND RETREAT",
-          unsplash_query: "close up hand touching face hesitant candid indoor"
+          element_name: "Bag Tips Onto Side",
+          insight_line: "Owner sets it upright, walks away",
+          direction_label: "TIP AND RESET"
         },
         {
-          element_name: "Opens door, pauses",
-          insight_line: "Handle turns, stops, turns again",
-          direction_label: "TURN AND PAUSE",
-          unsplash_query: "close up hand gripping door handle hesitant indoor candid"
+          element_name: "Zipper Jams Halfway",
+          insight_line: "Pull harder, teeth catch then release",
+          direction_label: "JAM AND FORCE"
         },
         {
-          element_name: "Looks at phone twice",
-          insight_line: "Screen check, pocket, check again",
-          direction_label: "CHECK AND RECHECK",
-          unsplash_query: "close up hands holding phone repeatedly checking indoor candid"
+          element_name: "Pocket Flap Hangs Open",
+          insight_line: "Notice it later, tuck back in quickly",
+          direction_label: "NOTICE AND FIX"
         },
         {
-          element_name: "Adjusts collar again",
-          insight_line: "Fingers fix, release, fix again",
-          direction_label: "FIX AND REFIX",
-          unsplash_query: "close up hands adjusting collar shirt repeatedly candid"
+          element_name: "Tag Catches On Hook",
+          insight_line: "Tug once, twice, comes free",
+          direction_label: "SNAG AND FREE"
         }
       ];
+      
+      var rewrite = rewrites[elementIndex % rewrites.length];
+      
+      return {
+        element_name: rewrite.element_name,
+        insight_line: rewrite.insight_line,
+        direction_label: rewrite.direction_label,
+        unsplash_query: element.unsplash_query
+      };
+    }
+
+    function validateAndRewrite(worldData, brief) {
+      if (!worldData.elements) return Promise.resolve(worldData);
+      
+      var rewritePromises = [];
+      var rewriteCount = 0;
+      
+      worldData.elements.forEach(function(el, idx) {
+        var needsRewrite = false;
+        var reasons = [];
+        
+        // Check for banned words
+        if (isGenericName(el.element_name)) {
+          needsRewrite = true;
+          reasons.push('generic name');
+        }
+        
+        // Check for banned phrases
+        if (isGenericInsight(el.insight_line)) {
+          needsRewrite = true;
+          reasons.push('generic insight');
+        }
+        
+        // Check for resistance (optional but ideal)
+        var hasResistanceInName = hasResistance(el.element_name);
+        var hasResistanceInInsight = hasResistance(el.insight_line);
+        
+        if (!hasResistanceInName && !hasResistanceInInsight) {
+          console.log('⚠️ Element ' + (idx + 1) + ' lacks resistance (acceptable but not ideal)');
+        }
+        
+        if (needsRewrite) {
+          rewriteCount++;
+          console.warn('🔥 REWRITE NEEDED Element ' + (idx + 1) + ': ' + reasons.join(', '));
+          rewritePromises.push({
+            index: idx,
+            promise: dynamicRewrite(el, brief, idx)
+          });
+        } else {
+          rewritePromises.push({
+            index: idx,
+            promise: Promise.resolve(el)
+          });
+        }
+      });
+      
+      // Log validation results
+      if (rewriteCount > 0) {
+        console.warn('🔥 Validation: ' + rewriteCount + ' elements being rewritten dynamically');
+      } else {
+        console.log('✅ Validation: All elements passed');
+      }
+      
+      // Wait for all rewrites to complete
+      return Promise.all(rewritePromises.map(function(item) { return item.promise; }))
+        .then(function(rewrittenElements) {
+          worldData.elements = rewrittenElements;
+          return worldData;
+        });
     }
 
     // ============================================
-    // 🔥 V2: VALIDATION (MINIMAL - just check existence)
-    // ============================================
-    function isValidElement(el) {
-      if (!el) return false;
-      if (!el.element_name) return false;
-      if (!el.insight_line) return false;
-      if (!el.element_name.includes(" ")) return false; // Ensures descriptive, not one-word generic
-      return true;
-    }
-
-    // ============================================
-    // 🔥 V2: NO VALIDATION LOOP - SINGLE PASS ONLY
-    // ============================================
-
-    // ============================================
-    // 🔥 V3: DUAL-PASS GENERATION ENGINE
+    // GENERATION ENGINE (WITH VALIDATION)
     // ============================================
     function generateWorld() {
       var brief = document.getElementById('brief').value.trim();
@@ -1093,17 +1000,19 @@ Do NOT break format.
       errorMsg.style.display = 'none';
       closePanel();
       
-      var conceptType = detectConceptType(brief);
-      console.log('🎯 Concept type detected: ' + conceptType);
-      
+      // CATEGORY DETECTION
       selectedCategory = detectCategory(brief);
+      
+      // DYNAMIC ANGLE SELECTION (not static default)
       var category = CATEGORIES[selectedCategory];
       selectedAngleIndex = scoreAngle(category.angles, brief);
       
       showAngleSelector(selectedCategory);
-      var userPrompt = buildPrompt(brief, selectedCategory, selectedAngleIndex, conceptType);
       
-      setStatus('🔵 Building structure…');
+      // BUILD PROMPT WITH INTERPRETATION
+      var userPrompt = buildPrompt(brief, selectedCategory, selectedAngleIndex);
+      
+      setStatus('Building creative direction…');
 
       fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -1115,7 +1024,7 @@ Do NOT break format.
             { role: 'user', content: userPrompt + '\nRole: ' + selectedRole }
           ],
           temperature: 0.7,
-          max_tokens: 1000
+          max_tokens: 1200
         })
       })
       .then(function(res) {
@@ -1124,30 +1033,24 @@ Do NOT break format.
       })
       .then(function(data) {
         var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
+        var w;
+        try { w = JSON.parse(raw); } catch(e) { throw new Error('Parse failed'); }
         
         console.log('✅ PASS 1: Structure generated');
-        console.log('📝 OUTPUT:', raw.substring(0, 150));
         
-        var w = parseOutput(raw);
-        if (!w || !w.elements || w.elements.length === 0) {
-          console.warn('⚠️ Using fallback');
-          w = { elements: fallbackElements() };
-        }
-        
-        console.log('✅ Parsed:', w.elements.length, 'elements');
-        
-        // 🔥 SKIP VALIDATION - GO STRAIGHT TO REFINEMENT
-        return w;
+        // 🔥 VALIDATION + DYNAMIC REWRITE (async)
+        return validateAndRewrite(w, brief);
       })
-      .then(function(rawWorld) {
-        console.log('✅ Skipping validation layer');
+      .then(function(validatedWorld) {
+        console.log('✅ VALIDATION: Complete');
         
-        // 🔥 PASS 2: TASTE REFINEMENT ONLY
-        return refineWorld(rawWorld, brief);
+        // 🔥 PASS 2: TASTE REFINEMENT
+        return refineWorld(validatedWorld, brief);
       })
       .then(function(w) {
         console.log('✅ PASS 2: Refinement complete');
         
+        // Store generation
         var generation = {
           id: Date.now(),
           brief: brief,
@@ -1166,10 +1069,10 @@ Do NOT break format.
         updateGenerationHistory();
         document.getElementById('exportBtn').style.display = 'block';
         
-        setStatus('🖼️ Curating visuals…');
-        
+        setStatus('Curating visuals…');
+
         renderGeneration(w, brief);
-        
+
         var grid = document.getElementById('worldGrid');
         grid.innerHTML = '';
         document.getElementById('output').style.display = 'block';
@@ -1190,7 +1093,7 @@ Do NOT break format.
         btn.disabled = false;
       })
       .catch(function(err) {
-        console.error('❌ Generation error:', err);
+        console.error(err);
         setStatus('');
         document.getElementById('errorMsg').textContent = 'Error: ' + err.message;
         document.getElementById('errorMsg').style.display = 'block';
@@ -1331,8 +1234,8 @@ Do NOT break format.
           '</div>';
         }
         html += '<div class="exec-row cols4">' +
-          eblock('🎬 Shots', elist(shots.slice(0,4))) +
-          eblock('🎞️ Sequence', elist(seq.slice(0,3))) +
+          eblock('🎬 Shots', elist(shots)) +
+          eblock('🎞️ Sequence', elist(seq)) +
           eblock('⏱️ Pacing', eval_(w.pacing)) +
           eblock('🎥 Style', eval_(style)) +
         '</div>';
@@ -1391,7 +1294,7 @@ Do NOT break format.
       var content = '<div class="p-insight">' + el.insight_line + '</div>';
 
       if (selectedRole === 'video') {
-        var vd = (w.shots || w.visual_direction||[]).slice(0,4).map(function(i){return '<li>'+i+'</li>';}).join('');
+        var vd = (w.shots || w.visual_direction||[]).map(function(i){return '<li>'+i+'</li>';}).join('');
         var seq = (w.sequence || w.suggested_sequence||[]).slice(0,3).map(function(i){return '<li>'+i+'</li>';}).join('');
         content +=
           '<div class="p-section"><div class="p-label">Visual Direction</div><ul class="p-list">' + vd + '</ul></div>' +
@@ -1403,7 +1306,7 @@ Do NOT break format.
           '<div class="p-section"><div class="p-label">Layout</div><div class="p-value">' + (w.layout||'') + '</div></div>' +
           '<div class="p-section"><div class="p-label">Typography</div><div class="p-value">' + (w.typography||'') + '</div></div>' +
           '<div class="p-section"><div class="p-label">Visual Behavior</div><div class="p-value">' + (w.visual_behavior||'') + '</div></div>';
-      } else if (role === 'brand') {
+      } else if (selectedRole === 'brand') {
         var msgs = (w.example_messaging||[]).map(function(i){return '<li>'+i+'</li>';}).join('');
         content +=
           '<div class="p-section"><div class="p-label">Positioning</div><div class="p-value">' + (w.positioning||'') + '</div></div>' +
@@ -1416,22 +1319,19 @@ Do NOT break format.
     }
 
     // ============================================
-    // 🔥 V2: IMAGE FETCHING (PRECISION - NO RANDOMIZATION)
+    // IMAGE FETCHING (OPTIMIZED)
     // ============================================
     function fetchImage(query, card, el, brief, imageIndex) {
-      // Use model's query EXACTLY - no modification, no randomization
-      var finalQuery = query.trim() || "close up hands holding object indoor candid";
+      var finalQuery = query.trim() || "creative abstract";
       
-      // Safety check: ensure query has multiple words (not just generic single word)
-      if (!finalQuery.includes(" ")) {
-        console.warn('⚠️ Single-word query detected, using fallback');
-        finalQuery = "close up hands holding object indoor candid";
+      // Add global style consistency
+      var globalStyle = worldData.color_texture || "";
+      if (globalStyle) {
+        finalQuery = finalQuery + " " + globalStyle;
       }
       
-      console.log('🔍 QUERY:', finalQuery); // Debug log
-      
-      // Fetch ONLY 1 image - take first result for precision
-      fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(finalQuery) + '&per_page=1&orientation=portrait', {
+      // Fetch 5 images for better selection
+      fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(finalQuery) + '&per_page=5&orientation=portrait', {
         headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
       })
       .then(function(r) {
@@ -1439,12 +1339,23 @@ Do NOT break format.
         return r.json();
       })
       .then(function(data) {
+        // Intelligent fallback
         if (!data.results || data.results.length === 0) {
-          throw new Error("No results for query: " + finalQuery);
+          var simplified = finalQuery.split(' ').slice(0, -3).join(' ');
+          if (simplified.split(' ').length >= 4) {
+            return fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(simplified) + '&per_page=5&orientation=portrait', {
+              headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
+            }).then(function(r) { return r.json(); });
+          }
+          throw new Error("No results");
         }
+        return data;
+      })
+      .then(function(data) {
+        if (!data.results || data.results.length === 0) throw new Error("No results after retry");
         
-        // Always take FIRST result (most relevant)
-        var photo = data.results[0];
+        // Pick best result (random from top 3)
+        var photo = data.results[Math.floor(Math.random() * Math.min(data.results.length, 3))];
         var sk = card.querySelector('.skeleton-ph');
         if (sk) {
           var imgUrl = photo.urls.regular || photo.urls.small;
@@ -1477,10 +1388,14 @@ Do NOT break format.
         }
       })
       .catch(function(err) {
-        console.error('Image fetch failed:', err);
+        console.error('Unsplash error:', err);
         var sk = card.querySelector('.skeleton-ph');
         if (sk) {
-          sk.innerHTML = '<div style="padding:40px;text-align:center;color:#666;">Image unavailable</div>';
+          var img = document.createElement('img');
+          img.className = 'card-img';
+          img.alt = el.element_name;
+          img.src = 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800';
+          sk.replaceWith(img);
         }
       });
     }
