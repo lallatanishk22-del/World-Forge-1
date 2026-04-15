@@ -1499,7 +1499,7 @@ Return only valid JSON for this one element.`
           grid.appendChild(card);
           (function(element, cardEl, idx) {
             setTimeout(function() {
-              fetchImage(element.unsplash_query, cardEl, element, brief, idx);
+              const USE_SMART_QUERY = true;  const query = USE_SMART_QUERY   ? generateImageQuery(element.element_name + " " + element.insight_line, idx)   : element.unsplash_query;  fetchImage(query, cardEl, element, brief, idx);
             }, idx * 300);
             setTimeout(function() { cardEl.classList.add('visible'); }, idx * 70);
           })(el, card, i);
