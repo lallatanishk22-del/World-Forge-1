@@ -417,7 +417,11 @@
     // ============================================
     // SYSTEM PROMPT (BRUTAL CREATIVE DIRECTOR MODE)
     // ============================================
-    var SYSTEM_PROMPT = `You are a creative director who rejects generic work.
+    // ============================================
+    // SYSTEM PROMPTS (MODE-SPECIFIC)
+    // ============================================
+    
+    var PHYSICAL_SYSTEM_PROMPT = `You are a creative director who rejects generic work.
 
 Generate emotionally real ad moments with strict structural enforcement.
 
@@ -498,6 +502,237 @@ JSON structure:
       "insight_line": "visible behavior, max 8 words",
       "direction_label": "VERB AND VERB",
       "unsplash_query": "person + action + imperfection + location + lighting (10-15 words)"
+    }
+  ]
+}`;
+
+    var CREATIVE_SYSTEM_PROMPT = `You are a creative director focused on human behavior, not objects.
+
+Your job is to generate moments where internal state leaks into physical action.
+
+CORE PRINCIPLE:
+
+Do NOT describe what is happening.
+Show what the body does wrong because of what the mind is processing.
+
+MANDATORY STRUCTURE:
+
+Each moment MUST follow:
+1. Automatic action (driven by habit, memory, or expectation)
+2. Behavioral leak (delay, hesitation, correction, continuation, abort)
+
+GOOD:
+"Presses wrong floor, doesn't correct immediately
+ Waits a second before hitting the right one"
+
+BAD:
+"Presses wrong floor"
+"Realizes mistake"
+
+RULES:
+
+- NO generic actions (looking, walking, checking phone)
+- NO observation words (notices, sees, realizes, remembers, thinks)
+- NO explanation of change ("is different", "has changed")
+- NO storytelling or drama
+
+FOCUS ON:
+
+- Hesitation (pauses mid-action)
+- Delay (doesn't correct immediately)
+- Repetition (does twice when once enough)
+- Covering behavior (pretends to do something else)
+- Aborted actions (starts, then stops)
+- Slight over-continuation (keeps going after should stop)
+
+CRITICAL EXECUTION RULES:
+
+1. REALITY RULE:
+Every moment must include a slight imperfection in action.
+If the action feels clean or expected → add a delay, miss, or interruption.
+
+2. SPECIFICITY RULE:
+Avoid abstract words: familiar, routine, habitual, repetitive, awkward
+Describe the exact physical action instead.
+If it can be summarized in one word → rewrite it more specifically.
+
+3. TWO-STEP RULE:
+Each moment must have:
+Line 1: action
+Line 2: slight disruption (delay, correction, repeat, stop)
+If line 2 is missing → the moment is weak → rewrite.
+
+4. NO POETRY RULE:
+Do not describe atmosphere, feelings, or visuals.
+No: sunlight, dust, nostalgia, silence, lost in thought, seeking control
+Only actions.
+
+5. RELATIONAL LEAK RULE (ONLY WHEN MULTIPLE PEOPLE PRESENT):
+If the moment involves another person, the behavioral leak may come from recognition instead of error.
+Show this through action, not explanation.
+
+Valid relational patterns:
+- Starts an action, stops because the other already did it
+- Prepares to explain, then doesn't need to
+- Notices the other person doing something the same way
+- Reacts to anticipation or alignment
+- Action becomes unnecessary due to other person
+
+Important:
+- Do NOT describe thoughts or meaning
+- Do NOT explain the relationship ("realizes he trusts him", "feels confident")
+- Show recognition ONLY through physical interruption or change in action
+
+Good relational leak:
+"Starts to explain something
+ Stops as the other finishes it"
+
+"Slides object forward
+ Pauses as the other picks it up the same way"
+
+Bad (storytelling):
+"Realizes he trusts him"
+"Feels confident in the decision"
+"Sees leadership in him"
+
+Use relational leak in maximum 2-3 moments only.
+Otherwise, everything becomes about interaction and balance is lost.
+
+VALID BEHAVIORAL LEAK PATTERNS:
+
+- "continues slightly after stopping"
+- "pauses mid-action"
+- "delays correction"
+- "starts something, then aborts"
+- "covers with another action"
+- "waits before reacting"
+- "does again unnecessarily"
+
+RESTRAINT INTELLIGENCE (PATTERN GUIDANCE — DO NOT EXPLAIN):
+
+Some behavioral leaks come from internal restraint, not error.
+Use these as pattern references when relevant. Do NOT mention emotions. Do NOT explain meaning.
+
+Letting go patterns:
+- starts to correct → stops halfway → withdraws hand
+- reaches for control → pauses → lets it continue
+
+Recognition / trust patterns:
+- starts to explain → stops as other already does it
+- prepares action → becomes unnecessary
+
+Calibration patterns:
+- watches action → does not interrupt
+- observes closely → no reaction
+
+Legacy weight patterns:
+- touches object → holds slightly longer → releases slower
+- completes action → hand lingers before leaving
+
+IMPORTANT:
+- These are NOT rules, only references
+- Use only when they fit the situation naturally
+- Maximum 2-3 moments should reflect this layer
+- All moments must still follow behavioral leak structure
+
+INVALID PATTERNS:
+
+- Pure observation without action consequence
+- Explanation of feelings or thoughts
+- Description of what changed
+- Summary of situation
+
+CRITICAL TEST:
+
+If the moment works WITHOUT the second line → it is weak → rewrite.
+
+The second line must show the LEAK (the body's imperfect response).
+
+OUTPUT:
+
+8 moments that feel like: "I've seen this happen, but never noticed it"
+
+VISUAL CONSISTENCY SYSTEM (CRITICAL):
+
+All 8 images must feel like they belong to the SAME scene — frames from one film.
+
+STEP 1: Generate visual_context from the brief ONCE at the start:
+
+Analyze the brief and establish:
+- person: specific person type (age, role, identity — NOT generic "person" or "man")
+- environment: detailed setting (NOT just "office" or "room" — be specific)
+- lighting: time of day and quality (warm evening, soft morning, golden hour, etc.)
+- mood: emotional atmosphere (reflective, tense, intimate, decisive, etc.)
+
+STEP 2: LOCK this context for ALL 8 elements.
+
+STEP 3: Each element's unsplash_query MUST use this locked context:
+
+QUERY FORMAT:
+[visual_context.person] + [visual_context.environment] + 
+[specific micro action + camera framing] + 
+[visual_context.lighting] + [visual_context.mood] + cinematic
+
+EXAMPLE:
+
+If visual_context is:
+- person: "middle aged executive"
+- environment: "minimalist glass office"
+- lighting: "warm evening light"
+- mood: "reflective tense"
+
+Then element queries become:
+"middle aged executive minimalist glass office hand passing document close up warm evening light reflective tense cinematic"
+"middle aged executive minimalist glass office watching quietly medium shot warm evening light reflective tense cinematic"
+
+CRITICAL RULES:
+- Do NOT change person type between elements
+- Do NOT change environment between elements
+- Do NOT change lighting between elements
+- Do NOT change mood between elements
+- ONLY vary: micro action and camera framing (close up, medium shot, detail, etc.)
+
+GOAL:
+When viewed together, the 8 images feel like frames from the same film, same moment, same world.
+
+Return valid JSON with exact structure:
+
+{
+  "visual_context": {
+    "person": "specific person type (age, role, identity)",
+    "environment": "detailed specific setting",
+    "lighting": "time of day and quality",
+    "mood": "emotional atmosphere"
+  },
+  "core_feeling": "3-5 words with tension/contrast",
+  "human_insight": "1 sharp line about real behavior",
+  "color_texture": "lighting + material + color",
+  "sound_direction": "ambient sounds, not music",
+  "first_action": {
+    "subject": "who/what",
+    "action": "command form",
+    "camera": "shot type",
+    "duration": "seconds",
+    "environment": "where"
+  },
+  "shots": ["shot 1", "shot 2", "shot 3", "shot 4"],
+  "sequence": ["step 1", "step 2", "step 3"],
+  "pacing": "timing",
+  "style": "camera approach",
+  "audio": "dominant sound",
+  "positioning": "brand role",
+  "tone": "2-3 words",
+  "example_messaging": ["line 1", "line 2"],
+  "layout": "spatial direction",
+  "typography": "Font + Font — feeling",
+  "avoid": ["avoid 1", "avoid 2", "avoid 3"],
+  "color_palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"],
+  "elements": [
+    {
+      "element_name": "specific action that reveals behavioral leak (3-6 words)",
+      "insight_line": "what body does, then the leak (max 10 words, two-part)",
+      "direction_label": "ACTION AND REACTION",
+      "unsplash_query": "[visual_context.person] + [visual_context.environment] + [micro action + framing] + [visual_context.lighting] + [visual_context.mood] + cinematic"
     }
   ]
 }`;
@@ -599,6 +834,35 @@ JSON structure:
     }
 
     // ============================================
+    // MODE DETECTION (PHYSICAL vs CREATIVE)
+    // ============================================
+    function detectMode(brief) {
+      var b = brief.toLowerCase();
+      
+      // PHYSICAL MODE TRIGGERS (products only)
+      if (
+        b.includes("bag") ||
+        b.includes("luggage") ||
+        b.includes("suitcase") ||
+        b.includes("backpack") ||
+        b.includes("glasses") ||
+        b.includes("eyewear") ||
+        b.includes("sunglasses") ||
+        b.includes("jeans") ||
+        b.includes("jacket") ||
+        b.includes("shoes") ||
+        b.includes("watch") ||
+        b.includes("product") ||
+        b.includes("durability")
+      ) {
+        return "physical";
+      }
+      
+      // DEFAULT: CREATIVE MODE (all human situations)
+      return "creative";
+    }
+
+    // ============================================
     // ANGLE SELECTOR UI
     // ============================================
     function showAngleSelector(categoryKey) {
@@ -624,7 +888,50 @@ JSON structure:
       descDiv.textContent = category.angles[selectedAngleIndex].description;
       selector.classList.add('visible');
     }
+function generateImageQuery(moment, index = 0) {
+  const m = moment.toLowerCase();
 
+  // SUBJECT
+  let subject = "person hands";
+  if (m.includes("ecg") || m.includes("monitor")) subject = "ECG monitor";
+  else if (m.includes("scalpel") || m.includes("instrument")) subject = "surgical instruments";
+  else if (m.includes("mask")) subject = "surgeon face mask";
+  else if (m.includes("door")) subject = "door handle";
+  else if (m.includes("keyboard") || m.includes("editing")) subject = "computer screen editing photos";
+  else if (m.includes("coffee") || m.includes("cup")) subject = "coffee cup counter";
+
+  // CONTEXT
+  let context = "indoor";
+  if (m.includes("surgery") || m.includes("operating")) context = "hospital operating room";
+  else if (m.includes("ecg") || m.includes("monitor")) context = "hospital ICU";
+  else if (m.includes("editing")) context = "workspace desk computer";
+  else if (m.includes("coffee")) context = "coffee shop";
+
+  // DETAIL
+  let detail = "close up";
+  if (m.includes("pause")) detail = "still moment tension";
+  else if (m.includes("hold")) detail = "hands holding object";
+  else if (m.includes("look")) detail = "focused gaze";
+  else if (m.includes("breath") || m.includes("mask")) detail = "face close up eyes intense";
+  else if (m.includes("screen")) detail = "glowing screen";
+
+  // STYLE VARIATION
+  const styles = [
+    "close up",
+    "wide shot",
+    "over shoulder",
+    "top down",
+    "side angle",
+    "extreme close up"
+  ];
+
+  const style = styles[index % styles.length] + " cinematic lighting shallow depth of field";
+
+  // CHARACTER LOCK (optional but recommended)
+  const character = "male surgeon 40s green scrubs surgical mask";
+
+  return `${character} ${subject} ${context} ${detail} ${style}`;
+}
     function selectAngle(categoryKey, index) {
       selectedAngleIndex = index;
       var category = CATEGORIES[categoryKey];
@@ -639,58 +946,160 @@ JSON structure:
     // ============================================
     // PROMPT BUILDER (WITH STRUCTURAL CONSTRAINTS)
     // ============================================
-    function buildPrompt(brief, categoryKey, angleIndex) {
+    function buildPrompt(brief, categoryKey, angleIndex, mode) {
       var category = CATEGORIES[categoryKey];
       var angle = category.angles[angleIndex];
       
-      return 'Brief: "' + brief + '"\n\n' +
-        'INTERPRETATION:\n' + angle.interpretation + '\n\n' +
-        'STRUCTURAL CONSTRAINTS (NON-NEGOTIABLE):\n\n' +
-        '1. INTERACTION + RESISTANCE RULE:\n' +
-        '   - Every moment must show: object + action + something goes wrong\n' +
-        '   - Resistance types: slipping, catching, struggling, missing, hesitating\n' +
-        '   - If smooth/perfect → invalid → rewrite with imperfection\n\n' +
-        '2. ELEMENT STRUCTURE:\n' +
-        '   - element_name: [object] + [action] (physical, not conceptual)\n' +
-        '   - insight_line: visible behavior/consequence (not feeling/summary)\n' +
-        '   - direction_label: VERB AND VERB (action-based)\n' +
-        '   - unsplash_query: person + action + imperfection + environment + lighting\n\n' +
-        '3. BANNED OUTPUT:\n' +
-        '   - Words: chaos, arrival, journey, relief, moment, experience, safe, perfect\n' +
-        '   - Phrases: "we made it", "left behind", "hold on", "in sight"\n' +
-        '   - Concepts: smooth outcomes, perfect timing, no resistance\n\n' +
-        '4. VALIDATION CHECK (before return):\n' +
-        '   Ask for each element:\n' +
-        '   - Is there object interaction? (yes/no)\n' +
-        '   - Is there resistance/imperfection? (yes/no)\n' +
-        '   - Is language specific, not abstract? (yes/no)\n' +
-        '   If ANY "no" → rewrite element\n\n' +
-        'EXAMPLES:\n\n' +
-        '❌ BAD:\n' +
-        '  name: "Check-in Chaos"\n' +
-        '  insight: "Overpack at your own risk"\n' +
-        '  label: "DRAG AND DROP"\n' +
-        '  Why: Abstract concept, summary phrase, no resistance\n\n' +
-        '✅ GOOD:\n' +
-        '  name: "Zip Stuck Halfway"\n' +
-        '  insight: "Force it closed, elbow pressed down"\n' +
-        '  label: "PRESS AND STRAIN"\n' +
-        '  Why: Object + action, visible behavior, resistance present\n\n' +
-        '❌ BAD:\n' +
-        '  name: "Safe Arrival"\n' +
-        '  insight: "We made it"\n' +
-        '  label: "STAND AND BREATHE"\n' +
-        '  Why: Summary concept, banned phrase, no interaction\n\n' +
-        '✅ GOOD:\n' +
-        '  name: "Wheel Catches On Tile"\n' +
-        '  insight: "Bag tips forward, owner grabs handle fast"\n' +
-        '  label: "TIP AND CATCH"\n' +
-        '  Why: Object + action, reaction visible, resistance (catching)\n\n' +
-        'Generate exactly 8 moments. Each must pass validation.';
+      var basePrompt = 'Brief: "' + brief + '"\n\n' +
+        'INTERPRETATION:\n' + angle.interpretation + '\n\n';
+      
+      // ============================================
+      // MODE SWITCH: PHYSICAL vs EMOTIONAL
+      // ============================================
+      
+      if (mode === "creative") {
+        // 🟩 CREATIVE MODE: Universal human observation
+        return basePrompt +
+          'CREATIVE MODE — UNIVERSAL HUMAN OBSERVATION:\n\n' +
+          'You are finding non-obvious, specific, true human moments.\n\n' +
+          'FIRST — UNDERSTAND THE SITUATION:\n' +
+          'What kind of moment is this?\n' +
+          '- Is it about something ending or changing?\n' +
+          '- Is it about waiting, repetition, or routine?\n' +
+          '- Is it about social pressure or awkwardness?\n' +
+          '- Is it about familiarity or memory?\n' +
+          'Do NOT label it. Just understand the dominant feeling.\n\n' +
+          'SECOND — GENERATE ACROSS DIMENSIONS:\n' +
+          'Based on the situation, naturally emphasize what fits:\n' +
+          '- Physical behavior (small actions, repeated movements, hesitations)\n' +
+          '- Sensory shifts (what looks/sounds/feels different)\n' +
+          '- Emotional recognition (what feels heavier or lighter)\n' +
+          '- Social tension (awkward interactions, copying behaviors)\n' +
+          '- Object interaction (things touched unnecessarily, held longer)\n' +
+          '- Time/memory (noticing what was always there, what changed)\n\n' +
+          'Do NOT force all dimensions. Let the situation determine what matters.\n\n' +
+          'THIRD — BEHAVIORAL LEAK RULE (CRITICAL):\n\n' +
+          'Do not describe what is different.\n' +
+          'Instead, show the person acting on memory, then the mismatch.\n\n' +
+          'STRUCTURE:\n' +
+          'Line 1: automatic action (driven by habit or memory)\n' +
+          'Line 2: micro-error, delay, hesitation, or correction\n\n' +
+          'VALID PATTERNS:\n' +
+          '- continues slightly after stopping\n' +
+          '- pauses mid-action\n' +
+          '- delays correction\n' +
+          '- starts something, then aborts\n' +
+          '- covers with another action (like checking phone)\n\n' +
+          'EXAMPLES:\n\n' +
+          '✅ STRONG:\n' +
+          '"Walks to empty space before realizing it\'s not his\n' +
+          ' Keeps walking two more steps after stopping"\n\n' +
+          '✅ STRONG:\n' +
+          '"Presses wrong floor, doesn\'t correct immediately\n' +
+          ' Waits a second before hitting the right one"\n\n' +
+          '✅ STRONG:\n' +
+          '"Slows near old office, pretends to check phone\n' +
+          ' Doesn\'t want to look inside"\n\n' +
+          '❌ WEAK (pure observation):\n' +
+          '"Notices parking spot is different"\n' +
+          '"Sees old office has changed"\n' +
+          '"Remembers window view"\n\n' +
+          'INVALID PATTERNS:\n' +
+          '- pure observation ("notices", "sees", "realizes")\n' +
+          '- descriptive memory ("remembers", "thinks about")\n' +
+          '- explanation of change ("is different", "has changed")\n\n' +
+          'TEST:\n' +
+          'If the moment works WITHOUT line 2 → it is weak → rewrite.\n\n' +
+          'FOURTH — ADDITIONAL FOCUS:\n' +
+          'Focus on moments where internal state leaks into physical action:\n' +
+          '- Unnecessary repetitions (does twice when once is enough)\n' +
+          '- Micro-hesitations (pauses mid-action)\n' +
+          '- Irrational patterns (checks something that won\'t change)\n' +
+          '- Awkward transitions (juggling objects, copying others)\n' +
+          '- Habitual checks (does from muscle memory, not need)\n\n' +
+          'CRITICAL RULES:\n' +
+          '- NO generic actions (checking phone, looking around)\n' +
+          '- NO job descriptions (operating equipment, following procedures)\n' +
+          '- NO obvious behavior (what anyone would expect)\n' +
+          '- NO storytelling or drama\n\n' +
+          'EXAMPLES:\n\n' +
+          'Last day (emphasize recognition + memory):\n' +
+          '✅ "Hand lingers on seat after standing"\n' +
+          '✅ "Touches control panel spot worn smooth from years"\n' +
+          '✅ "Removes headset, pauses, puts back on briefly"\n\n' +
+          'Airport security (emphasize behavior + tension):\n' +
+          '✅ "Re-ties shoes already tied, stalling before removal"\n' +
+          '✅ "Rehearses laptop removal like practicing performance"\n' +
+          '✅ "Watches person ahead to copy exact sequence"\n\n' +
+          'First date (emphasize tension + behavior):\n' +
+          '✅ "Checks phone for fake emergency exit"\n' +
+          '✅ "Laughs too loud at moderate joke"\n' +
+          '✅ "Adjusts shirt three times in two minutes"\n\n' +
+          'SENSORY DETAIL LAYER (CONTROLLED):\n' +
+          'Some moments may include subtle physical detail.\n' +
+          'Rules:\n' +
+          '- Only a few moments should include sensory detail (not all)\n' +
+          '- Most moments should remain clean and simple\n' +
+          '- Detail must be embedded naturally, not appended\n' +
+          '- Avoid repeating patterns like "with a few..." or "with faint..."\n\n' +
+          'GOOD: "fingers press edge, leather creases slightly"\n' +
+          'BAD: "touches surface, with faint scratches"\n\n' +
+          'Prefer fewer detailed moments over more.\n\n' +
+          'STRUCTURE:\n' +
+          '- element_name: specific action that reveals something\n' +
+          '- insight_line: what they physically do\n' +
+          '- direction_label: action-based (2-4 words, UPPERCASE)\n' +
+          '- unsplash_query: person + specific action + environment + natural light\n\n' +
+          'OUTPUT GOAL:\n' +
+          'Each moment should make someone think:\n' +
+          '"I\'ve seen this happen, but never noticed it"\n\n' +
+          'BEFORE FINALIZING:\n' +
+          'Check each moment:\n' +
+          '- Does it include a behavioral leak (action → mismatch)?\n' +
+          '- Does any moment read like pure observation?\n' +
+          'If yes → rewrite those moments.\n\n' +
+          'Generate exactly 8 moments. Return valid JSON.\n' +
+          'If output feels generic or obvious → rewrite with specificity.';
+      } else {
+        // 🟥 PHYSICAL MODE: Resistance/friction (original system)
+        return basePrompt +
+          'STRUCTURAL CONSTRAINTS (NON-NEGOTIABLE):\n\n' +
+          '1. INTERACTION + RESISTANCE RULE:\n' +
+          '   - Every moment must show: object + action + something goes wrong\n' +
+          '   - Resistance types: slipping, catching, struggling, missing, hesitating\n' +
+          '   - If smooth/perfect → invalid → rewrite with imperfection\n\n' +
+          '2. ELEMENT STRUCTURE:\n' +
+          '   - element_name: [object] + [action] (physical, not conceptual)\n' +
+          '   - insight_line: visible behavior/consequence (not feeling/summary)\n' +
+          '   - direction_label: VERB AND VERB (action-based)\n' +
+          '   - unsplash_query: person + action + imperfection + environment + lighting\n\n' +
+          '3. BANNED OUTPUT:\n' +
+          '   - Words: chaos, arrival, journey, relief, moment, experience, safe, perfect\n' +
+          '   - Phrases: "we made it", "left behind", "hold on", "in sight"\n' +
+          '   - Concepts: smooth outcomes, perfect timing, no resistance\n\n' +
+          '4. VALIDATION CHECK (before return):\n' +
+          '   Ask for each element:\n' +
+          '   - Is there object interaction? (yes/no)\n' +
+          '   - Is there resistance/imperfection? (yes/no)\n' +
+          '   - Is language specific, not abstract? (yes/no)\n' +
+          '   If ANY "no" → rewrite element\n\n' +
+          'EXAMPLES:\n\n' +
+          '❌ BAD:\n' +
+          '  name: "Check-in Chaos"\n' +
+          '  insight: "Overpack at your own risk"\n' +
+          '  label: "DRAG AND DROP"\n' +
+          '  Why: Abstract concept, summary phrase, no resistance\n\n' +
+          '✅ GOOD:\n' +
+          '  name: "Zip Stuck Halfway"\n' +
+          '  insight: "Force it closed, elbow pressed down"\n' +
+          '  label: "PRESS AND STRAIN"\n' +
+          '  Why: Object + action, visible behavior, resistance present\n\n' +
+          'Generate exactly 8 moments. Return valid JSON.';
+      }
     }
 
     // ============================================
-    // DUAL-PASS GENERATION SYSTEM
+    // DUAL-PASS REFINEMENT SYSTEM
     // ============================================
     
     function refineWorld(worldData, brief) {
@@ -1000,6 +1409,10 @@ Return only valid JSON for this one element.`
       errorMsg.style.display = 'none';
       closePanel();
       
+      // MODE DETECTION (CRITICAL)
+      var mode = detectMode(brief);
+      console.log('🎯 Mode detected:', mode);
+      
       // CATEGORY DETECTION
       selectedCategory = detectCategory(brief);
       
@@ -1009,10 +1422,13 @@ Return only valid JSON for this one element.`
       
       showAngleSelector(selectedCategory);
       
-      // BUILD PROMPT WITH INTERPRETATION
-      var userPrompt = buildPrompt(brief, selectedCategory, selectedAngleIndex);
+      // BUILD PROMPT WITH MODE
+      var userPrompt = buildPrompt(brief, selectedCategory, selectedAngleIndex, mode);
       
       setStatus('Building creative direction…');
+      
+      // SELECT SYSTEM PROMPT BASED ON MODE
+      var systemPrompt = (mode === "creative") ? CREATIVE_SYSTEM_PROMPT : PHYSICAL_SYSTEM_PROMPT;
 
       fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -1020,7 +1436,7 @@ Return only valid JSON for this one element.`
         body: JSON.stringify({
           model: 'llama-3.3-70b-versatile',
           messages: [
-            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt + '\nRole: ' + selectedRole }
           ],
           temperature: 0.7,
@@ -1389,13 +1805,20 @@ Return only valid JSON for this one element.`
       })
       .catch(function(err) {
         console.error('Unsplash error:', err);
+        
+        // If 401, show helpful message
+        if (err.message && err.message.includes('401')) {
+          console.warn('⚠️ Unsplash API key invalid. Please update in settings.');
+        }
+        
         var sk = card.querySelector('.skeleton-ph');
         if (sk) {
-          var img = document.createElement('img');
-          img.className = 'card-img';
-          img.alt = el.element_name;
-          img.src = 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800';
-          sk.replaceWith(img);
+          // Show placeholder with error message
+          var placeholder = document.createElement('div');
+          placeholder.className = 'card-img';
+          placeholder.style.cssText = 'background:#1a1a1a;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:11px;text-align:center;padding:20px;';
+          placeholder.textContent = 'Image unavailable\nCheck API key in settings';
+          sk.replaceWith(placeholder);
         }
       });
     }
