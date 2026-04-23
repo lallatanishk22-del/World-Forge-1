@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Worldforge</title>
+  <title>Worldforge v5</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -17,7 +16,7 @@
     body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9; opacity: 0.3; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); }
 
     /* SETTINGS */
-    .settings-btn { position: fixed; top: 20px; right: 20px; z-index: 500; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 8px 16px; cursor: pointer; transition: all 0.2s; }
+    .settings-btn { position: fixed; top: 20px; left: 20px; z-index: 500; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 8px 16px; cursor: pointer; transition: all 0.2s; }
     .settings-btn:hover { border-color: var(--accent-dim); color: var(--accent); }
     .settings-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 600; align-items: center; justify-content: center; }
     .settings-overlay.open { display: flex; }
@@ -42,16 +41,6 @@
     h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(64px,10vw,120px); font-weight: 300; line-height: 0.9; letter-spacing: -2px; text-align: center; margin-bottom: 24px; }
     h1 em { font-style: italic; color: var(--accent); }
     .tagline { font-size: 13px; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 64px; text-align: center; }
-    
-    /* ANGLE SELECTOR */
-    .angle-selector { width: 100%; max-width: 680px; margin-bottom: 20px; display: none; background: var(--surface); border: 1px solid var(--border); padding: 16px 20px; }
-    .angle-selector.visible { display: block; }
-    .angle-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 10px; }
-    .angle-pills { display: flex; gap: 8px; flex-wrap: wrap; }
-    .angle-pill { padding: 7px 14px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 10px; letter-spacing: 1px; font-family: 'Syne', sans-serif; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-    .angle-pill:hover { border-color: var(--accent-dim); color: var(--text-dim); }
-    .angle-pill.active { background: var(--accent); color: #0a0a0a; border-color: var(--accent); font-weight: 600; }
-    .angle-description { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: var(--text-muted); margin-top: 10px; line-height: 1.5; }
     
     /* GENERATION HISTORY */
     .gen-history { margin-bottom: 24px; display: none; }
@@ -79,12 +68,29 @@
     .role-btn[data-role="brand"].active { border-color: #34d399; color: #34d399; background: rgba(52,211,153,0.06); }
     .hint-text { font-size: 11px; color: var(--text-muted); margin-top: 12px; font-style: italic; font-family: 'Cormorant Garamond', serif; }
     .error-msg { color: #c0392b; font-size: 13px; margin-top: 12px; display: none; font-family: 'Cormorant Garamond', serif; font-style: italic; }
+
+    /* IDEA EXPLORER */
+    .idea-panel { display: none; width: 100%; margin-top: 14px; background: var(--surface); border: 1px solid var(--border); padding: 18px 20px; }
+    .idea-panel.visible { display: block; }
+    .idea-panel-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 14px; }
+    .idea-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .idea-item { padding: 12px 16px; background: transparent; border: 1px solid var(--border); color: var(--text-dim); font-family: 'Cormorant Garamond', serif; font-size: 15px; line-height: 1.5; cursor: pointer; text-align: left; transition: all 0.2s; width: 100%; display: flex; flex-direction: column; gap: 4px; }
+    .idea-item:hover { border-color: var(--accent-dim); color: var(--text); }
+    .idea-item.selected { border-color: var(--accent); color: var(--text); background: rgba(201,169,110,0.06); }
+    .idea-item.recommended { border-color: rgba(167,139,250,0.5); }
+    .idea-num { font-family: 'Syne', sans-serif; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-dim); }
+    .idea-item.selected .idea-num { color: var(--accent); }
+    .idea-item.recommended .idea-num { color: #a78bfa; }
+    .idea-text { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: inherit; line-height: 1.5; }
+    .idea-recommended-badge { font-family: 'Syne', sans-serif; font-size: 9px; letter-spacing: 1px; color: #a78bfa; margin-top: 2px; }
+    .develop-btn { width: 100%; background: var(--accent); color: #0a0a0a; border: none; padding: 14px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.2s; display: none; }
+    .develop-btn.visible { display: block; }
+    .develop-btn:hover { background: #d4b47a; }
+    .develop-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .status { margin-top: 40px; font-size: 12px; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; text-align: center; min-height: 20px; opacity: 0; transition: opacity 0.4s; }
     .status.visible { opacity: 1; }
 
-    /* EXPORT BUTTON */
-    .export-btn { position: fixed; bottom: 24px; right: 24px; z-index: 500; background: var(--accent); color: #0a0a0a; border: none; padding: 12px 24px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background 0.2s; display: none; }
-    .export-btn:hover { background: #d4b47a; }
+    /* EXPORT BUTTON - removed */
 
     /* OUTPUT */
     .output { display: none; padding-bottom: 80px; }
@@ -158,6 +164,11 @@
     .card-insight { font-family: 'Cormorant Garamond', serif; font-size: 12px; font-style: italic; color: rgba(255,255,255,0.6); line-height: 1.5; margin-bottom: 10px; }
     .card-insight.generic-flag { color: #e74c3c; }
     .card-label { display: inline-block; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); background: rgba(201,169,110,0.08); border: 1px solid rgba(201,169,110,0.2); padding: 4px 10px; }
+    .layer-badge { display: inline-block; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; padding: 3px 8px; margin-right: 6px; font-weight: 700; }
+    .layer-badge.LIFE     { color: #34d399; background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.2); }
+    .layer-badge.SOCIAL   { color: #4a9eff; background: rgba(74,158,255,0.08); border: 1px solid rgba(74,158,255,0.2); }
+    .layer-badge.SYMBOLIC { color: #a78bfa; background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.2); }
+    .layer-badge.MICRO    { color: var(--accent); background: rgba(201,169,110,0.08); border: 1px solid rgba(201,169,110,0.2); }
     .card-click-hint { position: absolute; top: 14px; left: 14px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.6); background: rgba(0,0,0,0.7); padding: 5px 12px; opacity: 0; transition: opacity 0.3s; border: 1px solid rgba(255,255,255,0.12); }
     .card:hover .card-click-hint { opacity: 1; }
     .card-credit { position: absolute; bottom: 8px; right: 10px; font-size: 8px; color: rgba(255,255,255,0.2); text-decoration: none; }
@@ -196,14 +207,18 @@
 <body>
 
   <button class="settings-btn" onclick="openSettings()">⚙ API Keys</button>
-  <button class="export-btn" id="exportBtn" onclick="exportPDF()">📄 Export PDF</button>
 
   <div class="settings-overlay" id="settingsOverlay" onclick="closeSettingsOnBg(event)">
     <div class="settings-modal">
       <div class="settings-title">API Keys</div>
       <div class="settings-subtitle">Stored locally. Never sent anywhere.</div>
       <div class="settings-field">
-        <label class="settings-label"><span class="key-status" id="groqStatus"></span>Groq API Key</label>
+        <label class="settings-label"><span class="key-status" id="geminiStatus"></span>Gemini API Key</label>
+        <input class="settings-input" id="geminiKeyInput" type="password" placeholder="AIza..."/>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Free at aistudio.google.com — 1M tokens/day</div>
+      </div>
+      <div class="settings-field">
+        <label class="settings-label"><span class="key-status" id="groqStatus"></span>Groq API Key (optional fallback)</label>
         <input class="settings-input" id="groqKeyInput" type="password" placeholder="gsk_xxxxxxxxxxxxxxxx"/>
         <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Free at console.groq.com</div>
       </div>
@@ -231,16 +246,8 @@
       <label class="input-label" for="brief">Your brief</label>
       <div class="input-row">
         <textarea id="brief" placeholder="Skybag airport ad…"></textarea>
-        <button class="generate-btn" id="generateBtn" onclick="generateWorld()">Generate</button>
+        <button class="generate-btn" id="generateBtn" onclick="runWorldforge()">Forge World</button>
       </div>
-      
-      <!-- ANGLE SELECTOR -->
-      <div class="angle-selector" id="angleSelector">
-        <div class="angle-label">Creative Angle</div>
-        <div class="angle-pills" id="anglePills"></div>
-        <div class="angle-description" id="angleDescription"></div>
-      </div>
-      
       <div class="role-row">
         <button class="role-btn active" data-role="video" onclick="selectRole('video')">🎬 Video Editor</button>
         <button class="role-btn" data-role="designer" onclick="selectRole('designer')">🎨 Designer</button>
@@ -253,7 +260,15 @@
   </section>
 
   <div class="output" id="output">
-    <div class="visual-section" style="padding-top:48px;">
+    <div class="lens-panel" id="lensPanel" style="display:none;max-width:1400px;margin:0 auto;padding:32px 24px 0;">
+      <div style="border:1px solid var(--border);background:var(--surface);padding:24px 28px;">
+        <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-dim);margin-bottom:10px;">Meaning Lock</div>
+        <div id="lensText" style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:#fff;line-height:1.4;margin-bottom:18px;"></div>
+        <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-dim);margin-bottom:10px;">Behavioral Anchors</div>
+        <div id="anchorsText" style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--text-dim);line-height:1.8;"></div>
+      </div>
+    </div>
+    <div class="visual-section" style="padding-top:32px;">
       <div class="section-head">
         Visual World
         <span class="section-hint">Click any image to explore</span>
@@ -415,285 +430,283 @@
     };
 
     // ============================================
-    // SYSTEM PROMPT (BRUTAL CREATIVE DIRECTOR MODE)
-    // ============================================
-    // ============================================
     // SYSTEM PROMPTS (MODE-SPECIFIC)
     // ============================================
-    
+
+    var CREATIVE_SYSTEM_PROMPT = `You are a creative director who generates complete human worlds, not just behavioral moments.
+
+MEANING LOCK (NON-NEGOTIABLE — READ FIRST):
+The brief you receive contains a LENS and ANCHORS.
+These are not suggestions. They are the meaning of this world.
+Every element MUST express the LENS through physical behavior.
+Every element MUST connect to at least one ANCHOR.
+If an element does not clearly connect to the LENS — rewrite it before outputting.
+Do not drift. Do not generalize. All 8 moments must feel like they come from the same underlying human truth.
+
+MEANING ENFORCEMENT — apply to every element before keeping it:
+Ask: could this same moment appear in a generic ad for any product in this category?
+If YES — it is too generic — rewrite with behavior that could ONLY happen under this specific LENS.
+Banned generic actions for consumer/product briefs: checking reviews, asking opinions, browsing, comparing prices, hesitating at checkout.
+
+CONSISTENCY TEST — apply before final output:
+All 8 moments must feel like expressions of the SAME underlying mindset.
+The test: could all 8 cards belong to the same person? If not — something is wrong.
+
+MANDATORY LAYER DISTRIBUTION (STRICT):
+Elements 1-2: LIFE — personal world, what person does alone. One must be environment-only (no human body).
+Elements 3-4: SOCIAL — relationship to others. This does NOT require a second person to be physically present. Allowed: real interaction with another person, anticipated interaction that does not happen, deliberate avoidance of someone nearby, absence of an expected response. NOT allowed: introducing random external characters (phone calls, neighbors, strangers) who have no connection to the LENS tension.
+Elements 5-6: SYMBOLIC — objects showing evidence of time, repetition, interruption. No person required.
+Elements 7-8: MICRO — behavioral leak. Extreme close-up. One hand, one finger, one motion.
+
+QUALITY RULES:
+
+1. ELEMENT SELECTION — valid ONLY if all three are true:
+   A. OVERLOOKED: not central, not designed to be seen
+   B. HUMAN RESIDUE: evidence of repeated unnoticed interaction
+   C. PASSIVE: found, not presented
+   Not predictable. Not summarizable as "person feels X because of Y".
+
+2. OUTPUT FORMAT:
+   element_name: physical action, not concept. ✅ "Hand Reaches Lock Then Pulls Back" ❌ "Hesitation Before Closing"
+   insight_line: 3-beat sequence — action → interruption → continuation. Filmable in one shot.
+     ✅ "starts explaining → gets interrupted → continues anyway"
+     ❌ BANNED labels: engages, reflects, listens, offers, drifts, feels, considers, adjusts, checks, notices, looks, watches, realizes, sees, thinks, decides
+     ❌ BANNED emotion words: uncertainty, longing, resilience, comfort, ritual, symbol
+   direction_label: 2-4 words, ALL CAPS, two physical verbs. ✅ "FOLDS AND REFOLDS" ❌ "ENGAGES WITH EMPATHY"
+
+3. CONTEXT IN NAMES: element_name must reflect its layer.
+   LIFE: ✅ "Half-Finished Coffee By The Door" ❌ "Quiet Morning"
+   SOCIAL: ✅ "Colleague Slides Logbook Across" ❌ "People Watching"
+   SYMBOLIC: ✅ "Worn Patch On Control Lever" ❌ "Final Moment"
+   MICRO: ✅ "Finger Pauses On Send Button" ❌ "Moment of Doubt"
+
+4. DEVIATION VARIETY — must include across 8 elements:
+   At least 2 IMPERFECT ACTIONS. At least 1 NON-HESITATION (repetition/overcorrection/mis-action).
+   At least 3 RETURN PATTERN (action complete — moves away — comes back unnecessarily).
+   At least 1 STILLNESS (body stopped mid-action, object set down and not picked up).
+
+5. DISTRIBUTION:
+   Intensity: elements 1-2 quiet, 3/4/6 medium, element 7 or 8 hits hard. ONE moment should pierce.
+   Variation: must include SUBTLE + SHARP + OBJECT-BASED + SOCIAL FRICTION.
+   Pattern: no action chain repeats across elements.
+   Scene contrast: each element differs from previous in SCALE, PACE, INFORMATION, or PRESENCE.
+
+6. ANCHOR RULE: At least 3 elements include a real-world object anchoring the moment physically.
+
+7. SYMBOLIC OBJECT — condition not selection. Object special because of STATE not identity.
+   Must show: INTERRUPTION / DISPLACEMENT / WEAR PATTERN / REPURPOSING.
+   Banned objects: flag, trophy, badge, uniform, certificate, dashboard, instrument panel, logbook.
+
+8. STRUCTURAL ARC:
+   CAUSAL PAIR (1): Element A deviation echoed physically in Element B without explanation.
+   UNRESOLVED CUTS (2+): insight lines that stop at interruption. Two beats only. No continuation.
+   NO CLOSURE on element 8: must leave something physically unanswered.
+
+LAYER-SPECIFIC RULES:
+
+LIFE: Personal world. One element must be environment-only (space, not person).
+  Insight: physical action with visible break. ✅ "Ties apron, unties, ties again" ❌ "A habit from better days"
+
+SOCIAL: Relationship to others — real, imagined, avoided, or absent. A second person does not need to be physically present.
+  The interaction must be INCOMPLETE, ANTICIPATED but unrealized, or DELIBERATELY AVOIDED.
+  ✅ Real: "Hands box to customer → customer grabs different box → both hold it for a second"
+  ✅ Imagined: "Prepares to share sundae → decides against it → continues eating alone"
+  ✅ Avoided: "Hears someone nearby → angles bowl away → does not look up"
+  ❌ "Phone rings" / "Neighbor knocks" — external interruptions with no LENS connection
+
+SYMBOLIC: Objects where human behavior left a visible trace.
+  INTERACTION REQUIRED — action exposes the meaning, does not describe it.
+  ✅ "Thumb presses worn patch on lever, stops at edge where metal shows through"
+
+MICRO: Behavioral leak. Internal state escaping through body. Extreme close-up only.
+  ✅ "Throws switch, hand withdraws, finger comes back and rests on it — not pressing, just there"
+
+VISUAL GROUNDING:
+Generate visual_context ONCE from the brief. Lock person, environment, lighting, mood for all 8 elements.
+Each unsplash_query must describe the STAGE where behavior happens — not the behavior itself.
+Strip verbs. Search: object + environment + human presence + camera style.
+LIFE: environment + object, wide shot. SOCIAL: two people + object between them, mid-shot.
+SYMBOLIC: object fills frame, physical state visible. MICRO: body part + object + extreme close up.`;
+
+    // ============================================
+    // PHYSICAL SYSTEM PROMPT
+    // ============================================
+
     var PHYSICAL_SYSTEM_PROMPT = `You are a creative director who rejects generic work.
 
 Generate emotionally real ad moments with strict structural enforcement.
 
-MANDATORY STRUCTURE - EVERY ELEMENT:
-
-element_name: Must describe physical interaction (object + action)
-  ✅ VALID: "Zip Stuck Halfway" / "Wheel Catches On Tile" / "Handle Slips From Grip"
-  ❌ INVALID: "Check-in Chaos" / "Journey Begins" / "Safe Arrival"
-
-insight_line: Must describe visible reaction or consequence
-  ✅ VALID: "Force it closed, elbow pressed down" / "Bag tips forward, owner catches fast"
-  ❌ INVALID: "Overpack at your own risk" / "We made it" / "Hold on tight"
-
-direction_label: Must be verb-based action phrase
-  ✅ VALID: "PRESS AND STRAIN" / "TIP AND CATCH" / "SLIP AND DRAG"
-  ❌ INVALID: "DRAG AND DROP" / "STAND AND WAIT" / "RUN AND RUSH"
-
-CRITICAL CONSTRAINT - INTERACTION + RESISTANCE:
-
-Each moment MUST include:
-1. INTERACTION: Object + specific physical action
-2. RESISTANCE: Something goes slightly wrong
-
-Examples of resistance:
-- Slipping (grip loosens, foot slides, object drops)
-- Missing (hand reaches but misses, timing off)
-- Catching (thing falling, last-second save)
-- Struggling (zipper stuck, wheel caught, strap tight)
-- Hesitation (pause before action, uncertain grip)
-
-If an element lacks resistance → it's too clean → REWRITE IT
-
-BANNED CONTENT:
-
-Abstract words: chaos, journey, arrival, moment, experience, relief, stress, freedom, adventure
-Summary phrases: "we made it", "left behind", "hold on", "next time", "in sight"
-Perfect outcomes: safe, complete, perfect, smooth, easy
-
-VALIDATION BEFORE RETURN:
-
-Scan each element for:
-1. Does element_name contain object + action? (not concept)
-2. Does insight_line show visible behavior? (not feeling)
-3. Does element include resistance? (not smooth flow)
-
-If NO to any → REWRITE that element before returning JSON
-
-Return valid JSON with exactly 8 elements. No preamble, no explanation.
-
-JSON structure:
-{
-  "core_feeling": "3-5 words with tension/contrast",
-  "human_insight": "1 sharp line about real behavior",
-  "color_texture": "lighting + material + color",
-  "sound_direction": "ambient sounds, not music",
-  "first_action": {
-    "subject": "who/what",
-    "action": "command form",
-    "camera": "shot type",
-    "duration": "seconds",
-    "environment": "where"
-  },
-  "shots": ["shot 1", "shot 2", "shot 3", "shot 4"],
-  "sequence": ["step 1", "step 2", "step 3"],
-  "pacing": "timing",
-  "style": "camera approach",
-  "audio": "dominant sound",
-  "positioning": "brand role",
-  "tone": "2-3 words",
-  "example_messaging": ["line 1", "line 2"],
-  "layout": "spatial direction",
-  "typography": "Font + Font — feeling",
-  "avoid": ["avoid 1", "avoid 2", "avoid 3"],
-  "color_palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"],
-  "elements": [
-    {
-      "element_name": "object + action (2-4 words)",
-      "insight_line": "visible behavior, max 8 words",
-      "direction_label": "VERB AND VERB",
-      "unsplash_query": "person + action + imperfection + location + lighting (10-15 words)"
-    }
-  ]
-}`;
-
-    var CREATIVE_SYSTEM_PROMPT = `You are a creative director focused on human behavior, not objects.
-
-Your job is to generate moments where internal state leaks into physical action.
-
-CORE PRINCIPLE:
-
-Do NOT describe what is happening.
-Show what the body does wrong because of what the mind is processing.
-
-MANDATORY STRUCTURE:
-
-Each moment MUST follow:
-1. Automatic action (driven by habit, memory, or expectation)
-2. Behavioral leak (delay, hesitation, correction, continuation, abort)
-
-GOOD:
-"Presses wrong floor, doesn't correct immediately
- Waits a second before hitting the right one"
-
-BAD:
-"Presses wrong floor"
-"Realizes mistake"
-
-RULES:
-
-- NO generic actions (looking, walking, checking phone)
-- NO observation words (notices, sees, realizes, remembers, thinks)
-- NO explanation of change ("is different", "has changed")
-- NO storytelling or drama
-
-FOCUS ON:
-
-- Hesitation (pauses mid-action)
-- Delay (doesn't correct immediately)
-- Repetition (does twice when once enough)
-- Covering behavior (pretends to do something else)
-- Aborted actions (starts, then stops)
-- Slight over-continuation (keeps going after should stop)
-
-CRITICAL EXECUTION RULES:
-
-1. REALITY RULE:
-Every moment must include a slight imperfection in action.
-If the action feels clean or expected → add a delay, miss, or interruption.
+QUALITY RULES (APPLY TO ALL ELEMENTS):
+
+1. ELEMENT SELECTION — valid ONLY if all three are true:
+   A. OVERLOOKED: not central, not designed to be seen — edge, seam, wear pattern, not a featured prop
+   B. HUMAN RESIDUE: evidence of repeated unnoticed interaction — polish from touch, fading, misalignment
+   C. PASSIVE: found, not presented — exists regardless of whether anyone watches
+   Not predictable: ask "is this the first thing anyone imagines?" → if yes, reject and find different moment.
+   Not summarizable: if element reads as "person feels X because of Y" → too explicit → rewrite.
+   "Something small happened and it stayed" → correct. That resistance to paraphrase is the quality signal.
+
+2. OUTPUT FORMAT — applies to element_name, insight_line, direction_label:
+   element_name: physical action, not concept. ✅ "Hand Reaches Lock Then Pulls Back" ❌ "Hesitation Before Closing"
+   insight_line: 3-beat action sequence → interruption/change → continuation. Filmable in one continuous shot.
+     ✅ "starts explaining → gets interrupted → continues anyway"
+     ✅ "reaches for object → hesitates → takes it with different grip"
+     ❌ BANNED labels: engages, reflects, listens, offers, drifts, feels, considers, adjusts, checks, notices, looks, watches, realizes, sees, thinks, decides — these are invisible. Replace with exact physical sequence.
+     ❌ BANNED emotion words: uncertainty, longing, resilience, comfort, ritual, symbol, habit from better days
+   direction_label: exactly 2-4 words, ALL CAPS, two physical verbs. ✅ "FOLDS AND REFOLDS" ❌ "ENGAGES WITH EMPATHY"
+
+3. CONTEXT IN NAMES: element_name must reflect its layer.
+   LIFE: ✅ "Half-Finished Coffee By The Door" ❌ "Quiet Morning"
+   SOCIAL: ✅ "Colleague Slides Logbook Across" ❌ "People Watching"
+   SYMBOLIC: ✅ "Worn Patch On Control Lever" ❌ "Final Moment"
+   MICRO: ✅ "Finger Pauses On Send Button" ❌ "Moment of Doubt"
+
+4. DEVIATION VARIETY — across the 8 elements, must include all of:
+   → At least 2 with IMPERFECT ACTIONS: action starts then shifts method, unnecessary repetition, wrong approach before correction, slight mistiming
+   → At least 1 NON-HESITATION: repetition (done again unnecessarily), overcorrection (response larger than trigger), or mis-action (wrong object/direction before self-correction). Hesitation alone is not enough.
+   → At least 3 with RETURN PATTERN: action completes → moves away → comes back to same object. Return must be unnecessary — first action was already complete.
+   → At least 1 STILLNESS: body stopped mid-action, object set down and not picked up, person who started to move and didn't.
+
+5. DISTRIBUTION — across the 8 elements:
+   → Intensity: elements 1-2 low (deviation barely visible), 3/4/6 medium, element 7 or 8 ONE high-intensity hit. ONE hits hard — rest frame it.
+   → Variation types: must include all four — SUBTLE (barely visible), SHARP (impossible to miss), OBJECT-BASED (no person required), SOCIAL FRICTION (two people, action doesn't land as expected)
+   → Pattern: no action chain repeats. Different category per element: grip/release, fold/unfold, speak/cut-off, count/recount, place/reposition, hold/abandon, open/leave-open, move/freeze, signal/withdraw
+   → Scene contrast: each element must differ from previous in at least one — SCALE, PACE, INFORMATION withheld, or PRESENCE (person vs environment)
+
+6. ANCHOR RULE: At least 3 elements must include a real-world object anchoring the moment physically.
+
+7. SYMBOLIC OBJECT — condition not selection:
+   Object is special because of its STATE, not its identity. Must show one of:
+   → INTERRUPTION: left mid-use (pen uncapped, door half-open)
+   → DISPLACEMENT: not where it belongs
+   → WEAR PATTERN: repeated behavior visible on object
+   → REPURPOSING: used for different purpose than intended
+   ❌ Flag, trophy, badge, uniform — obvious, chosen for symbolism. Meaning must emerge from condition.
+
+8. STRUCTURAL ARC — across the full set:
+   → CAUSAL PAIR (exactly 1): Element A deviation echoed physically in Element B — without explanation. Viewer senses link, not told it.
+   → UNRESOLVED CUTS (at least 2): insight lines that stop at the interruption — no continuation, no resolution. Two beats only.
+   → NO CLOSURE on element 8: must leave something physically unanswered. If it resolves cleanly → rewrite.
+
+LAYER-SPECIFIC RULES:
+
+LIFE layer rules:
+- Show personal world, not event world. The brief is context, not the subject.
+- Describe what the person does when no one is watching.
+- Insight line: a physical action with a visible break. NOT what it means or reveals.
+  ✅ "Ties apron, unties, ties again" ❌ "A habit from better days"
+- LIFE moments show deviation too — a small break in routine, not a description of the routine.
+
+SOCIAL layer rules:
+- Require at least one other person.
+- Show the physical gap between what was expected and what happened.
+- Insight line: the physical exchange that breaks — NOT what it feels like.
+  ✅ "Starts to speak, stops, slides tarp across instead" ❌ "A moment of shared understanding"
+- The interaction must be INCOMPLETE or COLLIDING — two people's actions overlapping wrong.
+  ✅ "Hands box to customer → customer grabs different box → both hold it for a second"
+  ❌ "Exchanges a knowing glance" — clean, complete, no collision
+
+SYMBOLIC layer rules:
+- Select objects ONLY where human behavior has left a visible trace. The object must satisfy one:
+  → REPEATED USE: worn smooth, indented, faded, loosened from too many contacts
+  → INTERRUPTED STATE: left mid-use, half-open, misplaced, not where it belongs
+  → REPURPOSED: used for a different purpose than intended (human workaround)
+  → LAYERED HISTORY: repaired over repaired, tape over tape, written over written
+  If none apply → reject the object. A clean, undisturbed, obvious object = invalid.
+- INTERACTION REQUIRED: The element must include a physical interaction that reveals the trace.
+  The action exposes the meaning — do not describe the meaning.
+  ❌ "Worn control lever" — describes state, no interaction
+  ✅ "Thumb presses worn patch on lever, stops at edge where metal shows through" — interaction reveals trace
+- Meaning must be inferred, never stated. Ban: "represents", "symbolizes", "shows", "means".
+- HARD BANNED OBJECTS — these will always be rejected, no exceptions:
+  dashboard, instrument panel, logbook, flight manual, badge, uniform, flag, trophy, certificate,
+  headset (unless showing specific wear/damage), standard cockpit controls (unless showing specific wear),
+  blinking lights, screens, any object designed to be looked at, any object that is new or undamaged.
+  These are documentation objects or designed-to-be-seen objects — they record or display, they do not remember.
+  Auto-reject if output includes: "blinking lights", "control panel", "screen glow", "dramatic gaze at instrument".
+- The object should carry memory even when no one is present. If it could be new and unchanged → reject it.
+
+SYMBOLIC EXECUTION ANCHOR:
+
+✅ STRONG (repeated use trace + interaction):
+  element_name: "Checklist Corner Folded Into Permanent Curve"
+  insight_line: "Pilot's thumb finds the fold, presses flat — corner returns to curve immediately"
+
+✅ STRONG (interrupted state):
+  element_name: "Seat Lever Stopped Halfway Down"
+  insight_line: "Hand releases lever — it stops before clicking home, stays there"
+
+
 
-2. SPECIFICITY RULE:
-Avoid abstract words: familiar, routine, habitual, repetitive, awkward
-Describe the exact physical action instead.
-If it can be summarized in one word → rewrite it more specifically.
-
-3. TWO-STEP RULE:
-Each moment must have:
-Line 1: action
-Line 2: slight disruption (delay, correction, repeat, stop)
-If line 2 is missing → the moment is weak → rewrite.
-
-4. NO POETRY RULE:
-Do not describe atmosphere, feelings, or visuals.
-No: sunlight, dust, nostalgia, silence, lost in thought, seeking control
-Only actions.
-
-5. RELATIONAL LEAK RULE (ONLY WHEN MULTIPLE PEOPLE PRESENT):
-If the moment involves another person, the behavioral leak may come from recognition instead of error.
-Show this through action, not explanation.
-
-Valid relational patterns:
-- Starts an action, stops because the other already did it
-- Prepares to explain, then doesn't need to
-- Notices the other person doing something the same way
-- Reacts to anticipation or alignment
-- Action becomes unnecessary due to other person
-
-Important:
-- Do NOT describe thoughts or meaning
-- Do NOT explain the relationship ("realizes he trusts him", "feels confident")
-- Show recognition ONLY through physical interruption or change in action
-
-Good relational leak:
-"Starts to explain something
- Stops as the other finishes it"
-
-"Slides object forward
- Pauses as the other picks it up the same way"
-
-Bad (storytelling):
-"Realizes he trusts him"
-"Feels confident in the decision"
-"Sees leadership in him"
-
-Use relational leak in maximum 2-3 moments only.
-Otherwise, everything becomes about interaction and balance is lost.
-
-VALID BEHAVIORAL LEAK PATTERNS:
-
-- "continues slightly after stopping"
-- "pauses mid-action"
-- "delays correction"
-- "starts something, then aborts"
-- "covers with another action"
-- "waits before reacting"
-- "does again unnecessarily"
-
-RESTRAINT INTELLIGENCE (PATTERN GUIDANCE — DO NOT EXPLAIN):
-
-Some behavioral leaks come from internal restraint, not error.
-Use these as pattern references when relevant. Do NOT mention emotions. Do NOT explain meaning.
-
-Letting go patterns:
-- starts to correct → stops halfway → withdraws hand
-- reaches for control → pauses → lets it continue
-
-Recognition / trust patterns:
-- starts to explain → stops as other already does it
-- prepares action → becomes unnecessary
-
-Calibration patterns:
-- watches action → does not interrupt
-- observes closely → no reaction
-
-Legacy weight patterns:
-- touches object → holds slightly longer → releases slower
-- completes action → hand lingers before leaving
-
-IMPORTANT:
-- These are NOT rules, only references
-- Use only when they fit the situation naturally
-- Maximum 2-3 moments should reflect this layer
-- All moments must still follow behavioral leak structure
-
-INVALID PATTERNS:
-
-- Pure observation without action consequence
-- Explanation of feelings or thoughts
-- Description of what changed
-- Summary of situation
-
-CRITICAL TEST:
-
-If the moment works WITHOUT the second line → it is weak → rewrite.
-
-The second line must show the LEAK (the body's imperfect response).
-
-OUTPUT:
-
-8 moments that feel like: "I've seen this happen, but never noticed it"
-
-VISUAL CONSISTENCY SYSTEM (CRITICAL):
-
-All 8 images must feel like they belong to the SAME scene — frames from one film.
-
-STEP 1: Generate visual_context from the brief ONCE at the start:
-
-Analyze the brief and establish:
-- person: specific person type (age, role, identity — NOT generic "person" or "man")
-- environment: detailed setting (NOT just "office" or "room" — be specific)
-- lighting: time of day and quality (warm evening, soft morning, golden hour, etc.)
-- mood: emotional atmosphere (reflective, tense, intimate, decisive, etc.)
-
-STEP 2: LOCK this context for ALL 8 elements.
-
-STEP 3: Each element's unsplash_query MUST use this locked context:
-
-QUERY FORMAT:
-[visual_context.person] + [visual_context.environment] + 
-[specific micro action + camera framing] + 
-[visual_context.lighting] + [visual_context.mood] + cinematic
-
-EXAMPLE:
-
-If visual_context is:
-- person: "middle aged executive"
-- environment: "minimalist glass office"
-- lighting: "warm evening light"
-- mood: "reflective tense"
-
-Then element queries become:
-"middle aged executive minimalist glass office hand passing document close up warm evening light reflective tense cinematic"
-"middle aged executive minimalist glass office watching quietly medium shot warm evening light reflective tense cinematic"
-
-CRITICAL RULES:
-- Do NOT change person type between elements
-- Do NOT change environment between elements
-- Do NOT change lighting between elements
-- Do NOT change mood between elements
-- ONLY vary: micro action and camera framing (close up, medium shot, detail, etc.)
-
-GOAL:
-When viewed together, the 8 images feel like frames from the same film, same moment, same world.
+❌ WEAK — ALWAYS REJECT:
+  "Cockpit Instrument Panel" / "Pilot's Logbook" / "Control Dashboard"
+  These have no trace. They document. They do not remember.
+
+MICRO layer rules:
+- Behavioral leak only. Internal state escaping through the body.
+- Insight line: the exact sequence of the deviation — action → unexpected continuation.
+  ✅ "Counts notes, separates them, recounts the same pile" ❌ "A moment of uncertainty"
+- MANDATORY: deviation must be the core. Remove it mentally — if action still makes sense → REJECT.
+- MANDATORY STRUCTURE: Line 1 = automatic action. Line 2 = the leak (delay/hesitation/repetition/abort).
+- If line 2 is missing → the moment is weak → rewrite.
+- Do NOT describe thoughts or meaning. Only actions.
+
+MICRO EXECUTION ANCHOR (this is what strong MICRO output looks like):
+
+  element_name: "Finger Returns To Switch Already Thrown"
+  insight_line: "Throws switch, hand withdraws, finger comes back and rests on it — not pressing, just there"
+
+
+  element_name: "Pilot Feels Tense"
+  insight_line: "Grips controls tightly, feeling the weight of responsibility"
+
+
+VISUAL GROUNDING (MANDATORY):
+
+Generate visual_context ONCE from the brief and lock it for all 8 elements:
+- person: specific type (age, role, identity — NOT "person" or "man")
+- environment: specific setting (NOT "office" or "room")
+- lighting: time of day and quality
+- mood: emotional atmosphere in one word
+
+Each element's unsplash_query must describe the STAGE where behavior happens — not the behavior itself.
+Strip verbs. Search: object + environment + human presence + camera style.
+Unsplash is indexed by scenes and objects, NOT sequences or micro-behavior.
+
+QUERY CONVERSION RULE: behavior → strip verbs → keep nouns → add environment → add human → add ONE behavioral evidence detail → add camera
+
+BEHAVIORAL EVIDENCE (add one per query — makes the moment readable without text):
+  half-eaten / untouched / steam rising / hand paused mid-air / object slightly displaced /
+  phone screen lit / spoon resting against bowl / cup abandoned / ingredients spread out
+
+Non-visual moments MUST convert to visual proxy:
+  sound → object making it (coffee machine, clinking cups, crowd)
+  time passing → evidence of time (cold coffee, melted ice, fading steam)
+  atmosphere → closest physical anchor in the scene (empty chair, door ajar, window)
+
+LAYER-SPECIFIC QUERY FORMAT:
+LIFE → [environment] + [object] + [person] + [lighting] — real not staged, wide or mid shot
+  GOOD: 'restaurant table dessert menu hand warm lighting'
+  BAD: 'person scanning menu and pausing thoughtfully'
+SOCIAL → [environment] + [two people] + [object between them] — mid-shot, interaction visible
+  GOOD: 'restaurant table person pointing menu talking to waiter'
+  BAD: 'customer changes order after seeing special addition'
+SYMBOLIC → [specific object] + [its physical state] + [environment] — object fills frame
+  GOOD: 'face cream jar open bathroom counter close up natural light'
+  BAD: 'cream applied slowly and invisibly to skin'
+MICRO → [body part] + [object being touched] + [environment] + close up
+  GOOD: 'person applying face cream bathroom mirror close up hands'
+  BAD: 'finger pauses mid-application realizing subtle change'
+
+Each query must differ in subject and framing. No two queries of the same shot type.
+
+FINAL VALIDATION (run before returning JSON):
+[ ] Every element belongs to the domain of the brief — no hospital corridors, office desks, or generic environments unless the brief is specifically about them?
+[ ] At least 3 elements use the return pattern (action complete → moves away → comes back)?
+[ ] All 4 variation types present: subtle / sharp / object-based / social friction?
+[ ] Every insight_line is filmable, no emotion words, no interpretation?
+[ ] Element 8 unresolved — leaves something unanswered?
+If any fails → rewrite that element only, then return.
 
 Return valid JSON with exact structure:
 
@@ -701,6 +714,7 @@ Return valid JSON with exact structure:
   "visual_context": {
     "person": "specific person type (age, role, identity)",
     "environment": "detailed specific setting",
+    "era": "decade or period if historically specific, otherwise 'contemporary'",
     "lighting": "time of day and quality",
     "mood": "emotional atmosphere"
   },
@@ -729,10 +743,11 @@ Return valid JSON with exact structure:
   "color_palette": ["#hex1", "#hex2", "#hex3", "#hex4", "#hex5"],
   "elements": [
     {
-      "element_name": "specific action that reveals behavioral leak (3-6 words)",
-      "insight_line": "what body does, then the leak (max 10 words, two-part)",
-      "direction_label": "ACTION AND REACTION",
-      "unsplash_query": "[visual_context.person] + [visual_context.environment] + [micro action + framing] + [visual_context.lighting] + [visual_context.mood] + cinematic"
+      "layer": "LIFE | SOCIAL | SYMBOLIC | MICRO",
+      "element_name": "specific name reflecting the layer (3-6 words)",
+      "insight_line": "[physical action] → [disruption or deviation] → [continuation or cut] (max 15 words, filmable, no emotion words)",
+      "direction_label": "VERB AND VERB",
+      "unsplash_query": "layer-appropriate query — see LAYER-SPECIFIC QUERY FORMAT above (max 12 words)"
     }
   ]
 }`;
@@ -741,6 +756,7 @@ Return valid JSON with exact structure:
     // STATE & CONFIG
     // ============================================
     var GROQ_API_KEY = localStorage.getItem('groq_api_key') || '';
+    var GEMINI_API_KEY = localStorage.getItem('gemini_api_key') || '';
     var UNSPLASH_ACCESS_KEY = localStorage.getItem('unsplash_access_key') || '';
     var selectedRole = 'video';
     var selectedCategory = 'generic';
@@ -748,6 +764,9 @@ Return valid JSON with exact structure:
     var worldData = null;
     var generations = [];
     var currentGenerationIndex = -1;
+
+    // Internal single-pass state (not exposed to UI)
+    var creativeDNA = null;
 
     // ============================================
     // INIT
@@ -758,6 +777,7 @@ Return valid JSON with exact structure:
     });
 
     function openSettings() {
+      document.getElementById('geminiKeyInput').value = GEMINI_API_KEY;
       document.getElementById('groqKeyInput').value = GROQ_API_KEY;
       document.getElementById('unsplashKeyInput').value = UNSPLASH_ACCESS_KEY;
       document.getElementById('settingsOverlay').classList.add('open');
@@ -765,13 +785,16 @@ Return valid JSON with exact structure:
     function closeSettings() { document.getElementById('settingsOverlay').classList.remove('open'); }
     function closeSettingsOnBg(e) { if (e.target === document.getElementById('settingsOverlay')) closeSettings(); }
     function saveKeys() {
+      var gm = document.getElementById('geminiKeyInput').value.trim();
       var g = document.getElementById('groqKeyInput').value.trim();
       var u = document.getElementById('unsplashKeyInput').value.trim();
+      if (gm) { GEMINI_API_KEY = gm; localStorage.setItem('gemini_api_key', gm); }
       if (g) { GROQ_API_KEY = g; localStorage.setItem('groq_api_key', g); }
       if (u) { UNSPLASH_ACCESS_KEY = u; localStorage.setItem('unsplash_access_key', u); }
       updateKeyStatuses(); closeSettings();
     }
     function updateKeyStatuses() {
+      document.getElementById('geminiStatus').className = 'key-status' + (GEMINI_API_KEY ? ' set' : '');
       document.getElementById('groqStatus').className = 'key-status' + (GROQ_API_KEY ? ' set' : '');
       document.getElementById('unsplashStatus').className = 'key-status' + (UNSPLASH_ACCESS_KEY ? ' set' : '');
     }
@@ -834,31 +857,42 @@ Return valid JSON with exact structure:
     }
 
     // ============================================
-    // MODE DETECTION (PHYSICAL vs CREATIVE)
+    // MODE DETECTION (PHYSICAL vs CREATIVE vs POSITIVE)
     // ============================================
     function detectMode(brief) {
       var b = brief.toLowerCase();
       
-      // PHYSICAL MODE TRIGGERS (products only)
+      // MARKETING/CAMPAIGN OVERRIDE — always creative, never physical
+      // If brief contains marketing/campaign intent, skip physical mode entirely
+      var isMarketing = b.includes("marketing") || b.includes("campaign") || b.includes("ad ") ||
+        b.includes("advertisement") || b.includes("brand") || b.includes("audience") ||
+        b.includes("strategy") || b.includes("plan") || b.includes("focus on") ||
+        b.includes("unique") || b.includes("insight") || b.includes("storytelling");
+      
+      // POSITIVE MODE TRIGGERS — warmth/care/brand/human connection briefs
       if (
-        b.includes("bag") ||
-        b.includes("luggage") ||
-        b.includes("suitcase") ||
-        b.includes("backpack") ||
-        b.includes("glasses") ||
-        b.includes("eyewear") ||
-        b.includes("sunglasses") ||
-        b.includes("jeans") ||
-        b.includes("jacket") ||
-        b.includes("shoes") ||
-        b.includes("watch") ||
-        b.includes("product") ||
-        b.includes("durability")
+        b.includes("introvert") || b.includes("friendship") || b.includes("care") ||
+        b.includes("empathy") || b.includes("connection") || b.includes("support") ||
+        b.includes("kindness") || b.includes("love") || b.includes("meaningful") ||
+        b.includes("personal growth") || b.includes("human connection") ||
+        (b.includes("quiet") && (b.includes("brand") || b.includes("friend") || b.includes("person"))) ||
+        b.includes("mental health") || b.includes("wellbeing") || b.includes("wellness")
       ) {
+        return "positive";
+      }
+      
+      // PHYSICAL MODE TRIGGERS — only for pure product/durability briefs, NOT marketing briefs
+      if (!isMarketing && (
+        b.includes("bag") || b.includes("luggage") || b.includes("suitcase") ||
+        b.includes("backpack") || b.includes("glasses") || b.includes("eyewear") ||
+        b.includes("sunglasses") || b.includes("jeans") || b.includes("jacket") ||
+        b.includes("shoes") || b.includes("watch") || b.includes("product") ||
+        b.includes("durability")
+      )) {
         return "physical";
       }
       
-      // DEFAULT: CREATIVE MODE (all human situations)
+      // DEFAULT: CREATIVE MODE
       return "creative";
     }
 
@@ -888,50 +922,7 @@ Return valid JSON with exact structure:
       descDiv.textContent = category.angles[selectedAngleIndex].description;
       selector.classList.add('visible');
     }
-function generateImageQuery(moment, index = 0) {
-  const m = moment.toLowerCase();
 
-  // SUBJECT
-  let subject = "person hands";
-  if (m.includes("ecg") || m.includes("monitor")) subject = "ECG monitor";
-  else if (m.includes("scalpel") || m.includes("instrument")) subject = "surgical instruments";
-  else if (m.includes("mask")) subject = "surgeon face mask";
-  else if (m.includes("door")) subject = "door handle";
-  else if (m.includes("keyboard") || m.includes("editing")) subject = "computer screen editing photos";
-  else if (m.includes("coffee") || m.includes("cup")) subject = "coffee cup counter";
-
-  // CONTEXT
-  let context = "indoor";
-  if (m.includes("surgery") || m.includes("operating")) context = "hospital operating room";
-  else if (m.includes("ecg") || m.includes("monitor")) context = "hospital ICU";
-  else if (m.includes("editing")) context = "workspace desk computer";
-  else if (m.includes("coffee")) context = "coffee shop";
-
-  // DETAIL
-  let detail = "close up";
-  if (m.includes("pause")) detail = "still moment tension";
-  else if (m.includes("hold")) detail = "hands holding object";
-  else if (m.includes("look")) detail = "focused gaze";
-  else if (m.includes("breath") || m.includes("mask")) detail = "face close up eyes intense";
-  else if (m.includes("screen")) detail = "glowing screen";
-
-  // STYLE VARIATION
-  const styles = [
-    "close up",
-    "wide shot",
-    "over shoulder",
-    "top down",
-    "side angle",
-    "extreme close up"
-  ];
-
-  const style = styles[index % styles.length] + " cinematic lighting shallow depth of field";
-
-  // CHARACTER LOCK (optional but recommended)
-  const character = "male surgeon 40s green scrubs surgical mask";
-
-  return `${character} ${subject} ${context} ${detail} ${style}`;
-}
     function selectAngle(categoryKey, index) {
       selectedAngleIndex = index;
       var category = CATEGORIES[categoryKey];
@@ -944,6 +935,441 @@ function generateImageQuery(moment, index = 0) {
     }
 
     // ============================================
+    // CONTEXT EXTRACTION (LIGHTWEIGHT INTERPRETATION)
+    // ============================================
+    function extractContext(brief) {
+      var b = brief.toLowerCase();
+      var context = [];
+
+      // Geography / culture
+      if (b.includes('mumbai') || b.includes('bombay')) context.push(
+        'MUMBAI REALITY (not tourist stereotype):\n' +
+        'What tourists SEE: crowds, chaos, overwhelm, noise, poverty contrast\n' +
+        'What tourists MISS — generate from these invisible realities:\n' +
+        '1. PRECISION INSIDE DISORDER: People do not collide randomly — they navigate by micro-signals. ' +
+        'Dabbawalas deliver 200,000 lunches daily with near-zero error using no smartphones. ' +
+        'Trains look chaotic but have unspoken boarding zones, standing positions, exit choreography. ' +
+        'The system works because of invisible shared protocols, not despite the chaos.\n' +
+        '2. MICRO-NEGOTIATIONS: Not loud bargaining. Tiny eye contact shifts that change a price. ' +
+        'A hand gesture that means "I\'ll take it" without words. A slight pause that means rejection. ' +
+        'A vendor who stops rearranging stock the moment someone slows down — not when they stop.\n' +
+        '3. TIME DOES NOT SEGMENT: 2am is not quiet. 6am is not the beginning. ' +
+        'The city runs in overlapping shifts with no clean start or end. ' +
+        'A chai stall that has been open since before anyone can remember. ' +
+        'A person sleeping on a footpath next to someone in a suit checking Bloomberg.\n' +
+        '4. EXTREME PROXIMITY WITHOUT ACKNOWLEDGMENT: Shoulders touching on trains, sharing bench space, ' +
+        'two strangers eating lunch 4 inches apart — with total mutual invisibility. ' +
+        'This is not rudeness. It is a social contract of shared space without obligation.\n' +
+        '5. OBJECTS WITH LAYERED HISTORY: Nothing gets thrown away until it has been repaired ' +
+        'multiple times. Tape over tape. Paint over old paint showing through. ' +
+        'A sign repainted but the old letters still readable underneath. ' +
+        'The repair IS the object now.\n' +
+        '6. EMOTIONAL CONTRADICTION: The same person who is ruthlessly transactional with a stranger ' +
+        'will spend 40 minutes helping them find an address. ' +
+        'Overwhelming generosity and complete indifference exist in the same interaction.\n' +
+        'BANNED STEREOTYPES for Mumbai: crowded train (surface only), asking directions (generic), ' +
+        'spicy food, poverty contrast, traffic chaos, colorful markets — these are what tourists photograph, ' +
+        'not what they experience.'
+      );
+      if (b.includes('india') || b.includes('indian') || b.includes('delhi') || b.includes('bangalore') || b.includes('chennai') || b.includes('kolkata')) context.push(
+        'India — institutional weight visible in physical objects and queues, ' +
+        'hierarchy communicated through posture and waiting position, ' +
+        'heat changes the pace and the patience, ' +
+        'repair culture means nothing looks new but everything still works, ' +
+        'public and private space bleed into each other without clear boundary'
+      );
+      if (b.includes('japan') || b.includes('tokyo') || b.includes('japanese')) context.push('Japan — precision culture, silence as respect, institutional formality, ' +
+        'the social cost of being the person who breaks a queue or makes noise, ' +
+        'apology as ritual that must be physically performed to count');
+      if (b.includes('africa') || b.includes('lagos') || b.includes('nairobi')) context.push('Sub-Saharan Africa — community interdependence, ' +
+        'resource constraints producing creative workarounds that become permanent, ' +
+        'time as negotiable, relationships as infrastructure');
+      if (b.includes('new york') || b.includes('nyc') || b.includes('manhattan')) context.push('New York City — pace as identity, ' +
+        'anonymity as social contract, transactional interactions with zero warmth that are not unkind, ' +
+        'the city as a system people plug into rather than live inside');
+
+      // Time period / era
+      if (b.includes('covid') || b.includes('pandemic') || b.includes('lockdown')) context.push('COVID pandemic — PPE as normal, exhaustion normalized, physical distance enforced, institutional overload, fear embedded in routine');
+      if (b.includes('partition') || b.includes('1947')) context.push('1947 Partition — displacement, identity fracture, irreversible loss');
+      if (b.includes('80s') || b.includes('1980') || b.includes('eighties')) context.push('1980s — analog everything, no mobile phones, slower pace of information');
+      if (b.includes('wartime') || b.includes('war') || b.includes('conflict')) context.push('wartime or conflict — scarcity, hyperawareness of risk, compressed time');
+
+      // Institutions / environments
+      if (b.includes('hospital') || b.includes('clinic') || b.includes('icu') || b.includes('ward')) context.push('hospital environment — fluorescent light, controlled noise, clinical smell, institutional corridors, hierarchy visible in movement');
+      if (b.includes('school') || b.includes('classroom')) context.push('school — institutional authority, age gap between teacher and student, formality masking uncertainty');
+      if (b.includes('airport') || b.includes('flight') || b.includes('terminal')) context.push('airport — anonymity, transience, everyone mid-transition, no one fully arrived or departed');
+      if (b.includes('office') || b.includes('corporate') || b.includes('workplace')) context.push('corporate office — performance of competence, hierarchy visible in seating and posture, private feelings hidden behind professional behavior');
+
+      // Specific life events
+      if (b.includes('last day') || b.includes('final day') || b.includes('retiring') || b.includes('retirement')) context.push('ending of a long tenure — identity tied to role now separating, muscle memory outlasting the role itself');
+      if (b.includes('first day') || b.includes('new job') || b.includes('joining')) context.push('beginning of unfamiliar role — performance of competence, watching others to copy behavior');
+      if (b.includes('funeral') || b.includes('death') || b.includes('grief') || b.includes('mourning')) context.push('grief — social performance of composure, body doing tasks the mind is not in');
+      if (b.includes('wedding') || b.includes('marriage')) context.push('wedding — ritual masking anxiety, performance of joy, private moments inside public ceremony');
+      if (b.includes('exam') || b.includes('test') || b.includes('interview')) context.push('high-stakes evaluation — body performing calm it does not feel, micro-preparations as control rituals');
+
+      // Environment pressure — rush, crowds, chaos
+      if (b.includes('rush') || b.includes('peak') || b.includes('crowd') || b.includes('overwhelm') || b.includes('busy') || b.includes('packed')) context.push('peak rush environment — actions constantly interrupted before completion, competing priorities, body working faster than mind can track, tasks collide');
+      if (b.includes('festival') || b.includes('ganpati') || b.includes('diwali') || b.includes('eid') || b.includes('holi') || b.includes('navratri')) context.push('festival — heightened emotional charge, religious objects handled carelessly under commercial pressure, private ritual squeezed into public chaos');
+      if (b.includes('market') || b.includes('bazaar') || b.includes('stall') || b.includes('vendor') || b.includes('shop') || b.includes('sweet')) context.push('street commerce — body moving on muscle memory, customer demands interrupt personal rhythm, physical space too small for the volume of work');
+      if (b.includes('rain') || b.includes('monsoon') || b.includes('storm') || b.includes('wet')) context.push('rain/monsoon — environment actively disrupting actions, surfaces slipping, objects moved to wrong places, normal sequences broken by weather forcing improvisation');
+
+      // Sports / cricket dressing room
+      if (b.includes('cricket') || b.includes('cricketer') || b.includes('dressing room') || b.includes('team india') || b.includes('test match') || b.includes('debut') || b.includes('pitch') || b.includes('innings') || b.includes('batsman') || b.includes('bowler')) context.push(
+        'CRICKET DRESSING ROOM — the invisible reality:\n' +
+        '1. SILENCE AS HIERARCHY: Senior players do not greet a newcomer with words. A nod. A glance held one second longer than normal. Space made on a bench without being asked. Acknowledgment is physical and minimal.\n' +
+        '2. OBJECTS CARRY WEIGHT: A kit bag placed next to a legend\'s without permission. A batting glove handed over without eye contact. A jersey with a number that has never been worn. The object holds more meaning than anyone will say aloud.\n' +
+        '3. ROUTINE AS ARMOR: Veterans have rituals — tap the bat three times, same corner of the room, same sequence of padding up. The newcomer watches but does not copy yet. They find a corner and sit with their own hands.\n' +
+        '4. THE BODY BEFORE THE MIND: Hands trained for years know what to do. The mind is elsewhere. Padding goes on automatically while eyes are unfocused.\n' +
+        '5. STATUS INVISIBLE BUT ABSOLUTE: Who sits where. Who speaks first. Who the physio approaches first. The order of everything reveals the hierarchy without anyone announcing it.\n' +
+        'BANNED for this domain: motivational speeches, team huddles, high fives, group celebrations, "believe in yourself" moments — these are what films show, not what happens.'
+      );
+
+      // General sports / athlete environment
+      if ((b.includes('sport') || b.includes('athlete') || b.includes('player') || b.includes('match') || b.includes('game') || b.includes('tournament') || b.includes('locker') || b.includes('stadium') || b.includes('coach') || b.includes('training')) && !b.includes('cricket')) context.push(
+        'sports environment — pre-competition rituals as control mechanisms, hierarchy visible in who occupies space without words, the body operating on trained memory while the mind is elsewhere, objects (kit, equipment) handled with disproportionate care as displacement activity, silence between teammates more revealing than speech'
+      );
+
+      if (context.length === 0) return '';
+      return 'CONTEXT DETECTED:\n' + context.join('\n') + '\n\nAll 8 elements MUST reflect this specific reality. Generic interpretations that could apply to any situation are invalid.';
+    }
+
+    // ============================================
+    // BRIEF INTERPRETER (INPUT EXPANSION)
+    // Converts raw user input into a behavioral scenario
+    // ============================================
+    function interpretBrief(raw) {
+      var b = raw.toLowerCase().trim();
+      var wordCount = raw.trim().split(/\s+/).length;
+
+      // ── BRIEF SANITIZER ───────────────────────────────────────────────────────
+      // Strip analytical/question framing that causes the model to explain instead of generate JSON
+      // "what would be the emotions" → removed, brief preserved
+      // "describe the scene" → soft strip only if subject remains
+      var sanitized = raw
+        .replace(/what would (be|happen|it feel like|the emotions?|they feel|he feel|she feel)[^,.?]*/gi, '')
+        .replace(/how would (it|he|she|they) (feel|react|respond|behave)[^,.?]*/gi, '')
+        .replace(/tell me (about|what)[^,.?]*/gi, '')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+      // Only use sanitized version if it still has meaningful content (>3 words)
+      // This prevents "describe the scene of X" from collapsing to empty string
+      if (sanitized.split(/\s+/).length > 3) {
+        raw = sanitized;
+        b = raw.toLowerCase().trim();
+        wordCount = raw.trim().split(/\s+/).length;
+      }
+      // Separately strip "describe X" only from the START of brief, not mid-sentence
+      if (/^(describe|imagine|tell me about)\s/i.test(raw)) {
+        var stripped = raw.replace(/^(describe|imagine|tell me about)\s+(the\s+)?(scene\s+(of|where|when)\s+)?/i, '').trim();
+        if (stripped.split(/\s+/).length > 3) {
+          raw = stripped;
+          b = raw.toLowerCase().trim();
+          wordCount = raw.trim().split(/\s+/).length;
+        }
+      }
+
+      // ── SCENE TYPE DETECTION ──────────────────────────────────────────────
+      // Detect what kind of world this is before expanding
+      var sceneType = 'human';   // default
+      var hasTimeline = false;
+      var subjectAnchor = '';
+
+      // Timeline signals — progression, lifecycle, stages
+      if (/over \d+ day|over time|through the years|lifecycle|each day|day \d|week \d|month \d|aging|grows|evolves|fades|wears/.test(b)) {
+        hasTimeline = true;
+      }
+      if (/last day|final day|last flight|last shift|retirement|first day|closing night|opening day/.test(b)) {
+        hasTimeline = true;
+      }
+
+      // Object-centric — the OBJECT is the subject, not the person
+      // IMPORTANT: whole-word match only — prevents 'hat' inside 'that',
+      // 'car' inside 'scar', 'cap' inside 'escape', 'pen' inside 'open', etc.
+      var objectWords = ['cupcake','cake','food','flower','plant','book','jacket','shoe','bag','phone',
+        'car','bicycle','building','house','coffee','bread','fruit','candle','letter','photograph',
+        'watch','clock','ring','chain','necklace','bracelet','locket','key','wallet','coin',
+        'guitar','violin','instrument','camera','diary','journal','uniform','jersey','medal','trophy',
+        'hat','cap','scarf','gloves','tool','knife','pen','glasses','spectacles','umbrella'];
+      for (var oi = 0; oi < objectWords.length; oi++) {
+        if (new RegExp('\\b' + objectWords[oi] + '\\b').test(b)) {
+          sceneType = 'object';
+          subjectAnchor = objectWords[oi];
+          break;
+        }
+      }
+
+      // MILESTONE OVERRIDE — earned achievement briefs
+      // When brief contains achievement object + years-of-work signal,
+      // the object is a symbol — NOT the story. Override object-centric path.
+      var isMilestoneObject = sceneType === 'object' && /key|watch|jersey|medal|trophy|ring/.test(subjectAnchor);
+      var hasEarnedSignal = /first time|after (years|working|saving|everything)|finally|years of (work|saving|struggle|sacrifice)|worked for|saved (up|for)|dreamed of|always wanted/.test(b);
+      var hasAchievementFrame = /his|her|their|my|own|bought|owns|holding|holds/.test(b);
+      if (isMilestoneObject && (hasEarnedSignal || hasAchievementFrame)) {
+        sceneType = 'milestone';
+      }
+
+      // Transition/event — moment of change as primary subject
+      if (/last flight|last day|final|retirement|first day|closing|leaving|arrival|departure|graduation/.test(b) && sceneType !== 'object' && sceneType !== 'milestone') {
+        sceneType = 'transition';
+      }
+
+      // System/environment — the place or process is the subject
+      if (/airport|hospital|school|market|factory|office|station|terminal|corridor|ward|street/.test(b) && wordCount <= 5 && sceneType !== 'object' && sceneType !== 'milestone') {
+        sceneType = 'environment';
+      }
+
+      // ── CONDITION INJECTION (not story injection) ──────────────────────
+      // Each path returns: what kind of moment + tension axes + what not to assume.
+      // NO demographics. NO resolved narratives. NO specific characters.
+      // SINGLE_PASS finds the human truth. This only sets the field it searches in.
+
+      // ── HELPER: condition builder ────────────────────────────────────────
+      function condition(momentType, tensions, banned, signals) {
+        return 'MOMENT TYPE: ' + momentType + ' ' +
+          'TENSION AXES (each output should pull from different ends of these): ' + tensions.join(' / ') + ' ' +
+          'BEHAVIORAL SIGNALS (observable, filmable, no emotions stated): ' + signals.join(', ') + ' ' +
+          'BANNED ASSUMPTIONS: ' + banned.join(', ') + ' ' +
+          'Do not resolve the tensions. Do not decide which end is true. ' +
+          'Let the 8 elements land at different points across these axes. ' +
+          'Show through physical action only. Never state the feeling.';
+      }
+
+      // ── FIRST SALARY / EARNED MONEY ──────────────────────────────────────
+      if (/first salary|first paycheck|first pay|pehli salary|pehli tankhwah|salary credited|got.*salary|salary.*came/.test(b)) {
+        return condition(
+          'The first time money arrives that was earned by this specific person. ' +
+          'Not a gift. Not an allowance. Money that came from their own labour, for the first time.',
+          [
+            'pride vs emptiness — it arrived but something is missing',
+            'freedom vs responsibility — can spend it vs must spend it wisely',
+            'connection vs isolation — want to share this vs no one who fully understands',
+            'enough vs not enough — more than zero vs less than imagined',
+            'celebration vs calculation — want to feel it vs already planning it'
+          ],
+          [
+            'age assumptions', 'family structure assumptions', 'gender assumptions',
+            'assume they call parents', 'assume they are happy', 'assume celebration',
+            'office party', 'boss congratulating', 'group photos', 'champagne'
+          ],
+          [
+            'opens banking app, stares, closes it, opens again',
+            'types a message to someone, deletes it before sending',
+            'holds item in store longer than necessary before deciding',
+            'pays for something and watches the money leave',
+            'sits with the phone after making a transfer',
+            'buys something small for someone else before anything for themselves',
+            'checks balance after spending — the number is different now',
+            'the smirk that happens when no one is watching'
+          ]
+        );
+      }
+
+      // ── EARNED OBJECT / MILESTONE ─────────────────────────────────────────
+      if (sceneType === 'milestone') {
+        return condition(
+          'A person holds or reaches an object that is proof of something they worked for. ' +
+          'The object exists. The work is over. The body does not know what to do next. ' +
+          'Brief: ' + raw,
+          [
+            'arrival vs continuation — got here vs now what',
+            'private vs public — wants to feel this alone vs wants someone to witness',
+            'the object vs what it represents — just a thing vs everything',
+            'disbelief vs certainty — did this actually happen vs yes it did',
+            'stillness vs motion — stop and feel it vs keep moving as if nothing changed'
+          ],
+          [
+            'specific age or gender', 'assume family present', 'assume celebration',
+            'posed triumph', 'slow motion', 'cinematic reveal', 'tears of joy'
+          ],
+          [
+            'stands with object without doing anything',
+            'almost contacts someone, stops',
+            'puts object down, picks it back up',
+            'the hand that holds it has done specific work to get here',
+            'body does not know the right posture for this moment',
+            'looks around to see if anyone is watching — no one is'
+          ]
+        );
+      }
+
+      // ── OBJECT WITH TIME ─────────────────────────────────────────────────
+      if (sceneType === 'object' && hasTimeline) {
+        return condition(
+          'An object moves through time. It is the same object. The world around it changes. ' +
+          'The object is the constant. Human behaviour leaves marks on it. Brief: ' + raw,
+          [
+            'use vs neglect', 'repair vs decay', 'attachment vs letting go',
+            'the object as it was vs the object as it is now'
+          ],
+          [
+            'specific person', 'assume sadness or nostalgia', 'assume the object is precious'
+          ],
+          [
+            'wear visible from repeated contact in the same spot',
+            'repair that reveals the original damage',
+            'position that shows it was interrupted mid-use',
+            'evidence of someone who is no longer present'
+          ]
+        );
+      }
+
+      // ── OBJECT-CENTRIC ───────────────────────────────────────────────────
+      if (sceneType === 'object') {
+        return condition(
+          'An object — ' + subjectAnchor + ' — is the anchor of this world. ' +
+          'It passes through different human situations. Each situation reveals something different about it. ' +
+          'Brief: ' + raw,
+          [
+            'the object vs the person holding it — which one carries more weight',
+            'private use vs public use — alone with it vs in front of others',
+            'new vs worn — what it looked like vs what it looks like now'
+          ],
+          [
+            'assume the object is special', 'assume the person values it',
+            'treat it as a symbol — let its state speak, not its identity'
+          ],
+          [
+            'object in its resting state before being touched',
+            'two people and the object between them',
+            'evidence of repeated use visible on the object itself',
+            'body reacting to holding or touching it'
+          ]
+        );
+      }
+
+      // ── TRANSITION / ENDING / BEGINNING ─────────────────────────────────
+      if (sceneType === 'transition') {
+        return condition(
+          'A moment of crossing — something is ending or beginning. ' +
+          'The body is in the middle of a shift it may not have chosen. Brief: ' + raw,
+          [
+            'ending vs continuation — this is over vs the body keeps doing it anyway',
+            'public moment vs private feeling — what is shown vs what is happening',
+            'forward vs backward — toward what comes next vs pulled toward what is ending',
+            'knowing vs not-knowing — aware this is the last time vs only realising later'
+          ],
+          [
+            'assume emotion is visible', 'assume the person has accepted this',
+            'cinematic farewell', 'speech or declaration', 'crowd watching'
+          ],
+          [
+            'body performing a routine for possibly the last time',
+            'object handled with different weight than usual',
+            'action started, then adjusted, then completed differently',
+            'the gap between two people who have run out of words',
+            'something left mid-use that will not be returned to'
+          ]
+        );
+      }
+
+      // ── ENVIRONMENT ──────────────────────────────────────────────────────
+      if (sceneType === 'environment') {
+        return condition(
+          'A specific place is the world. The place shapes behaviour in ways people inside it do not notice. ' +
+          'Brief: ' + raw,
+          [
+            'institutional rules vs human instinct — what the place demands vs what the body wants',
+            'public face vs private action — what is performed vs what actually happens',
+            'belonging vs not-belonging — those who move through it easily vs those who do not'
+          ],
+          [
+            'generic stock photo of the location', 'tourist view',
+            'assume the person is comfortable here', 'establish shot'
+          ],
+          [
+            'behaviour that only happens in this specific place',
+            'the thing people do here that they would never do elsewhere',
+            'the object that shows how many people have passed through',
+            'the moment the institutional mask slips slightly'
+          ]
+        );
+      }
+
+      // ── BRAND / PRODUCT IN A HUMAN SITUATION ────────────────────────────
+      if (/cadbury|dairy milk|coca.?cola|pepsi|nike|adidas|apple|samsung|zomato|swiggy|uber|ola|maggi|amul|red bull|monster|kit.?kat|oreo|dominos|mcdonalds|kfc|starbucks/.test(b) ||
+          /ad|advertisement|campaign|marketing|brand|launch|promote/.test(b)) {
+        var productSignal = b.match(/cadbury|dairy milk|maggi|red bull|zomato|swiggy|uber|ola|nike|adidas/);
+        var product = productSignal ? productSignal[0] : 'this product';
+        return condition(
+          'A product — ' + product + ' — enters a specific human moment. ' +
+          'The product is not the story. The human situation is the story. ' +
+          'The product interrupts, enables, or reveals something that was already present. ' +
+          'Brief: ' + raw,
+          [
+            'the person vs the product — who is using whom',
+            'the moment before vs the moment after — what changed and what did not',
+            'private consumption vs social visibility — alone with it vs in front of others',
+            'need vs want — had to have it vs chose to have it'
+          ],
+          [
+            'before/after transformation', 'product as solution', 'smiling at camera',
+            'slow motion product shot', 'golden hour lighting', 'aspirational lifestyle',
+            'assume the product is positive', 'assume it helps'
+          ],
+          [
+            'the decision to reach for it — what the body does before',
+            'the moment of contact — first touch, first bite, first use',
+            'the person who notices someone else has it',
+            'the wrapper, packaging, or object after — what it looks like used',
+            'the 90 seconds after — what the body does, not what it feels'
+          ]
+        );
+      }
+
+      // ── EMOTIONAL STATE / CONDITION ──────────────────────────────────────
+      if (/tired|exhausted|lonely|anxious|stressed|bored|excited|angry|frustrated|numb|overwhelmed|depressed|happy|sad|scared|nervous/.test(b) && wordCount < 12) {
+        return condition(
+          'A person is in a specific state. The state is real but the cause is unknown. ' +
+          'The body is managing this state in a specific place, at a specific time. ' +
+          'Brief: ' + raw,
+          [
+            'the state vs the performance of the state — what is felt vs what is shown',
+            'alone vs witnessed — no one sees this vs someone might',
+            'the state intensifying vs the state breaking — getting worse vs something interrupts it'
+          ],
+          [
+            'specific cause of the state', 'specific age or gender',
+            'assume the person wants help', 'assume the state is visible to others'
+          ],
+          [
+            'small self-regulation actions the body makes automatically',
+            'the object the person reaches for or avoids',
+            'the moment the performance slips — just for a second',
+            'what the space looks like — what it tells us without showing the person'
+          ]
+        );
+      }
+
+      // ── ABSTRACT CONCEPT ─────────────────────────────────────────────────
+      if (/forgive|trust|fear|love|loss|grief|hope|courage|loneliness|letting go|moving on|growing up|belonging|identity/.test(b)) {
+        return condition(
+          'An abstract human experience — ' + raw.trim() + ' — is physically present in a real situation. ' +
+          'It is not named. It is not explained. It is happening in a body, in a place.',
+          [
+            'the experience vs the resistance to it — feeling it vs refusing to',
+            'private vs shared — one person vs two or more',
+            'the moment before vs the moment it cannot be avoided'
+          ],
+          [
+            'state the abstract concept directly', 'explain what the moment means',
+            'use metaphor or symbolism', 'resolve the tension'
+          ],
+          [
+            'action that begins and cannot be completed',
+            'object that carries the weight of the experience without naming it',
+            'two people and the gap between them',
+            'the body doing something the mind has not decided yet'
+          ]
+        );
+      }
+
+      // ── DEFAULT ──────────────────────────────────────────────────────────
+      // Brief is specific enough — pass through with minimal framing only
+      return raw + ' — find the specific human behaviors that happen in this situation. ' +
+        'Not the obvious ones. The ones that only happen here. ' +
+        'Show through physical action. Never state the feeling.';    }
+
+    // ============================================
     // PROMPT BUILDER (WITH STRUCTURAL CONSTRAINTS)
     // ============================================
     function buildPrompt(brief, categoryKey, angleIndex, mode) {
@@ -954,228 +1380,159 @@ function generateImageQuery(moment, index = 0) {
         'INTERPRETATION:\n' + angle.interpretation + '\n\n';
       
       // ============================================
-      // MODE SWITCH: PHYSICAL vs EMOTIONAL
+      // MODE SWITCH: PHYSICAL vs CREATIVE vs POSITIVE
       // ============================================
       
-      if (mode === "creative") {
-        // 🟩 CREATIVE MODE: Universal human observation
-        return basePrompt +
-          'CREATIVE MODE — UNIVERSAL HUMAN OBSERVATION:\n\n' +
-          'You are finding non-obvious, specific, true human moments.\n\n' +
-          'FIRST — UNDERSTAND THE SITUATION:\n' +
-          'What kind of moment is this?\n' +
-          '- Is it about something ending or changing?\n' +
-          '- Is it about waiting, repetition, or routine?\n' +
-          '- Is it about social pressure or awkwardness?\n' +
-          '- Is it about familiarity or memory?\n' +
-          'Do NOT label it. Just understand the dominant feeling.\n\n' +
-          'SECOND — GENERATE ACROSS DIMENSIONS:\n' +
-          'Based on the situation, naturally emphasize what fits:\n' +
-          '- Physical behavior (small actions, repeated movements, hesitations)\n' +
-          '- Sensory shifts (what looks/sounds/feels different)\n' +
-          '- Emotional recognition (what feels heavier or lighter)\n' +
-          '- Social tension (awkward interactions, copying behaviors)\n' +
-          '- Object interaction (things touched unnecessarily, held longer)\n' +
-          '- Time/memory (noticing what was always there, what changed)\n\n' +
-          'Do NOT force all dimensions. Let the situation determine what matters.\n\n' +
-          'THIRD — BEHAVIORAL LEAK RULE (CRITICAL):\n\n' +
-          'Do not describe what is different.\n' +
-          'Instead, show the person acting on memory, then the mismatch.\n\n' +
-          'STRUCTURE:\n' +
-          'Line 1: automatic action (driven by habit or memory)\n' +
-          'Line 2: micro-error, delay, hesitation, or correction\n\n' +
-          'VALID PATTERNS:\n' +
-          '- continues slightly after stopping\n' +
-          '- pauses mid-action\n' +
-          '- delays correction\n' +
-          '- starts something, then aborts\n' +
-          '- covers with another action (like checking phone)\n\n' +
-          'EXAMPLES:\n\n' +
-          '✅ STRONG:\n' +
-          '"Walks to empty space before realizing it\'s not his\n' +
-          ' Keeps walking two more steps after stopping"\n\n' +
-          '✅ STRONG:\n' +
-          '"Presses wrong floor, doesn\'t correct immediately\n' +
-          ' Waits a second before hitting the right one"\n\n' +
-          '✅ STRONG:\n' +
-          '"Slows near old office, pretends to check phone\n' +
-          ' Doesn\'t want to look inside"\n\n' +
-          '❌ WEAK (pure observation):\n' +
-          '"Notices parking spot is different"\n' +
-          '"Sees old office has changed"\n' +
-          '"Remembers window view"\n\n' +
-          'INVALID PATTERNS:\n' +
-          '- pure observation ("notices", "sees", "realizes")\n' +
-          '- descriptive memory ("remembers", "thinks about")\n' +
-          '- explanation of change ("is different", "has changed")\n\n' +
-          'TEST:\n' +
-          'If the moment works WITHOUT line 2 → it is weak → rewrite.\n\n' +
-          'FOURTH — ADDITIONAL FOCUS:\n' +
-          'Focus on moments where internal state leaks into physical action:\n' +
-          '- Unnecessary repetitions (does twice when once is enough)\n' +
-          '- Micro-hesitations (pauses mid-action)\n' +
-          '- Irrational patterns (checks something that won\'t change)\n' +
-          '- Awkward transitions (juggling objects, copying others)\n' +
-          '- Habitual checks (does from muscle memory, not need)\n\n' +
-          'CRITICAL RULES:\n' +
-          '- NO generic actions (checking phone, looking around)\n' +
-          '- NO job descriptions (operating equipment, following procedures)\n' +
-          '- NO obvious behavior (what anyone would expect)\n' +
-          '- NO storytelling or drama\n\n' +
-          'EXAMPLES:\n\n' +
-          'Last day (emphasize recognition + memory):\n' +
-          '✅ "Hand lingers on seat after standing"\n' +
-          '✅ "Touches control panel spot worn smooth from years"\n' +
-          '✅ "Removes headset, pauses, puts back on briefly"\n\n' +
-          'Airport security (emphasize behavior + tension):\n' +
-          '✅ "Re-ties shoes already tied, stalling before removal"\n' +
-          '✅ "Rehearses laptop removal like practicing performance"\n' +
-          '✅ "Watches person ahead to copy exact sequence"\n\n' +
-          'First date (emphasize tension + behavior):\n' +
-          '✅ "Checks phone for fake emergency exit"\n' +
-          '✅ "Laughs too loud at moderate joke"\n' +
-          '✅ "Adjusts shirt three times in two minutes"\n\n' +
-          'SENSORY DETAIL LAYER (CONTROLLED):\n' +
-          'Some moments may include subtle physical detail.\n' +
-          'Rules:\n' +
-          '- Only a few moments should include sensory detail (not all)\n' +
-          '- Most moments should remain clean and simple\n' +
-          '- Detail must be embedded naturally, not appended\n' +
-          '- Avoid repeating patterns like "with a few..." or "with faint..."\n\n' +
-          'GOOD: "fingers press edge, leather creases slightly"\n' +
-          'BAD: "touches surface, with faint scratches"\n\n' +
-          'Prefer fewer detailed moments over more.\n\n' +
-          'STRUCTURE:\n' +
-          '- element_name: specific action that reveals something\n' +
-          '- insight_line: what they physically do\n' +
-          '- direction_label: action-based (2-4 words, UPPERCASE)\n' +
-          '- unsplash_query: person + specific action + environment + natural light\n\n' +
-          'OUTPUT GOAL:\n' +
-          'Each moment should make someone think:\n' +
-          '"I\'ve seen this happen, but never noticed it"\n\n' +
-          'BEFORE FINALIZING:\n' +
-          'Check each moment:\n' +
-          '- Does it include a behavioral leak (action → mismatch)?\n' +
-          '- Does any moment read like pure observation?\n' +
-          'If yes → rewrite those moments.\n\n' +
-          'Generate exactly 8 moments. Return valid JSON.\n' +
-          'If output feels generic or obvious → rewrite with specificity.';
-      } else {
-        // 🟥 PHYSICAL MODE: Resistance/friction (original system)
-        return basePrompt +
-          'STRUCTURAL CONSTRAINTS (NON-NEGOTIABLE):\n\n' +
-          '1. INTERACTION + RESISTANCE RULE:\n' +
-          '   - Every moment must show: object + action + something goes wrong\n' +
-          '   - Resistance types: slipping, catching, struggling, missing, hesitating\n' +
-          '   - If smooth/perfect → invalid → rewrite with imperfection\n\n' +
-          '2. ELEMENT STRUCTURE:\n' +
-          '   - element_name: [object] + [action] (physical, not conceptual)\n' +
-          '   - insight_line: visible behavior/consequence (not feeling/summary)\n' +
-          '   - direction_label: VERB AND VERB (action-based)\n' +
-          '   - unsplash_query: person + action + imperfection + environment + lighting\n\n' +
-          '3. BANNED OUTPUT:\n' +
-          '   - Words: chaos, arrival, journey, relief, moment, experience, safe, perfect\n' +
-          '   - Phrases: "we made it", "left behind", "hold on", "in sight"\n' +
-          '   - Concepts: smooth outcomes, perfect timing, no resistance\n\n' +
-          '4. VALIDATION CHECK (before return):\n' +
-          '   Ask for each element:\n' +
-          '   - Is there object interaction? (yes/no)\n' +
-          '   - Is there resistance/imperfection? (yes/no)\n' +
-          '   - Is language specific, not abstract? (yes/no)\n' +
-          '   If ANY "no" → rewrite element\n\n' +
-          'EXAMPLES:\n\n' +
-          '❌ BAD:\n' +
-          '  name: "Check-in Chaos"\n' +
-          '  insight: "Overpack at your own risk"\n' +
-          '  label: "DRAG AND DROP"\n' +
-          '  Why: Abstract concept, summary phrase, no resistance\n\n' +
-          '✅ GOOD:\n' +
-          '  name: "Zip Stuck Halfway"\n' +
-          '  insight: "Force it closed, elbow pressed down"\n' +
-          '  label: "PRESS AND STRAIN"\n' +
-          '  Why: Object + action, visible behavior, resistance present\n\n' +
-          'Generate exactly 8 moments. Return valid JSON.';
-      }
-    }
+      var contextBlock = extractContext(brief);
 
-    // ============================================
-    // DUAL-PASS REFINEMENT SYSTEM
-    // ============================================
-    
-    function refineWorld(worldData, brief) {
-      // SECOND PASS: Taste refinement
-      setStatus('Refining creative direction…');
-      
-      return fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            {
-              role: 'system',
-              content: `You are a brutal creative reviewer improving first-pass creative work.
-
-Your job:
-- Increase specificity (vague → precise physical detail)
-- Add more resistance (smooth → imperfect, catching, struggling)
-- Remove safe/predictable moments (generic → surprising)
-- Ensure every moment has tension
-
-For each element, ask:
-1. Is the action too smooth? → Add resistance
-2. Is the language too clean? → Add imperfection
-3. Could this be more specific? → Add micro-detail
-
-Rewrite elements that feel safe or generic. Keep the good ones.
-
-Return the same JSON structure with improved elements.`
-            },
-            {
-              role: 'user',
-              content: 'Brief: "' + brief + '"\n\nFirst-pass output:\n' + JSON.stringify(worldData) + '\n\nImprove specificity, resistance, and tension. Return refined JSON.'
-            }
-          ],
-          temperature: 0.6,  // Lower temp for refinement
-          max_tokens: 1500
-        })
-      })
-      .then(function(res) {
-        if (!res.ok) throw new Error('Refinement failed');
-        return res.json();
-      })
-      .then(function(data) {
-        var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
-        try {
-          return JSON.parse(raw);
-        } catch(e) {
-          console.warn('⚠️ Refinement parse failed, using original');
-          return worldData;
+      // SUBJECT ANCHOR — if brief was expanded by interpreter, extract anchor signals
+      var anchorBlock = '';
+      if (/is the anchor\.|must be present in every element|layer structure must still be respected/.test(brief)) {
+        var subjectMatch = brief.match(/^The (\w+) is the anchor/);
+        if (subjectMatch) {
+          var anchorObj = subjectMatch[1];
+          anchorBlock = 'SUBJECT ANCHOR: "' + anchorObj + '" must be present or directly implied in ALL 8 elements.\n' +
+            'CRITICAL: Do NOT collapse all 8 elements into MICRO close-ups of the object.\n' +
+            'The ' + anchorObj + ' must appear across all 4 layers:\n' +
+            '  LIFE: ' + anchorObj + ' in its environment, before being touched\n' +
+            '  SOCIAL: ' + anchorObj + ' as the thing between two people\n' +
+            '  SYMBOLIC: ' + anchorObj + ' showing wear, age, or interrupted state\n' +
+            '  MICRO: hand holding or touching the ' + anchorObj + ' with behavioral leak\n\n';
         }
-      })
-      .catch(function(err) {
-        console.error('Refinement error:', err);
-        return worldData; // Fallback to original
-      });
+      }
+      if (/is the subject\.|must be present or implied in every element/.test(brief)) {
+        var subjectMatch2 = brief.match(/^The (\w+) is the subject/);
+        if (subjectMatch2) {
+          anchorBlock = 'SUBJECT ANCHOR: "' + subjectMatch2[1] + '" must be present or directly implied in ALL 8 elements. Do not drift to generic human behavior that forgets the subject.\n\n';
+        }
+      }
+      if (/show it .* — how it changes|physical progression/.test(brief)) {
+        anchorBlock += 'TIMELINE REQUIRED: Elements must show progression — early state, middle state, late state. Order matters. Do not generate 8 simultaneous moments.\n\n';
+      }
+
+      if (mode === "positive") {
+        // 🟣 POSITIVE MODE: Behavior transform — show imperfect version of ideal behavior
+        return basePrompt +
+          (anchorBlock ? anchorBlock : '') +
+          (contextBlock ? contextBlock + '\n\n' : '') +
+          'POSITIVE MODE — BEHAVIOR TRANSFORM ENGINE:\n\n' +
+          'This brief is about warmth, care, or human connection.\n' +
+          'DO NOT show the ideal version of this behavior.\n' +
+          'ALWAYS show the imperfect, awkward, indirect version that makes it recognizable.\n\n' +
+          'BEHAVIOR TRANSFORM TABLE (apply to every element):\n\n' +
+          '  listen → starts to speak → stops mid-word → nods instead\n' +
+          '  share → extends object → hesitates → adjusts grip → finally gives\n' +
+          '  care → prepares action → delays → completes late or differently than intended\n' +
+          '  support → types long message → deletes most of it → sends two words\n' +
+          '  comfort → reaches toward person → stops → does something nearby instead\n' +
+          '  show up → arrives → doesn\'t knock immediately → stands for a moment → knocks\n' +
+          '  remember → reaches for something → pauses → continues differently\n\n' +
+          'RULE: Every intended good action must be shown through its hesitant, incomplete, or redirected execution.\n' +
+          'The care is real. The execution is imperfect. That is what makes it human.\n\n' +
+          'FILMABILITY TEST (apply to every element):\n' +
+          'Every moment must be shootable in 2-3 seconds of film.\n' +
+          '  ❌ "listens without interrupting" — camera cannot film an absence\n' +
+          '  ❌ "feels understood" — not visible\n' +
+          '  ❌ "shows empathy" — not an action\n' +
+          '  ✅ "mouth opens, closes, stays closed" — filmable in 2 seconds\n' +
+          '  ✅ "hand extends book, pulls back slightly, extends again" — filmable\n' +
+          '  ✅ "types, selects all, deletes, types two words, sends" — filmable\n\n' +
+          'HARD BANS FOR THIS MODE:\n' +
+          '  ❌ NO personality traits in any field: empathy, caring, thoughtful, kind, understanding\n' +
+          '  ❌ NO smooth interactions — every social moment must have friction or mistiming\n' +
+          '  ❌ NO emotion words in insight_line: smile, warm, nervous, anxious, happy\n' +
+          '  ❌ NO clean completion — every action must be interrupted, delayed, or redirected\n\n' +
+          'ELEMENT NAME FORMAT: physical action, not personality\n' +
+          '  ❌ "Listens Without Interrupting" ❌ "Shows Empathy"\n' +
+          '  ✅ "Mouth Opens Then Closes" ✅ "Book Extended Then Pulled Back"\n\n' +
+          'INSIGHT LINE FORMAT: action → interruption → modified continuation\n' +
+          '  ❌ "pauses before speaking" ❌ "hesitates before giving"\n' +
+          '  ✅ "starts sentence → stops mid-word → nods instead"\n' +
+          '  ✅ "extends book → pulls back → re-extends with different grip"\n\n' +
+          'DIRECTION LABEL: two physical verbs only, ALL CAPS\n' +
+          '  ❌ "ENGAGES WITH EMPATHY" ❌ "SHOWS UNDERSTANDING"\n' +
+          '  ✅ "STARTS AND STOPS" ✅ "EXTENDS AND WITHDRAWS"\n\n' +
+          'Generate exactly 8 elements following LIFE/SOCIAL/SYMBOLIC/MICRO layer structure.\n' +
+          'Return valid JSON. Every element must show broken execution of intended care.';
+
+      } else if (mode === "creative") {
+        // 🟩 CREATIVE MODE: Non-obvious human reality, context-specific
+        return basePrompt +
+          (anchorBlock ? anchorBlock : '') +
+          (contextBlock ? contextBlock + '\n\n' : '') +
+          'GENERATION PRIORITY ORDER (most important first):\n\n' +
+          '1. NON-OBVIOUS REALITY — find what people do but never notice\n' +
+          '2. CONTEXT SPECIFICITY — reflect the exact location, era, institution, event in the brief\n' +
+          '3. EMOTIONAL TRUTH — what the body does, not what the person feels\n' +
+          '4. LAYER STRUCTURE — satisfy the 4 layers only after the above three are met\n\n' +
+          'If structure is correct but moments are obvious → output is invalid.\n\n' +
+          (contextBlock ? 'ANTI-STEREOTYPE ENGINE (apply before generating each element):\n\n' +
+          'You have cultural context above. Before writing each element, ask:\n' +
+          '  1. Is this what a tourist EXPECTS to see? → If yes, discard. Find what they miss.\n' +
+          '  2. Does this moment exist specifically in this cultural context? → If it could happen anywhere, make it specific.\n' +
+          '  3. Is there a contradiction in this moment? → If not, look for one. Real places are contradictory.\n' +
+          '  4. Does this reveal a SYSTEM or a PROTOCOL, not just a personal action? → If not, deepen it.\n\n' +
+          'The test: could this element appear in a generic stock photo library? If yes → REJECT and regenerate.\n\n' : '') +
+          'INTERFERENCE RULE (MANDATORY — at least 2 moments):\n\n' +
+          'At least 2 elements must show an action broken by an EXTERNAL force — not self-contained deviation.\n\n' +
+          'External forces: another person calling out, a crowd pushing, an object falling, overlapping orders, rain, noise.\n\n' +
+          '❌ SELF-CONTAINED (weak):\n' +
+          '  "counts money → recounts" — only internal\n\n' +
+          '✅ INTERFERENCE (strong):\n' +
+          '  "counts money → customer shouts order → loses count → restarts from wrong note"\n' +
+          '  "wraps sweet → someone grabs his arm → drops box → picks up wrong one"\n\n' +
+          'The external force must change the action — not just interrupt it.\n\n' +
+          'SYMBOLIC MUST ALSO BREAK:\n\n' +
+          'Symbolic objects are not static. They get moved, displaced, handled under pressure.\n' +
+          '✅ "idol pushed aside to make room for tray, vendor moves it back between orders"\n' +
+          '✅ "tray knocked crooked by customer reaching past, vendor straightens it without looking"\n\n' +
+          'Generate exactly 8 elements following the LIFE/SOCIAL/SYMBOLIC/MICRO layer structure.\n' +
+          'Return valid JSON. If any element feels predictable → rewrite before returning.';
+      } else {
+        // 🟥 PHYSICAL MODE: Resistance/friction
+        return basePrompt +
+          (anchorBlock ? anchorBlock : '') +
+          (contextBlock ? contextBlock + '\n\n' : '') +
+          'Generate exactly 8 moments with object + action + resistance. Return valid JSON.';
+      }
     }
 
     // ============================================
     // DYNAMIC REWRITE ENGINE (CONTEXT-AWARE)
     // ============================================
     
-    function dynamicRewrite(element, brief, elementIndex) {
-      // CONTEXT-AWARE rewrite using API, not static templates
-      console.log('🔄 Dynamic rewrite for element ' + (elementIndex + 1));
+    function dynamicRewrite(element, brief, elementIndex, mode) {
+      console.log('🔄 Dynamic rewrite for element ' + (elementIndex + 1) + ' (' + (mode||'physical') + ' mode)');
       
-      return fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            {
-              role: 'system',
-              content: `Rewrite this creative element to be non-generic.
+      // Mode-specific rewrite instructions
+      var rewriteSystemPrompt;
+      var rewriteUserPrompt;
+      
+      if (mode === 'creative') {
+        rewriteSystemPrompt = `Rewrite this creative element. It contains banned generic language but is otherwise a behavioral observation.
+
+Requirements:
+- element_name: specific action that reveals something (object + contextual action, 3-6 words)
+- insight_line: two-part structure — action, then the behavioral leak (delay, hesitation, correction, abort) — max 10 words
+- direction_label: ACTION AND REACTION (2-4 words, UPPERCASE)
+
+Good behavioral leak patterns:
+- pauses mid-action
+- starts, then aborts
+- delays correction
+- continues after stopping
+- does again unnecessarily
+
+Banned words to replace: chaos, journey, arrival, moment, experience, relief, stress, freedom, adventure
+Banned phrases to replace: "we made it", "left behind", "hold on", "in sight"
+
+Do NOT add physical resistance (no: stuck, slip, creak, fall).
+DO preserve the behavioral observation intent.
+
+Return only valid JSON for this one element. You MUST include the layer field with its original value unchanged.`;
+        rewriteUserPrompt = 'Brief: "' + brief + '"\n\nElement with generic language:\n' + JSON.stringify(element) + '\n\nRewrite with specific behavioral observation. Keep the behavioral intent, remove generic words. The layer field must be preserved exactly.';
+      } else {
+        rewriteSystemPrompt = `Rewrite this creative element to be non-generic.
 
 Requirements:
 - element_name: object + action (4 words max, physical interaction)
@@ -1186,26 +1543,19 @@ Requirements:
 Banned: chaos, arrival, journey, relief, safe, perfect
 Banned phrases: "we made it", "left behind", "hold on"
 
-Return only valid JSON for this one element.`
-            },
-            {
-              role: 'user',
-              content: 'Brief: "' + brief + '"\n\nGeneric element:\n' + JSON.stringify(element) + '\n\nRewrite with object + action + resistance.'
-            }
-          ],
-          temperature: 0.7,
-          max_tokens: 200
-        })
-      })
-      .then(function(res) {
-        if (!res.ok) throw new Error('Rewrite failed');
-        return res.json();
-      })
-      .then(function(data) {
-        var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
+Return only valid JSON for this one element.`;
+        rewriteUserPrompt = 'Brief: "' + brief + '"\n\nGeneric element:\n' + JSON.stringify(element) + '\n\nRewrite with object + action + resistance.';
+      }
+      
+      return callLLM(rewriteSystemPrompt, rewriteUserPrompt, 200)
+      .then(function(text) {
+        var raw = text.replace(/```json|```/g, '').trim();
         try {
           var rewritten = JSON.parse(raw);
-          console.log('✅ Rewrite successful:', rewritten.element_name);
+          // Always restore layer and unsplash_query from original — rewrite only touches content fields
+          rewritten.layer = element.layer;
+          if (!rewritten.unsplash_query) rewritten.unsplash_query = element.unsplash_query;
+          console.log('✅ Rewrite successful:', rewritten.element_name, '| layer:', rewritten.layer);
           return rewritten;
         } catch(e) {
           console.warn('⚠️ Rewrite parse failed, using fallback');
@@ -1219,25 +1569,11 @@ Return only valid JSON for this one element.`
     }
 
     function staticFallbackRewrite(element, elementIndex) {
-      // FALLBACK: Static rewrites (only used if API fails)
-      var rewrites = [
-        { element_name: "Zip Stuck Halfway", insight_line: "Force it closed, elbow pressed down", direction_label: "PRESS AND STRAIN" },
-        { element_name: "Wheel Catches On Tile", insight_line: "Bag tips forward, owner grabs handle fast", direction_label: "TIP AND CATCH" },
-        { element_name: "Strap Slips Off Shoulder", insight_line: "Reaches back, catches before it falls", direction_label: "SLIP AND CATCH" },
-        { element_name: "Handle Pulls Too Tight", insight_line: "Adjusts grip, fingers readjust pressure", direction_label: "GRIP AND SHIFT" },
-        { element_name: "Bag Tips Onto Side", insight_line: "Owner sets it upright, walks away", direction_label: "TIP AND RESET" },
-        { element_name: "Zipper Jams Halfway", insight_line: "Pull harder, teeth catch then release", direction_label: "JAM AND FORCE" },
-        { element_name: "Pocket Flap Hangs Open", insight_line: "Notice it later, tuck back in quickly", direction_label: "NOTICE AND FIX" },
-        { element_name: "Tag Catches On Hook", insight_line: "Tug once, twice, comes free", direction_label: "SNAG AND FREE" }
-      ];
-      
-      var rewrite = rewrites[elementIndex % rewrites.length];
-      return {
-        element_name: rewrite.element_name,
-        insight_line: rewrite.insight_line,
-        direction_label: rewrite.direction_label,
-        unsplash_query: element.unsplash_query
-      };
+      // FALLBACK: Only fires if dynamic rewrite API call fails.
+      // Return original element unchanged — a domain-consistent original
+      // is always better than a hardcoded generic replacement.
+      console.warn('Static fallback fired for element ' + (elementIndex + 1) + ' — keeping original to preserve domain integrity');
+      return element;
     }
 
     // ============================================
@@ -1253,6 +1589,24 @@ Return only valid JSON for this one element.`
       'we made it', 'made it', 'in sight', 'running out', 'left behind',
       'hold on', 'at your own', 'own risk', 'next time', 'until next'
     ];
+
+    // Banned verbs in insight_line — invisible mental actions, not physical behavior
+    var BANNED_VERBS_IN_INSIGHT = [
+      'engages', 'reflects', 'listens', 'offers', 'drifts', 'considers',
+      'notices', 'watches', 'realizes', 'decides', 'thinks', 'feels',
+      'understands', 'observes', 'senses'
+    ];
+
+    function hasWeakInsight(text) {
+      var lower = text.toLowerCase();
+      // Check for banned verbs
+      if (BANNED_VERBS_IN_INSIGHT.some(function(v) { return lower.includes(v); })) return true;
+      // Check for action sequence arrow — strong insight lines almost always have one
+      // Only flag if also very short (short + no arrow = likely a label, not a sequence)
+      var wordCount = text.trim().split(/\s+/).length;
+      if (wordCount < 6 && !text.includes('→') && !text.includes('->')) return true;
+      return false;
+    }
 
     var RESISTANCE_WORDS = [
       'stuck', 'slip', 'catch', 'miss', 'drop', 'struggle', 'hesitate',
@@ -1281,96 +1635,163 @@ Return only valid JSON for this one element.`
     }
 
     function autoRewrite(element, elementIndex) {
-      // FALLBACK REWRITES based on element position
-      var rewrites = [
-        {
-          element_name: "Zip Stuck Halfway",
-          insight_line: "Force it closed, elbow pressed down",
-          direction_label: "PRESS AND STRAIN"
-        },
-        {
-          element_name: "Wheel Catches On Tile",
-          insight_line: "Bag tips forward, owner grabs handle fast",
-          direction_label: "TIP AND CATCH"
-        },
-        {
-          element_name: "Strap Slips Off Shoulder",
-          insight_line: "Reaches back, catches before it falls",
-          direction_label: "SLIP AND CATCH"
-        },
-        {
-          element_name: "Handle Pulls Too Tight",
-          insight_line: "Adjusts grip, fingers readjust pressure",
-          direction_label: "GRIP AND SHIFT"
-        },
-        {
-          element_name: "Bag Tips Onto Side",
-          insight_line: "Owner sets it upright, walks away",
-          direction_label: "TIP AND RESET"
-        },
-        {
-          element_name: "Zipper Jams Halfway",
-          insight_line: "Pull harder, teeth catch then release",
-          direction_label: "JAM AND FORCE"
-        },
-        {
-          element_name: "Pocket Flap Hangs Open",
-          insight_line: "Notice it later, tuck back in quickly",
-          direction_label: "NOTICE AND FIX"
-        },
-        {
-          element_name: "Tag Catches On Hook",
-          insight_line: "Tug once, twice, comes free",
-          direction_label: "SNAG AND FREE"
-        }
-      ];
-      
-      var rewrite = rewrites[elementIndex % rewrites.length];
-      
-      return {
-        element_name: rewrite.element_name,
-        insight_line: rewrite.insight_line,
-        direction_label: rewrite.direction_label,
-        unsplash_query: element.unsplash_query
-      };
+      // Delegates to staticFallbackRewrite — single source of truth
+      return staticFallbackRewrite(element, elementIndex);
     }
 
-    function validateAndRewrite(worldData, brief) {
+    // ============================================
+    // HARD LAYER ENFORCEMENT
+    // Guarantees 2-2-2-2 distribution regardless of model output
+    // Runs after generation — system correctness, not model obedience
+    // ============================================
+    function enforceLayerDistribution(worldData) {
+      if (!worldData.elements || worldData.elements.length < 8) return worldData;
+
+      var validLayers = ['LIFE','SOCIAL','SYMBOLIC','MICRO'];
+      var forcedLayers = ['LIFE','LIFE','SOCIAL','SOCIAL','SYMBOLIC','SYMBOLIC','MICRO','MICRO'];
+
+      // Step 1: Normalise — fix missing or invalid layer values by position BEFORE counting
+      worldData.elements.forEach(function(el, i) {
+        var current = (el.layer || '').toUpperCase();
+        if (validLayers.indexOf(current) === -1) {
+          el.layer = forcedLayers[i];
+          console.log('↩️ Layer normalised for element ' + (i+1) + ': "' + current + '" → ' + forcedLayers[i]);
+        }
+      });
+
+      // Step 2: Count after normalisation
+      var layers = worldData.elements.map(function(e) { return e.layer.toUpperCase(); });
+      var counts = {
+        LIFE:     layers.filter(function(l) { return l === 'LIFE'; }).length,
+        SOCIAL:   layers.filter(function(l) { return l === 'SOCIAL'; }).length,
+        SYMBOLIC: layers.filter(function(l) { return l === 'SYMBOLIC'; }).length,
+        MICRO:    layers.filter(function(l) { return l === 'MICRO'; }).length
+      };
+
+      var isValid = counts.LIFE === 2 && counts.SOCIAL === 2 && counts.SYMBOLIC === 2 && counts.MICRO === 2;
+
+      if (!isValid) {
+        console.warn('⚠️ Layer imbalance after normalisation:', JSON.stringify(counts), '— enforcing 2-2-2-2');
+        worldData.elements.forEach(function(el, i) {
+          el.layer = forcedLayers[i];
+        });
+      } else {
+        console.log('✅ Layer distribution: 2-2-2-2 confirmed');
+      }
+
+      return worldData;
+    }
+
+    // ============================================
+    // DISRUPTION GRAMMAR DEDUPLICATION
+    // Detects when direction_labels repeat the same verb root
+    // Returns flagged indices — validateAndRewrite handles the actual content rewrite
+    // ============================================
+    function enforceDisruptionVariety(worldData) {
+      if (!worldData.elements) return worldData;
+
+      var grammarFamilies = {
+        'resistance': ['slip','catch','strain','press','grip','pull','push','force','jam','snag','tug','yank','grab'],
+        'hesitation': ['pause','hover','wait','stop','freeze','hold','still','linger'],
+        'repetition': ['again','twice','recount','refold','retie','redo','rezip','return'],
+        'correction': ['correct','fix','adjust','realign','reset','reposition','redo'],
+        'release':    ['drop','fall','let go','release','loosen','unfold','open','spread']
+      };
+
+      function getFamily(label) {
+        if (!label) return 'unknown';
+        var lower = label.toLowerCase();
+        for (var family in grammarFamilies) {
+          var words = grammarFamilies[family];
+          for (var i = 0; i < words.length; i++) {
+            if (lower.includes(words[i])) return family;
+          }
+        }
+        return 'other';
+      }
+
+      var familyCounts = {};
+      var flagged = [];
+
+      worldData.elements.forEach(function(el, idx) {
+        var family = getFamily(el.direction_label);
+        familyCounts[family] = (familyCounts[family] || 0) + 1;
+        if (familyCounts[family] > 2) {
+          flagged.push(idx);
+        }
+      });
+
+      if (flagged.length > 0) {
+        console.warn('\u26a0\ufe0f Disruption grammar repetition at elements: ' + flagged.map(function(i){ return i+1; }).join(', '));
+        // Mark elements for content rewrite by validateAndRewrite
+        // Don't just swap labels — flag the full element as needing regeneration
+        flagged.forEach(function(idx) {
+          worldData.elements[idx]._needsDisruptionRewrite = true;
+          console.log('  Flagged element ' + (idx+1) + ' for disruption rewrite: "' + worldData.elements[idx].direction_label + '"');
+        });
+      } else {
+        console.log('\u2705 Disruption variety: no grammar repetition detected');
+      }
+
+      return worldData;
+    }
+
+    function validateAndRewrite(worldData, brief, mode) {
       if (!worldData.elements) return Promise.resolve(worldData);
       
       var rewritePromises = [];
       var rewriteCount = 0;
       
+      var MAX_REWRITES = 2;
       worldData.elements.forEach(function(el, idx) {
         var needsRewrite = false;
         var reasons = [];
         
-        // Check for banned words
+        // BANNED WORDS/PHRASES — checked in both modes (quality floor, not style bias)
         if (isGenericName(el.element_name)) {
           needsRewrite = true;
           reasons.push('generic name');
         }
-        
-        // Check for banned phrases
         if (isGenericInsight(el.insight_line)) {
           needsRewrite = true;
           reasons.push('generic insight');
         }
-        
-        // Check for resistance (optional but ideal)
-        var hasResistanceInName = hasResistance(el.element_name);
-        var hasResistanceInInsight = hasResistance(el.insight_line);
-        
-        if (!hasResistanceInName && !hasResistanceInInsight) {
-          console.log('⚠️ Element ' + (idx + 1) + ' lacks resistance (acceptable but not ideal)');
+        if (hasWeakInsight(el.insight_line)) {
+          needsRewrite = true;
+          reasons.push('weak insight — banned verb or missing action sequence');
+        }
+        // DISRUPTION GRAMMAR — flagged by enforceDisruptionVariety
+        if (el._needsDisruptionRewrite) {
+          needsRewrite = true;
+          reasons.push('repeated disruption grammar — needs distinct action category');
+          delete el._needsDisruptionRewrite;
         }
         
-        if (needsRewrite) {
+        if (mode === 'physical') {
+          // PHYSICAL MODE ONLY: check for resistance language
+          var hasResistanceInName = hasResistance(el.element_name);
+          var hasResistanceInInsight = hasResistance(el.insight_line);
+          if (!hasResistanceInName && !hasResistanceInInsight) {
+            console.log('⚠️ Physical element ' + (idx + 1) + ' lacks resistance');
+          }
+        } else {
+          // CREATIVE MODE: no resistance check — behavioral leak ≠ physical friction
+          // Log for visibility only
+          console.log('✓ Creative element ' + (idx + 1) + ': ' + (el.element_name || 'unnamed'));
+        }
+        
+        if (needsRewrite && rewriteCount < MAX_REWRITES) {
           rewriteCount++;
           console.warn('🔥 REWRITE NEEDED Element ' + (idx + 1) + ': ' + reasons.join(', '));
           rewritePromises.push({
             index: idx,
-            promise: dynamicRewrite(el, brief, idx)
+            promise: dynamicRewrite(el, brief, idx, mode)
+          });
+        } else if (needsRewrite && rewriteCount >= MAX_REWRITES) {
+          console.warn('⚠️ Rewrite cap reached — keeping element ' + (idx + 1) + ' as-is');
+          rewritePromises.push({
+            index: idx,
+            promise: Promise.resolve(el)
           });
         } else {
           rewritePromises.push({
@@ -1380,144 +1801,418 @@ Return only valid JSON for this one element.`
         }
       });
       
-      // Log validation results
       if (rewriteCount > 0) {
-        console.warn('🔥 Validation: ' + rewriteCount + ' elements being rewritten dynamically');
+        console.warn('🔥 Validation: ' + rewriteCount + ' elements being rewritten (' + mode + ' mode)');
       } else {
-        console.log('✅ Validation: All elements passed');
+        console.log('✅ Validation: All elements passed (' + mode + ' mode)');
       }
       
-      // Wait for all rewrites to complete
-      return Promise.all(rewritePromises.map(function(item) { return item.promise; }))
+      // Stagger rewrite calls to avoid TPM burst on Groq
+      var staggeredPromises = rewritePromises.map(function(item, i) {
+        return new Promise(function(resolve) {
+          setTimeout(function() { item.promise.then(resolve).catch(function() { resolve(item.promise); }); }, i * 800);
+        }).then(function() { return item.promise; });
+      });
+      return Promise.all(staggeredPromises.map(function(item) { return item; }))
         .then(function(rewrittenElements) {
           worldData.elements = rewrittenElements;
+          // Hard enforcement — runs regardless of model output
+          worldData = enforceLayerDistribution(worldData);
+          worldData = enforceDisruptionVariety(worldData);
           return worldData;
         });
     }
 
     // ============================================
-    // GENERATION ENGINE (WITH VALIDATION)
+    // SINGLE-PASS INTELLIGENCE ENGINE
+    // Internal: generates 3 directions → picks strongest → interprets → executes
+    // External: user sees nothing but the final world
     // ============================================
-    function generateWorld() {
-      var brief = document.getElementById('brief').value.trim();
-      if (!brief) return;
+
+    var SINGLE_PASS_PROMPT = `You are a three-stage creative intelligence system running in a single pass. The user never sees your internal work — only the final output.
+
+SCENE LOCK (apply before every stage):
+All output must strictly belong to the user's scenario — the specific domain, environment, and human situation in the brief.
+Before writing any element, ask: does this belong to the world of this brief?
+If it could belong to a different domain → reject and regenerate.
+Generic environments (hospital corridors, office desks, coffee cups) are invalid unless the brief is specifically about them.
+
+STAGE 1 — GENERATE 3 DIRECTIONS (internal, never shown):
+From the brief, generate 3 distinct raw creative directions.
+Each must differ in: emotional core, perspective, and narrative type.
+Do not label or explain them. Generate silently.
+
+STAGE 2 — SELECT STRONGEST (internal, never shown):
+Evaluate all 3 against:
+  - emotional intensity (specific > vague)
+  - specificity (observable > abstract)
+  - non-generic nature (uncommon > expected)
+Select the single strongest direction. Discard the other two silently.
+
+STAGE 3 — INTERPRET: extract creativeDNA from the selected direction.
+Apply this in strict sequence before generating any elements:
+
+① CORE EMOTION — identify the dominant psychological state. Must be compound and specific ("anticipatory anxiety", "suppressed relief"). One sentence.
+② HIDDEN TENSION — define the exact conflict in X vs Y format only. ("desire for control vs uncontrollable outcome"). One sentence.
+③ HUMAN TRUTH — extract a universal behavioral truth that holds across contexts. One sentence.
+④ PSYCHOLOGICAL TRIGGER — identify the internal mechanism from this closed set only: fear | validation | control | identity | loss | uncertainty | status | belonging. Format: "[trigger]: [why this idea activates it]". One sentence.
+⑤ SENSORY HOOK — one physical, filmable, real-world detail. Observable by a camera. One sentence.
+⑥ UNIQUE ANGLE — name the specific uncommon perspective that separates this from generic treatment. One sentence.
+
+VALIDATION before proceeding to Stage 4:
+- Is every DNA field one sentence only?
+- Is hidden_tension in X vs Y format?
+- Is psychological_trigger from the closed set?
+- Is sensory_hook physically observable?
+- Is every field derived only from the selected direction, zero invention?
+If any field fails → rewrite that field only, then continue.
+
+STAGE 4 — EXECUTE: generate the world using the creativeDNA as governing intelligence.
+
+━━━ CREATIVE DNA ENFORCEMENT — ALL 6 FIELDS GOVERN ALL 8 ELEMENTS ━━━
+① Core Emotion → every element must be filtered through this emotional state
+② Hidden Tension → at least 4 of 8 elements must embody one side of this tension
+③ Human Truth → the 8 elements collectively must demonstrate this truth through behavior
+④ Psychological Trigger → every element must activate the condition, not state it
+⑤ Sensory Hook → must appear or be echoed in at least one element — it is the world's physical anchor
+⑥ Unique Angle → any element that contradicts this framing is invalid — rewrite it before returning
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+IMPERFECTION HARD RULE (applies to every single element, no exceptions):
+Every action must feel slightly inefficient, mistimed, or imperfect.
+If the action feels clean, smooth, or optimal → make it worse before keeping it.
+Clean execution = invalid. The body is always slightly ahead of or behind the mind.
+
+━━━ PER-ELEMENT REJECTION LOOP ━━━
+Before finalising EACH element, run this loop silently. If the element fails any gate, regenerate it immediately — do not output the failed version.
+
+GATE 1 — DISRUPTION: Does this moment contain a clear disruption — not a pause, not a description of hesitation, but a physical action that breaks, repeats unnecessarily, or corrects itself?
+  → NO: regenerate. A moment without disruption is not a moment.
+
+GATE 2 — FILMABILITY: Can a camera capture this in a single shot without the operator needing to understand the character's feelings?
+  → NO: regenerate. If the action requires interpretation to make sense, it is invisible.
+
+GATE 3 — PREDICTABILITY: Would someone watching say "yeah, obviously that would happen"?
+  → YES: regenerate. If it's expected, it's not observed — it's imagined.
+
+GATE 4 — BEHAVIORAL DIVERSITY (three dimensions, all must be unique):
+  1. BEHAVIORAL TYPE — assign one from: initiation / interruption / escalation / collapse / inversion / persistence / avoidance / transformation
+     Each type used ONCE only. If already used → choose a different type and write from that type's logic.
+  2. EXPRESSION CATEGORY — assign one from: physical movement / social interaction / object interaction / perceptual distortion / internal leak
+     Max 2 per category across all 8 elements. If already used twice → choose a different category.
+  3. MOTION SIGNATURE — does this element repeat the same base physical mechanic as any previous element (turning, tapping, leaning, adjusting, glancing) even if context differs?
+     → YES: reject. Rewrite with a genuinely different mechanic. Different wording of the same motion is not enough.
+  Reject any element that feels like a variation of an earlier one across any of these three dimensions.
+  This is internal reasoning only. Do NOT output type, category, or signature labels.
+
+GATE 5 — DOMAIN LOCK + LENS CHECK: Does this element belong strictly to the world of the brief — this specific environment, these specific objects, this specific human situation? AND does the behavior directly reflect the specific LENS tension, not just the environment?
+  Ask: could this element exist in the same environment even if the LENS were not true?
+  → YES: reject. Environment alone is not enough. The behavior must only make sense because of this specific LENS.
+  → NO on both: proceed. Generic environments (corridors, desks, doorways) are only valid if the brief is specifically about them.
+
+GATE 6 — IMPERFECTION: Does the action feel clean, smooth, or optimal?
+  → YES: make it worse. Add mistiming, unnecessary repetition, slight mis-sequence. Then re-check gates 1–5.
+
+All 6 gates must pass. Only then write the element into the output.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STRUCTURAL REQUIREMENTS (apply across the full set of 8):
+→ Escalation: elements 1–2 quieter than 6–8. Intensity must rise.
+→ At least 3 elements use the return pattern: action completes → moves away → comes back to same object
+→ All 4 variation types must be present: subtle / sharp / object-based / social friction
+→ At least one causal pair: early deviation echoed in a later element, no explanation
+→ Element 8 must not resolve cleanly — leave something physically unanswered
+→ At least 2 insight lines must cut before resolution — action stops at interruption, no continuation`;
+
+    // ============================================
+    // BRIEF INTERPRETER PROMPT
+    // Call 1: understands the brief as a human situation
+    // Small, fast, cheap — ~400 tokens in, ~150 out
+    // ============================================
+    var BRIEF_INTERPRETER_PROMPT = 'You are not generating creative output. You are locking the meaning of a brief so a creative team can align instantly.' +
+      ' Your job: decide what this idea is really about, define the core human behavior behind it, give clear direction for visual generation.' +
+      ' INTERNAL CONVERSION STEP (mandatory, do not output):' +
+      ' Before writing anything: scan the brief for abstract ideas (confidence, belief, trust, ambition, fear, readiness, doubt, loyalty, innovation).' +
+      ' For each abstract idea found, convert it: what does a person physically DO when this is true? What do they do INSTEAD of the obvious thing?' +
+      ' Use only these converted behaviors when writing LENS and ANCHORS. Never use the abstract word itself in output.' +
+      ' OUTPUT STRUCTURE — return exactly these 6 labeled fields, nothing else, no extra text:' +
+      ' LENS: One sharp sentence capturing the real meaning. Must be specific and human. No buzzwords, no abstraction.' +
+      ' SPECIFICITY ENFORCEMENT: LENS must include at least ONE of — a number or duration (30 seconds, 3 times, 4 steps) / a physical constraint (cannot do X, forced to do Y) / a repeated action pattern / a measurable delay.' +
+      ' BAD LENS: a person stands in silence confronting the weight of history' +
+      ' GOOD LENS: visitors stop walking for exactly 20-30 seconds in front of personal artifacts before their feet move again on their own' +
+      ' If LENS has no measurable or observable constraint → it is too vague → rewrite with one.' +
+      ' ANCHORS: Exactly 3 lines, each starting with -. Each is a human decision or tendency showing tension. No product features, no outcomes.' +
+      ' ANCHOR HARDENING: remove ALL interpretation from anchors — banned phrases: as if, seems to, appears to, feels like, as though, drawn to, searching for.' +
+      ' Every anchor must be a physical action that can be filmed without explanation.' +
+      ' BAD anchor: they linger as if searching for a connection — explanation kills it.' +
+      ' GOOD anchor: they stop at one artifact and read every word of the label, then read it again.' +
+      ' SITUATION: One sentence. What is physically happening, to whom, where. Concrete, no emotions named.' +
+      ' If brief has an object — the object is not the situation. Find the human moment around it.' +
+      ' If brief has a brand — ignore the brand. Find the human moment the product enters.' +
+      ' TENSION: One sentence. X vs Y format. Must be specific to this brief, not abstract.' +
+      ' Banned tensions: identity vs time / memory vs present / old vs new / past vs future — always too generic.' +
+      ' DO NOT ASSUME: One sentence. 3 things the generator must not assume. Always include: do not assume age, gender, or emotional outcome.' +
+      ' BEHAVIORAL CHARGE: One sentence. The single most specific physical behavior that only happens in THIS situation.' +
+      ' Not a feeling. A body doing one specific thing that reveals the weight of this moment.' +
+      ' RULES: Be decisive, not exploratory. Do not give multiple interpretations. Do not explain reasoning. Stay grounded.' +
+      ' If any field sounds like an Instagram caption or therapy session — rewrite it.' +
+      ' REJECTION FILTER — apply before returning:' +
+      ' Reject any LENS that: sounds like common knowledge / could apply to any brand or situation / explains instead of showing behavior.' +
+      ' Reject any ANCHOR that: describes what people do obviously / could apply to any purchase or decision / lacks a specific deviation or tension.' +
+      ' ANCHORS must include the non-obvious version — what people do INSTEAD of the expected thing.' +
+      ' Bad anchor: chooses quality over price. Good anchor: waits 3 weeks for official repair rather than use cheaper alternative next door.' +
+      ' Bad anchor: stays loyal to brand. Good anchor: defends a product flaw to a friend rather than admit the alternative is better.' +
+      ' If LENS or ANCHORS feel safe → they are wrong. Rewrite until they feel specific enough to be slightly uncomfortable.' +
+      ' BEHAVIOR HARDENING — apply to LENS and every ANCHOR before returning:' +
+      ' Convert abstract words into visible actions. No exceptions.' +
+      ' confidence → what they do when challenged' +
+      ' belief → what they do instead of waiting' +
+      ' trust → what they do when the cheaper option is right there' +
+      ' ambition → what they do before they are ready' +
+      ' Each ANCHOR must be filmable in one scene. If you need an abstract word to describe it → rewrite it.' +
+      ' Target style: starts explaining before finishing previous thought / gets interrupted and continues anyway / switches direction mid-sentence without pause.' +
+      ' Return exactly these 6 fields: LENS: ANCHORS: SITUATION: TENSION: DO NOT ASSUME: BEHAVIORAL CHARGE:';
+
+    // ============================================
+    // UNIFIED LLM CALLER — Gemini primary, Groq fallback
+    // ============================================
+    function callLLM(systemPrompt, userPrompt, maxTokens) {
+      if (GROQ_API_KEY) {
+        return fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }],
+            temperature: 0.75,
+            max_tokens: maxTokens
+          })
+        })
+        .then(function(res) {
+          if (!res.ok) return res.text().then(function(e) { throw new Error('Groq (' + res.status + '): ' + e); });
+          return res.json();
+        })
+        .then(function(data) { return data.choices[0].message.content; });
+      }
+      return Promise.reject(new Error('No API key set — add Groq key in settings'));
+    }
+
+    // ============================================
+    // SINGLE-PASS ENTRY POINT
+    // ============================================
+    function runWorldforge() {
+      var rawBrief = document.getElementById('brief').value.trim();
+      if (!rawBrief) return;
       if (!GROQ_API_KEY || !UNSPLASH_ACCESS_KEY) { openSettings(); return; }
 
       var btn = document.getElementById('generateBtn');
       var errorMsg = document.getElementById('errorMsg');
       btn.disabled = true;
       errorMsg.style.display = 'none';
+      creativeDNA = null;
       closePanel();
-      
-      // MODE DETECTION (CRITICAL)
-      var mode = detectMode(brief);
-      console.log('🎯 Mode detected:', mode);
-      
-      // CATEGORY DETECTION
-      selectedCategory = detectCategory(brief);
-      
-      // DYNAMIC ANGLE SELECTION (not static default)
-      var category = CATEGORIES[selectedCategory];
-      selectedAngleIndex = scoreAngle(category.angles, brief);
-      
-      showAngleSelector(selectedCategory);
-      
-      // BUILD PROMPT WITH MODE
-      var userPrompt = buildPrompt(brief, selectedCategory, selectedAngleIndex, mode);
-      
-      setStatus('Building creative direction…');
-      
-      // SELECT SYSTEM PROMPT BASED ON MODE
-      var systemPrompt = (mode === "creative") ? CREATIVE_SYSTEM_PROMPT : PHYSICAL_SYSTEM_PROMPT;
+      usedPhotoIds = [];
+      // Reset lens panel
+      var lp = document.getElementById('lensPanel');
+      if (lp) lp.style.display = 'none';
+      var lt = document.getElementById('lensText');
+      if (lt) lt.textContent = '';
+      var at = document.getElementById('anchorsText');
+      if (at) at.innerHTML = '';
 
-      fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_API_KEY },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userPrompt + '\nRole: ' + selectedRole }
-          ],
-          temperature: 0.7,
-          max_tokens: 1200
+      setStatus('Reading brief…');
+
+      // ── Call 1: interpret brief as human situation ────────────────────────
+      function interpretWithGroq(rawBrief) {
+        return callLLM(BRIEF_INTERPRETER_PROMPT, rawBrief, 220)
+        .then(function(interpreted) {
+          interpreted = interpreted.trim();
+          console.log('Brief interpreted:', interpreted);
+
+          // Extract LENS and ANCHORS for UI display
+          var lensMatch = interpreted.match(/LENS:\s*([^\n]+)/);
+          var anchorsMatch = interpreted.match(/ANCHORS:\s*([\s\S]*?)(?=SITUATION:|TENSION:|$)/);
+
+          if (lensMatch) {
+            var lensEl = document.getElementById('lensText');
+            var lensPanel = document.getElementById('lensPanel');
+            if (lensEl) lensEl.textContent = lensMatch[1].trim();
+            if (lensPanel) lensPanel.style.display = 'block';
+          }
+
+          if (anchorsMatch) {
+            var anchorsEl = document.getElementById('anchorsText');
+            if (anchorsEl) {
+              var anchors = anchorsMatch[1].trim()
+                .split('\n')
+                .map(function(l) { return l.replace(/^-\s*/, '').trim(); })
+                .filter(function(l) { return l.length > 0; })
+                .slice(0, 3);
+              anchorsEl.innerHTML = anchors.map(function(a) {
+                return '<div style="display:flex;gap:10px;margin-bottom:4px;"><span style="color:var(--accent);margin-top:2px;">→</span><span>' + a + '</span></div>';
+              }).join('');
+            }
+          }
+
+          return interpreted;
         })
-      })
-      .then(function(res) {
-        if (!res.ok) return res.text().then(function(e) { throw new Error('Groq (' + res.status + '): ' + e); });
-        return res.json();
-      })
-      .then(function(data) {
-        var raw = data.choices[0].message.content.replace(/```json|```/g, '').trim();
-        var w;
-        try { w = JSON.parse(raw); } catch(e) { throw new Error('Parse failed'); }
-        
-        console.log('✅ PASS 1: Structure generated');
-        
-        // 🔥 VALIDATION + DYNAMIC REWRITE (async)
-        return validateAndRewrite(w, brief);
-      })
-      .then(function(validatedWorld) {
-        console.log('✅ VALIDATION: Complete');
-        
-        // 🔥 PASS 2: TASTE REFINEMENT
-        return refineWorld(validatedWorld, brief);
-      })
-      .then(function(w) {
-        console.log('✅ PASS 2: Refinement complete');
-        
-        // Store generation
-        var generation = {
-          id: Date.now(),
-          brief: brief,
-          role: selectedRole,
-          category: selectedCategory,
-          angleIndex: selectedAngleIndex,
-          data: w,
-          timestamp: new Date().toLocaleString(),
-          images: []
-        };
-        
-        generations.push(generation);
-        currentGenerationIndex = generations.length - 1;
-        worldData = w;
-        
-        updateGenerationHistory();
-        document.getElementById('exportBtn').style.display = 'block';
-        
-        setStatus('Curating visuals…');
-
-        renderGeneration(w, brief);
-
-        var grid = document.getElementById('worldGrid');
-        grid.innerHTML = '';
-        document.getElementById('output').style.display = 'block';
-        document.querySelector('.visual-section').scrollIntoView({ behavior: 'smooth' });
-        
-        (w.elements || []).forEach(function(el, i) {
-          var card = buildCard(el, i, w);
-          grid.appendChild(card);
-          (function(element, cardEl, idx) {
-            setTimeout(function() {
-              const USE_SMART_QUERY = true;  const query = USE_SMART_QUERY   ? generateImageQuery(element.element_name + " " + element.insight_line, idx)   : element.unsplash_query;  fetchImage(query, cardEl, element, brief, idx);
-            }, idx * 300);
-            setTimeout(function() { cardEl.classList.add('visible'); }, idx * 70);
-          })(el, card, i);
+        .catch(function() {
+          // Fallback to keyword-based interpretation if call 1 fails
+          console.warn('Interpreter call failed — falling back to keyword detection');
+          return interpretBrief(rawBrief);
         });
+      }
 
-        setStatus('');
-        btn.disabled = false;
-      })
-      .catch(function(err) {
-        console.error(err);
-        setStatus('');
-        document.getElementById('errorMsg').textContent = 'Error: ' + err.message;
-        document.getElementById('errorMsg').style.display = 'block';
-        btn.disabled = false;
-      });
+      // ── EARNED ARRIVAL DETECTOR ─────────────────────────────────────────
+      // Binary detection. All three signals must be present.
+      // If true: appends one line to brief before Call 1 sees it.
+      // JS does the detection — not the model. Clean separation.
+      function detectEarnedArrival(raw) {
+        var b = raw.toLowerCase();
+
+        // Signal 1: earning/effort over time
+        var hasEarning = /earned|worked for|saved (up|for)|built|fought for|struggled|years of|hardwork|hard work|sacrifice|sacrificed|finally (got|bought|own|have)|after (years|working|saving|everything)|dreamed of|always wanted|could(n.t| not) afford/.test(b);
+
+        // Signal 2: arrival — the thing is now in hand
+        var hasArrival = /buy|buying|bought|got|getting|received|achieved|reached|owns|first time|made it|finally|just got|just bought|picked up|collected|delivered|taking delivery/.test(b);
+
+        // Signal 3: something specific was earned — not a vague feeling
+        var hasSpecificThing = /car|bike|house|flat|home|phone|laptop|degree|job|salary|medal|trophy|watch|ring|camera|guitar|ticket|seat|place|position|role|team/.test(b);
+
+        // All three must fire. Two out of three = not earned arrival.
+        var isEarnedArrival = hasEarning && hasArrival && hasSpecificThing;
+
+        if (isEarnedArrival) {
+          console.log('Earned arrival detected — injecting ritual signal');
+          return raw + ' [EARNED ARRIVAL: This world is NOT about the object. The object is proof. The world is the person whose life changed. Show the 8 layers of this moment: the private space before anyone else sees it — standing outside alone; the first contact with someone from the life before this; the place that knew the person before the object did; the phone call that almost happens; the body sitting still after the excitement passes; the object in the persons actual world not a showroom; the moment of gratitude with no recipient; the return to the object when no one is watching. DO NOT stay inside the object. One card maximum on the object itself. The other 7 are the persons life around it.]';
+        }
+
+        return raw;
+      }
+
+      var preparedBrief = detectEarnedArrival(rawBrief);
+      interpretWithGroq(preparedBrief).then(function(brief) {
+      // Small delay between calls to respect Gemini 5 RPM limit
+
+      var mode = detectMode(brief);
+      selectedCategory = detectCategory(brief);
+      selectedAngleIndex = scoreAngle(CATEGORIES[selectedCategory].angles, brief);
+      var systemPrompt = (mode === 'physical') ? PHYSICAL_SYSTEM_PROMPT : CREATIVE_SYSTEM_PROMPT;
+      var userPrompt = SINGLE_PASS_PROMPT + '\n\n' + buildPrompt(brief, selectedCategory, selectedAngleIndex, mode) + '\nRole: ' + selectedRole;
+
+      // ── Single Groq call — same prompt every attempt ──────────────────────
+      function callGroq() {
+        return callLLM(systemPrompt, userPrompt, 2800)
+        .then(function(text) {
+          // Strip markdown fences
+          var raw = text.replace(/```json|```/g, '').trim();
+          // Extract JSON object — find outermost { }
+          var start = raw.indexOf('{');
+          var end = raw.lastIndexOf('}');
+          if (start !== -1 && end !== -1 && end > start) {
+            raw = raw.slice(start, end + 1);
+          }
+          // Truncation recovery — fix unbalanced braces
+          var openCount = (raw.match(/\{/g)||[]).length;
+          var closeCount = (raw.match(/\}/g)||[]).length;
+          if (openCount > closeCount) raw += '}]}}';
+          // Log raw for debugging
+          console.log('Raw JSON (first 200 chars):', raw.substring(0, 200));
+          // Parse — throws if malformed
+          try { return JSON.parse(raw); }
+          catch(e) {
+            console.error('Parse failed. Raw output:', raw.substring(0, 500));
+            throw new Error('parse_failed');
+          }
+        });
+      }
+
+      // ── Failure detection — structural checks only, no quality judgment ─────
+      function hasCriticalFailure(w) {
+        if (!w || !w.elements) return 'missing elements array';
+        if (w.elements.length < 8) return 'only ' + w.elements.length + '/8 elements';
+        // Check each element has the required non-empty fields
+        for (var i = 0; i < w.elements.length; i++) {
+          var el = w.elements[i];
+          if (!el.element_name || !el.element_name.trim()) return 'element ' + (i+1) + ' has empty element_name';
+          if (!el.insight_line  || !el.insight_line.trim())  return 'element ' + (i+1) + ' has empty insight_line';
+        }
+        return null; // structure is valid
+      }
+
+      // ── Attempt loop: 1 → 2 → 3 → error ─────────────────────────────────
+      function attempt(num) {
+        setStatus('Forging world\u2026' + (num > 1 ? ' (attempt ' + num + '/3)' : ''));
+        console.log('\ud83d\udd04 Attempt ' + num + '/3');
+
+        return callGroq()
+          .then(function(w) {
+            var failure = hasCriticalFailure(w);
+            if (failure) {
+              console.warn('\u26a0\ufe0f Attempt ' + num + '/3 structural failure: ' + failure);
+              if (num < 3) return attempt(num + 1);
+              throw new Error('Failed after 3 attempts. Last reason: ' + failure);
+            }
+            console.log('\u2705 Attempt ' + num + '/3 succeeded');
+            return validateAndRewrite(w, brief, mode);
+          })
+          .catch(function(err) {
+            if (err.message === 'parse_failed') {
+              console.warn('\u26a0\ufe0f Attempt ' + num + '/3 parse failure — model returned malformed JSON');
+              if (num < 3) return attempt(num + 1);
+              throw new Error('Parse failed on all 3 attempts — try a more specific brief.');
+            }
+            throw err; // network errors propagate immediately, no retry
+          });
+      }
+
+      // ── Kick off ──────────────────────────────────────────────────────────
+      attempt(1)
+        .then(function(w) {
+          var generation = {
+            id: Date.now(), brief: brief, role: selectedRole,
+            category: selectedCategory, angleIndex: selectedAngleIndex,
+            data: w, timestamp: new Date().toLocaleString(), images: []
+          };
+          generations.push(generation);
+          currentGenerationIndex = generations.length - 1;
+          worldData = w;
+
+          updateGenerationHistory();
+          setStatus('Curating visuals\u2026');
+          renderGeneration(w, brief);
+
+          var grid = document.getElementById('worldGrid');
+          grid.innerHTML = '';
+          document.getElementById('output').style.display = 'block';
+          document.querySelector('.visual-section').scrollIntoView({ behavior: 'smooth' });
+
+          (w.elements || []).forEach(function(el, i) {
+            var card = buildCard(el, i, w);
+            grid.appendChild(card);
+            (function(element, cardEl, idx) {
+              var query = element.unsplash_query || element.element_name || 'person candid street photography';
+              setTimeout(function() { fetchImage(query, cardEl, element, brief, idx); }, idx * 300);
+              setTimeout(function() { cardEl.classList.add('visible'); }, idx * 70);
+            })(el, card, i);
+          });
+
+          setStatus('');
+          btn.disabled = false;
+        })
+        .catch(function(err) {
+          console.error(err);
+          setStatus('');
+          errorMsg.textContent = 'Error: ' + err.message;
+          errorMsg.style.display = 'block';
+          btn.disabled = false;
+        });
+      }); // end interpretWithGroq().then()
     }
 
-    function updateGenerationHistory() {
+
+    
+        function updateGenerationHistory() {
       var historyDiv = document.getElementById('generationHistory');
       var tabsDiv = document.getElementById('generationTabs');
       
@@ -1552,7 +2247,6 @@ Return only valid JSON for this one element.`
       document.querySelectorAll('.role-btn').forEach(function(b) { b.classList.remove('active'); });
       document.querySelector('[data-role="' + gen.role + '"]').classList.add('active');
       
-      showAngleSelector(selectedCategory);
       renderGeneration(gen.data, gen.brief);
       updateGenerationHistory();
       
@@ -1690,6 +2384,8 @@ Return only valid JSON for this one element.`
     function buildCard(el, index, w) {
       var card = document.createElement('div');
       card.className = 'card';
+      var layer = (el.layer || 'MICRO').toUpperCase();
+      var layerBadge = '<span class="layer-badge ' + layer + '">' + layer + '</span>';
       
       card.innerHTML =
         '<div class="img-skeleton skeleton-ph"></div>' +
@@ -1699,7 +2395,10 @@ Return only valid JSON for this one element.`
           '<div class="card-num">' + (index+1 < 10 ? '0'+(index+1) : index+1) + '</div>' +
           '<div class="card-name">' + el.element_name + '</div>' +
           '<div class="card-insight">' + el.insight_line + '</div>' +
-          '<span class="card-label">' + (el.direction_label||'') + '</span>' +
+          '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+            layerBadge +
+            '<span class="card-label">' + (el.direction_label||'') + '</span>' +
+          '</div>' +
         '</div>';
       card.addEventListener('click', function() { openPanel(el, w); });
       return card;
@@ -1707,7 +2406,9 @@ Return only valid JSON for this one element.`
 
     function openPanel(el, w) {
       document.getElementById('panelName').textContent = el.element_name;
-      var content = '<div class="p-insight">' + el.insight_line + '</div>';
+      var layer = (el.layer || 'MICRO').toUpperCase();
+      var content = '<div class="p-insight">' + el.insight_line + '</div>' +
+        '<div style="margin-bottom:16px;"><span class="layer-badge ' + layer + '">' + layer + '</span></div>';
 
       if (selectedRole === 'video') {
         var vd = (w.shots || w.visual_direction||[]).map(function(i){return '<li>'+i+'</li>';}).join('');
@@ -1737,41 +2438,483 @@ Return only valid JSON for this one element.`
     // ============================================
     // IMAGE FETCHING (OPTIMIZED)
     // ============================================
-    function fetchImage(query, card, el, brief, imageIndex) {
-      var finalQuery = query.trim() || "creative abstract";
-      
-      // Add global style consistency
-      var globalStyle = worldData.color_texture || "";
-      if (globalStyle) {
-        finalQuery = finalQuery + " " + globalStyle;
+
+    // Track used photo IDs per generation to prevent duplicates
+    var usedPhotoIds = [];
+
+    // Translate Unsplash-invisible emotion/abstract words into physical descriptions
+    // Unsplash indexes photo metadata, not emotional concepts
+    var QUERY_TRANSLATIONS = {
+      'hesitation':   'person pausing before action',
+      'tension':      'person tight grip clenched',
+      'regret':       'person looking down avoiding',
+      'anxiety':      'person hand pressed tense',
+      'focus':        'person concentrated looking closely',
+      'doubt':        'person hand raised uncertain',
+      'restraint':    'person holding back still',
+      'suspended':    'person frozen mid-action',
+      'release':      'person exhaling letting go',
+      'control':      'person gripping firmly',
+      'pressure':     'person leaning forward tense',
+      // Motorsport / high-intensity — redirect to what Unsplash actually stocks
+      'f1':           'driver helmet visor close up',
+      'formula 1':    'driver helmet visor close up',
+      'grand prix':   'racing driver helmet close up',
+      'monaco':       'wet asphalt road close up rain',
+      'rearview':     'mirror reflection face close up',
+      'cockpit':      'hands steering wheel dark close up',
+      'pit lane':     'mechanic hands tools working close up',
+      'visor':        'helmet visor rain drops close up',
+      'apex':         'wet road curve asphalt puddle',
+      'oversteer':    'hands wheel correction close up tense',
+      'tyre':         'rubber wet surface texture close up',
+      'g-force':      'person neck strain head pressed back',
+      'gforce':       'person neck strained physical effort',
+      'redline':      'dial needle extreme close up gauge',
+      'tachometer':   'gauge needle close up instrument'
+    };
+
+    // Human presence indicators — if none present, append 'person'
+    var HUMAN_INDICATORS = ['person', 'man', 'woman', 'hand', 'finger', 'face', 'eye', 'pilot', 'engineer', 'controller', 'operator', 'worker', 'astronaut', 'doctor', 'figure', 'driver', 'mechanic', 'racer', 'athlete', 'neck', 'thumb', 'wrist', 'knuckle', 'glove'];
+
+    // Words in alt_description that indicate digital art / illustration — not real photos
+    var ILLUSTRATION_SIGNALS = ['render', 'rendering', '3d', 'illustration', 'artwork', 'wallpaper', 'digital art', 'graphic', 'animation', 'cgi', 'composite'];
+
+    // Brand/product name scrubber — strips specific brand names from Unsplash queries
+    // to prevent wrong-brand images (Ferrari when brief says Mercedes, etc.)
+    var BRAND_SCRUB = {
+      // Car brands → human interaction with car
+      'mercedes': 'luxury car interior leather',
+      'mercedes-benz': 'luxury car interior leather',
+      'ferrari': 'luxury car interior leather',
+      'tesla': 'car interior dashboard',
+      'bmw': 'car interior leather seat',
+      'porsche': 'car seat leather close up',
+      'lamborghini': 'car interior close up',
+      'audi': 'car interior dashboard close up',
+      'rolls-royce': 'luxury car interior leather',
+      'rolls royce': 'luxury car interior leather',
+      // Phone brands → hand with phone
+      'iphone': 'hand holding phone screen',
+      'samsung': 'hand holding phone screen',
+      'google pixel': 'hand holding phone',
+      // Fashion brands → human wearing/touching fabric
+      'nike': 'hand touching fabric shoe close up',
+      'adidas': 'hand touching shoe fabric',
+      'gucci': 'hand touching leather accessory',
+      'louis vuitton': 'hand touching leather bag',
+      'superdry': 'hand touching jacket fabric',
+      'zara': 'hand touching fabric clothing',
+      // Tech brands → hand with device
+      'apple': 'hand touching screen device',
+      'macbook': 'hands on laptop keyboard',
+      'google': 'hand near screen',
+      // Food brands → hand with food/packaging
+      'mcdonalds': 'hand holding food wrapper',
+      'starbucks': 'hand holding coffee cup'
+    };
+
+    function scrubBrandNames(query) {
+      var q = query.toLowerCase();
+      for (var brand in BRAND_SCRUB) {
+        if (q.includes(brand)) {
+          console.log('🏷️ Brand scrub: "' + brand + '" → "' + BRAND_SCRUB[brand] + '"');
+          q = q.replace(new RegExp(brand, 'gi'), BRAND_SCRUB[brand]);
+        }
       }
-      
-      // Fetch 5 images for better selection
-      fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(finalQuery) + '&per_page=5&orientation=portrait', {
+      return q;
+    }
+
+    // Domain-level query rewrite — fires when LLM generates literal scene descriptions
+    // that Unsplash cannot fulfil (e.g. F1 cars, licensed sports, specific events)
+    // Redirects to emotionally equivalent images Unsplash actually stocks
+    var DOMAIN_REWRITES = [
+      // F1 / motorsport literal scenes → emotional equivalents
+      { test: /f1 car|formula.?one car|racing car|race car|grand prix car/i,        rewrite: 'driver hands steering wheel dark close up' },
+      { test: /monaco (street|track|circuit|corner|road)/i,                          rewrite: 'wet road curve asphalt close up rain dark' },
+      { test: /rearview mirror.*(car|competitor|rival)/i,                            rewrite: 'mirror face reflection close up driver' },
+      { test: /pit (lane|stop|wall|crew)/i,                                          rewrite: 'mechanic hands tools fast close up' },
+      { test: /visor.*(rain|spray|blur|wet|fog)/i,                                   rewrite: 'helmet visor rain drops close up blur' },
+      { test: /radio.*(voice|static|panic|engineer)/i,                               rewrite: 'ear earpiece person listening close up tense' },
+      { test: /(wet|rain).*(track|circuit|tarmac|asphalt)/i,                         rewrite: 'wet road surface dark rain close up' },
+      { test: /crash|wall|barrier.*(close|near|edge)/i,                              rewrite: 'concrete wall close up rough texture edge' },
+      { test: /g.?force|lateral.?(load|force|g)/i,                                  rewrite: 'person neck strain head forced back effort' },
+      { test: /tyre.*(slip|squeal|grip|spin|wear)/i,                                 rewrite: 'rubber surface wet texture close up dark' }
+    ];
+
+    function applyDomainRewrites(query) {
+      for (var i = 0; i < DOMAIN_REWRITES.length; i++) {
+        if (DOMAIN_REWRITES[i].test.test(query)) {
+          console.log('🏁 Domain rewrite: "' + query.substring(0, 40) + '" → "' + DOMAIN_REWRITES[i].rewrite + '"');
+          return DOMAIN_REWRITES[i].rewrite;
+        }
+      }
+      return query;
+    }
+
+    // Abstract words Unsplash cannot index — strip these from queries
+    var ABSTRACT_QUERY_WORDS = [
+      'hesitating','hesitation','hesitates','deciding','decision','deciding',
+      'thinking','thought','feeling','emotion','emotional','moment','experience',
+      'slowly','carefully','gently','nervously','quietly','briefly','suddenly',
+      'realizing','noticing','wondering','considering','reflecting','pausing',
+      'invisible','subtle','gradual','symbolic','meaningful','significant',
+      'before','after','then','while','during','about','around','toward'
+    ];
+
+    function sanitizeQuery(q) {
+      // Strip abstract words that Unsplash cannot match to photos
+      ABSTRACT_QUERY_WORDS.forEach(function(word) {
+        var re = new RegExp('\\b' + word + '\\b', 'gi');
+        q = q.replace(re, '');
+      });
+      // Collapse multiple spaces
+      return q.replace(/\s+/g, ' ').trim();
+    }
+
+    function translateQuery(query) {
+      // Step 0: domain-level rewrite (catches literal scene descriptions Unsplash can't serve)
+      var q = applyDomainRewrites(query);
+      // Step 1: brand scrub
+      q = scrubBrandNames(q);
+      // Step 2: word-level translations
+      Object.keys(QUERY_TRANSLATIONS).forEach(function(word) {
+        var re = new RegExp('\b' + word + '\b', 'gi');
+        q = q.replace(re, QUERY_TRANSLATIONS[word]);
+      });
+      // Step 3: sanitize abstract words Unsplash can't index
+      q = sanitizeQuery(q);
+      return q;
+    }
+
+    function hasHumanPresence(query) {
+      var lower = query.toLowerCase();
+      return HUMAN_INDICATORS.some(function(word) { return lower.includes(word); });
+    }
+
+    function isIllustration(photo) {
+      var desc = ((photo.description || '') + ' ' + (photo.alt_description || '')).toLowerCase();
+      return ILLUSTRATION_SIGNALS.some(function(s) { return desc.includes(s); });
+    }
+
+    function unsplashFetch(query, page) {
+      var p = page || 1;
+      return fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(query) + '&per_page=10&page=' + p + '&orientation=portrait', {
         headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
-      })
-      .then(function(r) {
-        if (!r.ok) throw new Error("Unsplash failed " + r.status);
+      }).then(function(r) {
+        if (!r.ok) throw new Error('Unsplash failed ' + r.status);
         return r.json();
-      })
+      });
+    }
+
+    function pickBestPhoto(results, layer) {
+      var activeLayer = (layer || 'MICRO').toUpperCase();
+      // Filter out: already used IDs + illustrations/digital art
+      var filtered = results.filter(function(p) {
+        if (usedPhotoIds.indexOf(p.id) !== -1) return false;
+        if (isIllustration(p)) return false;
+        return true;
+      });
+
+      // For SYMBOLIC layer: object-only is valid — skip human preference filter
+      var pool;
+      if (activeLayer === 'SYMBOLIC') {
+        pool = filtered.length > 0 ? filtered : results;
+      } else {
+        // For all other layers: prefer photos with human presence
+        var humanFiltered = filtered.filter(function(p) {
+          var desc = ((p.description || '') + ' ' + (p.alt_description || '')).toLowerCase();
+          return HUMAN_INDICATORS.some(function(w) { return desc.includes(w); });
+        });
+        pool = humanFiltered.length > 0 ? humanFiltered
+             : filtered.length > 0      ? filtered
+             : results;
+      }
+
+      var photo = pool[Math.floor(Math.random() * Math.min(pool.length, 3))];
+      if (photo) usedPhotoIds.push(photo.id);
+      return photo;
+    }
+
+    // Maps specific objects in element names to concrete Unsplash-searchable queries
+    // Overrides vague queries when a known object is present in the element name
+    var OBJECT_MAP = {
+      // Physical objects
+      'boarding pass':  'paper ticket hand close up',
+      'passport':       'passport hand close up',
+      'zip':            'zipper fabric close up hand',
+      'zipper':         'zipper fabric close up hand',
+      'handle':         'hand gripping handle close up',
+      'strap':          'bag strap shoulder close up',
+      'phone':          'phone hand screen close up',
+      'cup':            'coffee cup hand table close up',
+      'pen':            'pen hand paper close up',
+      'pencil':         'pencil hand paper close up',
+      'document':       'paper document hand desk',
+      'contract':       'paper hand pen signing close up',
+      'door':           'door handle hand close up',
+      'key':            'key hand close up',
+      'headset':        'headset hand ear close up',
+      'dial':           'dial hand fingers close up',
+      'button':         'finger pressing button close up',
+      'switch':         'hand finger switch close up',
+      'screen':         'hand near screen close up',
+      'laptop':         'laptop keyboard hands close up',
+      'bag':            'hand gripping bag close up',
+      'luggage':        'luggage handle hand close up',
+      'suitcase':       'suitcase hand latch close up',
+      'throttle':       'hand gripping lever close up',
+      'wheel':          'hands gripping wheel close up',
+      // Body reaction moments — produces human-focused queries, not setting images
+      'armrest':        'hands gripping armrest knuckles white close up',
+      'grip':           'hand gripping tight close up knuckles',
+      'jaw':            'face jaw tension close up controlled expression',
+      'breath':         'person controlled breathing close up face',
+      'posture':        'person sitting upright tense close up',
+      'gaze':           'eyes focused intense close up face',
+      'glance':         'two people eyes meeting close up',
+      'nod':            'person slight nod face close up',
+      'throat':         'person clearing throat face close up',
+      'shoulders':      'person shoulders tension close up back',
+      // Motorsport objects — redirect to Unsplash-available equivalents
+      'visor':          'helmet visor rain drops close up',
+      'helmet':         'racing helmet close up side',
+      'paddle':         'hand finger lever close up dark',
+      'gear shift':     'hand gripping gear stick close up',
+      'gear paddle':    'hand finger lever close up',
+      'steering wheel': 'hands steering wheel close up dark interior',
+      'harness':        'strap buckle hands close up',
+      'seat belt':      'strap buckle hands close up',
+      'pit wall':       'engineer headset monitor close up',
+      'radio':          'ear headset close up person',
+      'earpiece':       'ear person close up listening',
+      'mirror':         'mirror reflection face driver close up',
+      'rev counter':    'dial gauge needle close up',
+      'track':          'wet asphalt road curve close up rain',
+      'tarmac':         'wet road surface texture close up dark',
+      'barrier':        'concrete wall close up rough texture',
+      'kerb':           'road edge painted stripe close up',
+      // Aviation — cockpit environment and pilot behavior
+      'cockpit':        'pilot cockpit hands controls close up',
+      'yoke':           'hands gripping yoke controls close up dark',
+      'throttle':       'hand gripping throttle lever cockpit close up',
+      'altimeter':      'cockpit instrument dial close up',
+      'checklist':      'pilot hand paper checklist cockpit close up',
+      'runway':         'aircraft runway tarmac close up perspective',
+      'flight deck':    'cockpit instruments hands dark close up',
+      'cabin':          'aircraft interior aisle seat close up',
+      'uniform':        'pilot uniform epaulette close up shoulder',
+      'silence':        'person alone quiet dim light close up face',
+      'manual':         'hands paper document close up reading',
+      'price tag':       'hand holding label shopping close up',
+      'price':           'hand shopping label store close up',
+      'tag':             'shopping label hand close up store',
+      'luxury':          'hand holding gift box packaging close up',
+      'item':            'hand holding product shopping close up',
+      'product':         'person shopping hand product close up',
+      'receipt':         'hand holding paper receipt close up',
+      'shopping bag':    'person carrying shopping bag close up',
+      'shelf':           'person browsing store shelf close up',
+      'phrase':          'pilot face cockpit close up speaking',
+      'muttered':        'person face close up speaking quietly dark',
+      'whisper':         'person face close up speaking quietly',
+      'sticky':          'hand fingers food close up texture',
+      'crumb':           'hand fingers food crumbs close up',
+      'sundae':          'ice cream dessert bowl close up spoon'
+    };
+
+    // Extract domain-safe fallback query from brief text
+    // Used when OBJECT_MAP has no keyword match — prevents raw behavioral text hitting Unsplash
+    function extractDomainFallback(brief) {
+      var b = (brief || '').toLowerCase();
+      // Physical environments (strong signal)
+      if (/pilot|cockpit|flight|aircraft|runway|airline|aviation/.test(b)) return 'pilot cockpit control panel close up';
+      if (/tapri|chai|tea stall|street food|vendor/.test(b)) return 'street food stall counter close up';
+      if (/kitchen|fridge|cook|sundae|dessert|biscotti|mango/.test(b)) return 'kitchen counter dessert preparation close up';
+      if (/office|corporate|meeting|desk|laptop|email/.test(b)) return 'office desk document close up';
+      if (/hospital|doctor|nurse|patient|clinic/.test(b)) return 'hospital corridor equipment close up';
+      if (/cricket|dressing room|pitch|bat|innings/.test(b)) return 'cricket equipment dressing room close up';
+      if (/wedding|ceremony|bride|groom/.test(b)) return 'wedding ceremony detail close up';
+      if (/racing|f1|formula|grand prix|monaco/.test(b)) return 'racing cockpit steering wheel close up';
+      if (/school|classroom|student|teacher/.test(b)) return 'classroom desk notebook close up';
+      if (/airport|terminal|boarding|flight|passport/.test(b) && /shop|store|retail|buy|purchase|luxury|item|product/.test(b)) return 'airport duty free shop retail product hand close up';
+      if (/airport|terminal|boarding|flight|passport/.test(b)) return 'airport terminal gate close up';
+      if (/market|bazaar|shop|store|retail/.test(b)) return 'shop counter product close up';
+      if (/restaurant|cafe|dining|meal/.test(b)) return 'restaurant table food close up';
+      // Brand/product domains (inferred from category, not environment)
+      if (/skincare|skin care|moisturiser|moisturizer|serum|cleanser|sunscreen|spf|glow|complexion|skin/.test(b)) return 'person bathroom mirror skincare routine close up';
+      if (/haircare|hair care|shampoo|conditioner|hair/.test(b)) return 'person bathroom hair care close up';
+      if (/fitness|gym|workout|exercise|training|running|yoga/.test(b)) return 'person gym workout equipment close up';
+      if (/finance|money|savings|investment|bank|salary|wealth/.test(b)) return 'person desk financial document close up';
+      if (/travel|journey|trip|adventure|backpack|explore/.test(b)) return 'person travel bag suitcase close up';
+      if (/fashion|clothing|outfit|style|dress|wear/.test(b)) return 'clothing fabric texture detail close up';
+      if (/technology|tech|app|digital|software|device/.test(b)) return 'person smartphone screen close up';
+      // Abstract concept briefs — map to human presence in neutral environment
+      if (/invisible|slow|gradual|unnoticed|subtle|quiet change|small change/.test(b)) return 'person mirror reflection close up face';
+      if (/confidence|identity|self|growth|transform|become/.test(b)) return 'person alone room close up face';
+      if (/time|years|patience|waiting|long|eventually/.test(b)) return 'person hands close up natural light';
+      if (/trust|belief|loyalty|commitment|promise/.test(b)) return 'two people close up hands interaction';
+      return 'person candid indoor natural light close up'; // universal safe fallback
+    }
+
+    function enforceObjectMatch(query, elementName) {
+      var lower = (elementName || '').toLowerCase();
+      for (var key in OBJECT_MAP) {
+        if (lower.includes(key)) {
+          console.log('🎯 Object match: "' + key + '" → ' + OBJECT_MAP[key]);
+          return OBJECT_MAP[key];
+        }
+      }
+      return query;  // no match — return original query unchanged
+    }
+
+    // Object keywords for image validation — checks returned photo metadata
+    var OBJECT_KEYWORDS = {
+      'boarding pass': ['paper', 'ticket', 'boarding', 'pass'],
+      'passport':      ['passport', 'document'],
+      'zipper':        ['zipper', 'zip', 'fabric'],
+      'zip':           ['zipper', 'zip'],
+      'handle':        ['handle', 'luggage', 'bag'],
+      'phone':         ['phone', 'mobile', 'smartphone'],
+      'pen':           ['pen', 'pencil', 'writing'],
+      'pencil':        ['pen', 'pencil'],
+      'cup':           ['cup', 'coffee', 'mug'],
+      'bag':           ['bag', 'luggage', 'backpack'],
+      'luggage':       ['luggage', 'suitcase', 'bag'],
+      'laptop':        ['laptop', 'computer', 'keyboard'],
+      'watch':         ['watch', 'wrist', 'clock'],
+      'door':          ['door', 'handle', 'entrance'],
+      'contract':      ['paper', 'document', 'signing'],
+      'headset':       ['headset', 'headphone', 'ear']
+    };
+
+    function getObjectKeywords(elementName) {
+      var lower = (elementName || '').toLowerCase();
+      for (var key in OBJECT_KEYWORDS) {
+        if (lower.includes(key)) return OBJECT_KEYWORDS[key];
+      }
+      return [];
+    }
+
+    function validateImageResult(el, photo) {
+      var desc = ((photo.description || '') + ' ' + (photo.alt_description || '')).toLowerCase();
+
+      // Check 1: human presence
+      var humanOk = HUMAN_INDICATORS.some(function(w) { return desc.includes(w); });
+
+      // Check 2: object match (only enforced when we know what object to expect)
+      var expectedKeywords = getObjectKeywords(el.element_name);
+      var objectOk = expectedKeywords.length === 0 ||
+                     expectedKeywords.some(function(k) { return desc.includes(k); });
+
+      return humanOk && objectOk;
+    }
+
+    function fetchImage(query, card, el, brief, imageIndex) {
+      var rawQuery = query.trim() || 'creative abstract';
+      var layer = (el.layer || 'MICRO').toUpperCase();
+
+      // STEP 1: Translate abstract/emotion words → physical descriptions
+      var translatedQuery = translateQuery(rawQuery);
+
+      // STEP 1b: Query validity filter — 3-tier safety check
+      // Tier 1: OBJECT_MAP hit (best — precise object match)
+      var hasObjectMapHit = (function() {
+        var lower = (el.element_name || '').toLowerCase();
+        var keys = Object.keys(OBJECT_MAP);
+        for (var i = 0; i < keys.length; i++) { if (lower.includes(keys[i])) return true; }
+        return false;
+      })();
+      // Tier 2: Concrete object in query (safe — query already grounded in searchable thing)
+      // Physical words alone (hand/finger) are NOT enough — must be a concrete noun Unsplash can find
+      var CONCRETE_OBJECTS = [
+        'controls','control','dashboard','cockpit','wheel','steering','throttle',
+        'phone','smartphone','screen','laptop','keyboard',
+        'receipt','document','paper','contract',
+        'cup','mug','bowl','glass','bottle','spoon','fork',
+        'box','bag','luggage','suitcase','strap',
+        'door','handle','window','counter','table','chair','desk',
+        'instrument','panel','lever','switch','dial','button',
+        'dessert','food','coffee','drink','sundae','biscotti','menu','plate',
+        'jacket','shirt','watch','ring','key','wallet','mirror','cream','skincare'
+      ];
+      // Note: 'tag', 'item', 'product', 'price' intentionally excluded — too generic for Unsplash
+      var hasConcreteObject = CONCRETE_OBJECTS.some(function(obj) {
+        return translatedQuery.toLowerCase().includes(obj);
+      });
+      // Tier 3: Domain fallback — when query is abstract/behavioral with no concrete anchor
+      if (!hasObjectMapHit && !hasConcreteObject) {
+        translatedQuery = extractDomainFallback(brief);
+        console.log('↩️ Domain fallback applied for: ' + el.element_name + ' → ' + translatedQuery);
+      }
+
+      // STEP 2: Layer-conditional human presence + framing
+      if (layer === 'SYMBOLIC') {
+        // SYMBOLIC: object IS the moment — do NOT force human presence
+      } else if (layer === 'LIFE') {
+        // LIFE: if query contains environment/space words → environment-only shot, no person needed
+        var isEnvironmentShot = /fan|chair|light|counter|wall|floor|ceiling|window|door|corner|table|surface|room|space|corridor/.test(translatedQuery.toLowerCase());
+        if (!isEnvironmentShot && !hasHumanPresence(translatedQuery)) {
+          translatedQuery = translatedQuery + ' person';
+        }
+        // Apply object match for LIFE too — catches domain-specific terms like cockpit, yoke, checklist
+        translatedQuery = enforceObjectMatch(translatedQuery, el.element_name);
+      } else {
+        // SOCIAL and MICRO: keep original human-presence enforcement
+        if (!hasHumanPresence(translatedQuery)) {
+          translatedQuery = translatedQuery + ' person';
+        }
+        // STEP 3: Object match override (only for SOCIAL and MICRO)
+        translatedQuery = enforceObjectMatch(translatedQuery, el.element_name);
+      }
+
+      // STEP 4: Cap length
+      var words = translatedQuery.split(' ');
+      if (words.length > 14) {
+        translatedQuery = words.slice(0, 14).join(' ');
+      }
+
+      var finalQuery = translatedQuery;
+
+      unsplashFetch(finalQuery)
       .then(function(data) {
-        // Intelligent fallback
+        // If no results, strip to core 5 words
         if (!data.results || data.results.length === 0) {
-          var simplified = finalQuery.split(' ').slice(0, -3).join(' ');
-          if (simplified.split(' ').length >= 4) {
-            return fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(simplified) + '&per_page=5&orientation=portrait', {
-              headers: { 'Authorization': 'Client-ID ' + UNSPLASH_ACCESS_KEY }
-            }).then(function(r) { return r.json(); });
-          }
-          throw new Error("No results");
+          var coreQuery = finalQuery.split(' ').slice(0, 5).join(' ');
+          console.log('↩️ Core fallback: ' + coreQuery);
+          return unsplashFetch(coreQuery);
+        }
+        // If all results already used this generation, try page 2
+        var unused = data.results.filter(function(p) { return usedPhotoIds.indexOf(p.id) === -1; });
+        if (unused.length === 0) {
+          console.log('↩️ Page 2 fallback — all page 1 results used');
+          return unsplashFetch(finalQuery, 2);
         }
         return data;
       })
       .then(function(data) {
-        if (!data.results || data.results.length === 0) throw new Error("No results after retry");
-        
-        // Pick best result (random from top 3)
-        var photo = data.results[Math.floor(Math.random() * Math.min(data.results.length, 3))];
+        if (!data.results || data.results.length === 0) throw new Error('No results after fallbacks');
+
+        var photo = pickBestPhoto(data.results, layer);
+
+        // Validate result — if it fails object+human check, retry once with relaxed query
+        // Skip human validation for SYMBOLIC layer — object-only is valid
+        if (photo && layer !== 'SYMBOLIC' && !validateImageResult(el, photo)) {
+          console.log('⚠️ Validation failed for "' + el.element_name + '" — retrying with relaxed query');
+          var relaxedQuery = finalQuery.split(' ').slice(0, 4).join(' ') + ' person';
+          return unsplashFetch(relaxedQuery).then(function(retryData) {
+            if (retryData.results && retryData.results.length > 0) {
+              var retryPhoto = pickBestPhoto(retryData.results, layer);
+              return retryPhoto || photo;
+            }
+            return photo;
+          });
+        }
+
+        return photo;
+      })
+      .then(function(photo) {
+        if (!photo) throw new Error('No valid photo found');
         var sk = card.querySelector('.skeleton-ph');
         if (sk) {
           var imgUrl = photo.urls.regular || photo.urls.small;
@@ -1784,16 +2927,16 @@ Return only valid JSON for this one element.`
 
         var creditDiv = document.createElement('div');
         creditDiv.className = 'card-credit';
-        creditDiv.innerHTML = 'Photo by <a href="' + photo.user.links.html + '?utm_source=worldforge&utm_medium=referral" target="_blank" rel="noopener">' + 
-          photo.user.name + 
+        creditDiv.innerHTML = 'Photo by <a href="' + photo.user.links.html + '?utm_source=worldforge&utm_medium=referral" target="_blank" rel="noopener">' +
+          photo.user.name +
           '</a> on <a href="https://unsplash.com/?utm_source=worldforge&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a>';
         card.appendChild(creditDiv);
-        
+
         if (photo.links && photo.links.download_location) {
           fetch(photo.links.download_location + '?client_id=' + UNSPLASH_ACCESS_KEY)
             .catch(function(err) { console.error('Download trigger failed:', err); });
         }
-        
+
         var gen = generations[currentGenerationIndex];
         if (gen) {
           gen.images[imageIndex] = {
@@ -1805,15 +2948,11 @@ Return only valid JSON for this one element.`
       })
       .catch(function(err) {
         console.error('Unsplash error:', err);
-        
-        // If 401, show helpful message
         if (err.message && err.message.includes('401')) {
           console.warn('⚠️ Unsplash API key invalid. Please update in settings.');
         }
-        
         var sk = card.querySelector('.skeleton-ph');
         if (sk) {
-          // Show placeholder with error message
           var placeholder = document.createElement('div');
           placeholder.className = 'card-img';
           placeholder.style.cssText = 'background:#1a1a1a;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:11px;text-align:center;padding:20px;';
@@ -1829,18 +2968,8 @@ Return only valid JSON for this one element.`
       s.classList.toggle('visible', !!msg);
     }
 
-    function exportPDF() {
-      if (!worldData || currentGenerationIndex < 0) {
-        alert('No generation to export');
-        return;
-      }
-
-      var gen = generations[currentGenerationIndex];
-      alert('PDF export feature: Coming soon! For now, you can screenshot this page.\n\nGeneration: ' + gen.brief);
-    }
-
     document.getElementById('brief').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); generateWorld(); }
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); runWorldforge(); }
     });
   </script>
 </body>
