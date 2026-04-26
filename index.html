@@ -218,7 +218,12 @@
         <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Free at aistudio.google.com — 1M tokens/day</div>
       </div>
       <div class="settings-field">
-        <label class="settings-label"><span class="key-status" id="groqStatus"></span>Groq API Key (optional fallback)</label>
+        <label class="settings-label"><span class="key-status" id="claudeStatus"></span>Claude API Key (recommended)</label>
+        <input class="settings-input" id="claudeKeyInput" type="password" placeholder="sk-ant-..."/>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Get key at console.anthropic.com</div>
+      </div>
+      <div class="settings-field">
+        <label class="settings-label"><span class="key-status" id="groqStatus"></span>Groq API Key (fallback)</label>
         <input class="settings-input" id="groqKeyInput" type="password" placeholder="gsk_xxxxxxxxxxxxxxxx"/>
         <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Free at console.groq.com</div>
       </div>
@@ -669,34 +674,62 @@ Generate visual_context ONCE from the brief and lock it for all 8 elements:
 - lighting: time of day and quality
 - mood: emotional atmosphere in one word
 
-Each element's unsplash_query must describe the STAGE where behavior happens — not the behavior itself.
-Strip verbs. Search: object + environment + human presence + camera style.
-Unsplash is indexed by scenes and objects, NOT sequences or micro-behavior.
+Each element's unsplash_query must describe a PHOTOGRAPH, not a behavior.
 
-QUERY CONVERSION RULE: behavior → strip verbs → keep nouns → add environment → add human → add ONE behavioral evidence detail → add camera
+INTERNAL THINKING (do this silently before writing each query):
+  Step 1: What is the primary object in this moment?
+  Step 2: What supporting objects exist around it?
+  Step 3: What is the environment — specific, not generic?
+  Step 4: Describe it as a photographer searching a stock library would.
 
-BEHAVIORAL EVIDENCE (add one per query — makes the moment readable without text):
-  half-eaten / untouched / steam rising / hand paused mid-air / object slightly displaced /
-  phone screen lit / spoon resting against bowl / cup abandoned / ingredients spread out
+QUERY FORMAT (mandatory):
+  [primary object] + [supporting object] + [environment] + [lighting or framing]
+  Maximum 8 words. Only nouns and scene descriptors. Zero verbs. Zero emotions.
 
-Non-visual moments MUST convert to visual proxy:
-  sound → object making it (coffee machine, clinking cups, crowd)
-  time passing → evidence of time (cold coffee, melted ice, fading steam)
-  atmosphere → closest physical anchor in the scene (empty chair, door ajar, window)
+EXAMPLES (study these — this is the standard):
+  Brief: barista writes name on cup
+  BAD: 'barista writing name on cup making mistake'
+  GOOD: 'starbucks coffee cup name written table warm light'
 
-LAYER-SPECIFIC QUERY FORMAT:
-LIFE → [environment] + [object] + [person] + [lighting] — real not staged, wide or mid shot
-  GOOD: 'restaurant table dessert menu hand warm lighting'
-  BAD: 'person scanning menu and pausing thoughtfully'
-SOCIAL → [environment] + [two people] + [object between them] — mid-shot, interaction visible
-  GOOD: 'restaurant table person pointing menu talking to waiter'
-  BAD: 'customer changes order after seeing special addition'
-SYMBOLIC → [specific object] + [its physical state] + [environment] — object fills frame
-  GOOD: 'face cream jar open bathroom counter close up natural light'
-  BAD: 'cream applied slowly and invisibly to skin'
-MICRO → [body part] + [object being touched] + [environment] + close up
-  GOOD: 'person applying face cream bathroom mirror close up hands'
-  BAD: 'finger pauses mid-application realizing subtle change'
+  Brief: customer waits impatiently at counter
+  BAD: 'customer waiting with impatience looking at barista'
+  GOOD: 'coffee shop counter person hands cup close up'
+
+  Brief: finger hovers over laptop keyboard
+  BAD: 'finger hovering over keyboard pausing before typing'
+  GOOD: 'laptop keyboard coffee cup table cafe close up'
+
+  Brief: pilot touches worn groove on throttle
+  BAD: 'pilot hand touching worn throttle groove cockpit'
+  GOOD: 'aircraft throttle lever cockpit controls close up dark'
+
+  Brief: person alone at tapri not part of conversation
+  BAD: 'person sitting alone tapri not joining conversation'
+  GOOD: 'street tea stall bench person hands cup close up'
+
+RULE: If your query contains any verb or emotion word — rewrite it. Unsplash finds photographs of things, not descriptions of actions.
+
+IF NO CLEAR OBJECT EXISTS in the element: use the most physical object from the brief environment.
+  Brief about chips → 'snack bowl hand chips close up'
+  Brief about phone → 'smartphone screen hand close up'
+  Brief about relationship → 'two people hands table close up'
+  Brief about money → 'wallet hand cash counter close up'
+  When in doubt: [nearest physical object from brief] + [hands] + [close up]
+
+OBJECT-FIRST RULE (mandatory):
+The query MUST start with the primary object of interaction — never with a broad environment.
+  ❌ WRONG: 'airport floor reflections person walking'
+  ✅ RIGHT: 'floor reflection tiles person feet walking terminal'
+  ❌ WRONG: 'cafe table person laptop'
+  ✅ RIGHT: 'laptop coffee cup wooden table cafe close up'
+  ❌ WRONG: 'airport duty free shop person wallet'
+  ✅ RIGHT: 'wallet hand payment counter duty free close up'
+
+If the environment is large (airport, mall, hospital, cafe) — specify the sub-location:
+  airport → duty free counter / boarding gate / check-in desk / terminal corridor
+  cafe → barista counter / wooden table / window seat
+  mall → shop counter / clothing rack / billing desk
+  restaurant → dining table / menu / bar counter
 
 Each query must differ in subject and framing. No two queries of the same shot type.
 
@@ -756,6 +789,7 @@ Return valid JSON with exact structure:
     // STATE & CONFIG
     // ============================================
     var GROQ_API_KEY = localStorage.getItem('groq_api_key') || '';
+    var CLAUDE_API_KEY = localStorage.getItem('claude_api_key') || '';
     var GEMINI_API_KEY = localStorage.getItem('gemini_api_key') || '';
     var UNSPLASH_ACCESS_KEY = localStorage.getItem('unsplash_access_key') || '';
     var selectedRole = 'video';
@@ -773,11 +807,12 @@ Return valid JSON with exact structure:
     // ============================================
     window.addEventListener('load', function() {
       updateKeyStatuses();
-      if (!GROQ_API_KEY || !UNSPLASH_ACCESS_KEY) openSettings();
+      if ((!GROQ_API_KEY && !CLAUDE_API_KEY) || !UNSPLASH_ACCESS_KEY) openSettings();
     });
 
     function openSettings() {
       document.getElementById('geminiKeyInput').value = GEMINI_API_KEY;
+      document.getElementById('claudeKeyInput').value = CLAUDE_API_KEY;
       document.getElementById('groqKeyInput').value = GROQ_API_KEY;
       document.getElementById('unsplashKeyInput').value = UNSPLASH_ACCESS_KEY;
       document.getElementById('settingsOverlay').classList.add('open');
@@ -786,6 +821,8 @@ Return valid JSON with exact structure:
     function closeSettingsOnBg(e) { if (e.target === document.getElementById('settingsOverlay')) closeSettings(); }
     function saveKeys() {
       var gm = document.getElementById('geminiKeyInput').value.trim();
+      var cl = document.getElementById('claudeKeyInput').value.trim();
+      if (cl) { CLAUDE_API_KEY = cl; localStorage.setItem('claude_api_key', cl); }
       var g = document.getElementById('groqKeyInput').value.trim();
       var u = document.getElementById('unsplashKeyInput').value.trim();
       if (gm) { GEMINI_API_KEY = gm; localStorage.setItem('gemini_api_key', gm); }
@@ -795,6 +832,7 @@ Return valid JSON with exact structure:
     }
     function updateKeyStatuses() {
       document.getElementById('geminiStatus').className = 'key-status' + (GEMINI_API_KEY ? ' set' : '');
+      document.getElementById('claudeStatus').className = 'key-status' + (CLAUDE_API_KEY ? ' set' : '');
       document.getElementById('groqStatus').className = 'key-status' + (GROQ_API_KEY ? ' set' : '');
       document.getElementById('unsplashStatus').className = 'key-status' + (UNSPLASH_ACCESS_KEY ? ' set' : '');
     }
@@ -1529,7 +1567,7 @@ Banned phrases to replace: "we made it", "left behind", "hold on", "in sight"
 Do NOT add physical resistance (no: stuck, slip, creak, fall).
 DO preserve the behavioral observation intent.
 
-Return only valid JSON for this one element. You MUST include the layer field with its original value unchanged.`;
+Return only valid JSON for this one element. You MUST include the layer field unchanged. NO markdown, NO code fences. Raw JSON only starting with {`;
         rewriteUserPrompt = 'Brief: "' + brief + '"\n\nElement with generic language:\n' + JSON.stringify(element) + '\n\nRewrite with specific behavioral observation. Keep the behavioral intent, remove generic words. The layer field must be preserved exactly.';
       } else {
         rewriteSystemPrompt = `Rewrite this creative element to be non-generic.
@@ -1543,16 +1581,16 @@ Requirements:
 Banned: chaos, arrival, journey, relief, safe, perfect
 Banned phrases: "we made it", "left behind", "hold on"
 
-Return only valid JSON for this one element.`;
+Return only valid JSON for this one element. NO markdown, NO code fences. Raw JSON only starting with {`;
         rewriteUserPrompt = 'Brief: "' + brief + '"\n\nGeneric element:\n' + JSON.stringify(element) + '\n\nRewrite with object + action + resistance.';
       }
       
       return callLLM(rewriteSystemPrompt, rewriteUserPrompt, 200)
       .then(function(text) {
-        var raw = text.replace(/```json|```/g, '').trim();
+        var raw = text.replace(/```json\s*/gi, '').replace(/```/g, '').replace(/^\s*json\s*/i, '').trim();
         try {
           var rewritten = JSON.parse(raw);
-          // Always restore layer and unsplash_query from original — rewrite only touches content fields
+          // Always restore layer from original — rewrite only touches content fields
           rewritten.layer = element.layer;
           if (!rewritten.unsplash_query) rewritten.unsplash_query = element.unsplash_query;
           console.log('✅ Rewrite successful:', rewritten.element_name, '| layer:', rewritten.layer);
@@ -1574,6 +1612,46 @@ Return only valid JSON for this one element.`;
       // is always better than a hardcoded generic replacement.
       console.warn('Static fallback fired for element ' + (elementIndex + 1) + ' — keeping original to preserve domain integrity');
       return element;
+    }
+
+    // ============================================
+    // CALL 3: DEDICATED IMAGE QUERY GENERATION
+    // Single focused call — one job only: convert elements into photograph queries
+    // No behavioral rules, no gates, no layer logic — just visual translation
+    // ============================================
+    function generateImageQueries(worldData, brief) {
+      var elementSummaries = worldData.elements.map(function(el, i) {
+        return (i+1) + '. ' + el.element_name + ' — ' + el.insight_line;
+      }).join('\n');
+
+      var querySystemPrompt = 'You are a photo researcher converting behavioral moments into Unsplash search queries. Your only job is to output a JSON array of 8 search queries. Nothing else.';
+
+      var queryUserPrompt = 'Brief context: ' + brief + '\n\nBehavioral elements:\n' + elementSummaries + '\n\nFor each element, write one Unsplash search query.\n\nRULES:\n- Start with the PRIMARY OBJECT — the concrete thing being touched, held, or interacted with\n- Only concrete nouns. Zero verbs. Zero emotions. Zero abstract words.\n- 4-7 words maximum\n- BRAND RULE: If the brief mentions a specific brand or place (Starbucks, IKEA, McDonald\'s, Kidzania, airport, hospital), include that exact word in the query. "starbucks menu board counter" not "cafe menu board". The brand name is what finds the right photo.\n- NEVER use: reflection, moment, pause, silence, atmosphere, mood, feeling, experience\n\nEXAMPLES:\n"Menu Board Reflection" in Starbucks brief → "starbucks menu board counter barista"\n"Cup placed on table" in Starbucks brief → "starbucks coffee cup wooden table"\n"Napkin unfolded slowly" in restaurant brief → "cloth napkin restaurant table folded"\n"Finger tracing price tag" in IKEA brief → "ikea price tag hand shelf"\n"Child tries on uniform" in Kidzania brief → "child uniform costume role play"\n\nReturn ONLY a JSON array of 8 strings, no other text:\n["query1","query2","query3","query4","query5","query6","query7","query8"]';
+
+      return callLLM(querySystemPrompt, queryUserPrompt, 300)
+        .then(function(text) {
+          var raw = text.replace(/```json\s*/gi, '').replace(/```/g, '').replace(/^\s*json\s*/i, '').trim();
+          var start = raw.indexOf('[');
+          var end = raw.lastIndexOf(']');
+          if (start !== -1 && end !== -1) {
+            var queries = JSON.parse(raw.slice(start, end + 1));
+            if (Array.isArray(queries) && queries.length === 8) {
+              worldData.elements.forEach(function(el, i) {
+                if (queries[i] && queries[i].trim()) {
+                  console.log('📸 Query ' + (i+1) + ': ' + queries[i]);
+                  el.unsplash_query = queries[i];
+                  el._call3query = true; // mark as Call 3 generated — skip override logic
+                }
+              });
+              console.log('✅ Call 3: all 8 queries generated');
+            }
+          }
+          return worldData;
+        })
+        .catch(function(err) {
+          console.warn('⚠️ Call 3 failed — keeping original queries:', err);
+          return worldData; // graceful fallback — original queries survive
+        });
     }
 
     // ============================================
@@ -1650,7 +1728,7 @@ Return only valid JSON for this one element.`;
       var validLayers = ['LIFE','SOCIAL','SYMBOLIC','MICRO'];
       var forcedLayers = ['LIFE','LIFE','SOCIAL','SOCIAL','SYMBOLIC','SYMBOLIC','MICRO','MICRO'];
 
-      // Step 1: Normalise — fix missing or invalid layer values by position BEFORE counting
+      // Step 1: Normalise missing or invalid layer values by position BEFORE counting
       worldData.elements.forEach(function(el, i) {
         var current = (el.layer || '').toUpperCase();
         if (validLayers.indexOf(current) === -1) {
@@ -1819,7 +1897,12 @@ Return only valid JSON for this one element.`;
           // Hard enforcement — runs regardless of model output
           worldData = enforceLayerDistribution(worldData);
           worldData = enforceDisruptionVariety(worldData);
-          return worldData;
+          // ── Call 3: dedicated query generation ───────────────────────────────
+          // Replaces unsplash_query fields with focused photograph descriptions.
+          // Single job, no competing instructions — far more reliable than inline generation.
+          return generateImageQueries(worldData, brief).then(function(worldWithQueries) {
+            return worldWithQueries;
+          });
         });
     }
 
@@ -1917,6 +2000,7 @@ All 6 gates must pass. Only then write the element into the output.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 STRUCTURAL REQUIREMENTS (apply across the full set of 8):
+→ CONTINUITY: All 8 elements happen to the same person, in the same visit, in natural time progression. Each element happens AFTER the previous one. Do not reset the scene. Do not jump to a different person or context. This is one journey, not 8 separate observations.
 → Escalation: elements 1–2 quieter than 6–8. Intensity must rise.
 → At least 3 elements use the return pattern: action completes → moves away → comes back to same object
 → All 4 variation types must be present: subtle / sharp / object-based / social friction
@@ -1936,10 +2020,12 @@ STRUCTURAL REQUIREMENTS (apply across the full set of 8):
       ' For each abstract idea found, convert it: what does a person physically DO when this is true? What do they do INSTEAD of the obvious thing?' +
       ' Use only these converted behaviors when writing LENS and ANCHORS. Never use the abstract word itself in output.' +
       ' OUTPUT STRUCTURE — return exactly these 6 labeled fields, nothing else, no extra text:' +
-      ' LENS: One sharp sentence capturing the real meaning. Must be specific and human. No buzzwords, no abstraction.' +
-      ' SPECIFICITY ENFORCEMENT: LENS must include at least ONE of — a number or duration (30 seconds, 3 times, 4 steps) / a physical constraint (cannot do X, forced to do Y) / a repeated action pattern / a measurable delay.' +
-      ' BAD LENS: a person stands in silence confronting the weight of history' +
-      ' GOOD LENS: visitors stop walking for exactly 20-30 seconds in front of personal artifacts before their feet move again on their own' +
+      ' LENS: This depends on brief type:' +
+      ' SITUATION OVERRIDE (check this first): If the brief contains any of — last day, final day, first day, last lecture, last shift, last flight, retirement, farewell, goodbye, graduation, opening day, closing night, last time — it is ALWAYS a human situation brief, even if it mentions a place. Skip the environment zones path entirely.' +
+      ' IF BRIEF IS AN ENVIRONMENT OR PLACE (airport, mall, IKEA, Kidzania, hospital, market, station) AND contains no situation override signal → LENS must name 4-6 distinct behavioral zones within that environment. Each zone gets one sharp physical behavior. Format: ZONE 1: behavior. ZONE 2: behavior. etc. Do NOT collapse to one angle. Airport = immigration + duty free + food court + currency exchange + departure gate. IKEA = showroom furniture + cafeteria + checkout + warehouse + room displays. Kidzania = chef zone + pilot zone + doctor zone + delivery zone + fire station. Cover the world, not one corner of it.' +
+      ' IF BRIEF IS A HUMAN SITUATION (person doing something specific, OR contains a situation override signal above) → LENS is one sharp sentence capturing the single behavioral truth of THIS specific moment — not a general description of the environment. Must include at least ONE of — a number or duration / a physical constraint / a repeated action pattern / a measurable delay.' +
+      ' BAD LENS for situation: a person stands in silence confronting the weight of history' +
+      ' GOOD LENS for situation: visitors stop walking for exactly 20-30 seconds in front of personal artifacts before their feet move again on their own' +
       ' If LENS has no measurable or observable constraint → it is too vague → rewrite with one.' +
       ' ANCHORS: Exactly 3 lines, each starting with -. Each is a human decision or tendency showing tension. No product features, no outcomes.' +
       ' ANCHOR HARDENING: remove ALL interpretation from anchors — banned phrases: as if, seems to, appears to, feels like, as though, drawn to, searching for.' +
@@ -1948,6 +2034,7 @@ STRUCTURAL REQUIREMENTS (apply across the full set of 8):
       ' GOOD anchor: they stop at one artifact and read every word of the label, then read it again.' +
       ' SITUATION: One sentence. What is physically happening, to whom, where. Concrete, no emotions named.' +
       ' If brief has an object — the object is not the situation. Find the human moment around it.' +
+      ' OBJECT-FIRST RULE: When brief contains physical objects for human use (furniture, food, clothing, tools, products) — anchor LENS in direct physical interaction with those objects BEFORE interpreting cognitive or emotional layers. IKEA brief → sitting on display sofa, opening cabinet drawer, touching bed frame. Food brief → hands on utensils, first contact with texture, negotiating the object. The objects are the entry point. Do not drift to navigation or wayfinding when the world is full of tangible things to interact with.' +
       ' If brief has a brand — ignore the brand. Find the human moment the product enters.' +
       ' TENSION: One sentence. X vs Y format. Must be specific to this brief, not abstract.' +
       ' Banned tensions: identity vs time / memory vs present / old vs new / past vs future — always too generic.' +
@@ -1977,6 +2064,28 @@ STRUCTURAL REQUIREMENTS (apply across the full set of 8):
     // UNIFIED LLM CALLER — Gemini primary, Groq fallback
     // ============================================
     function callLLM(systemPrompt, userPrompt, maxTokens) {
+      if (CLAUDE_API_KEY) {
+        return fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': CLAUDE_API_KEY,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: maxTokens,
+            system: systemPrompt + '\n\nCRITICAL OUTPUT RULES:\n1. Return ONLY valid JSON. No markdown. No code fences. No explanation.\n2. Every element MUST have element_name, insight_line, direction_label, layer, unsplash_query populated.\n3. element_name must NEVER be empty.\n4. Start response with { and end with }.\n5. No text before or after the JSON.',
+            messages: [{ role: 'user', content: userPrompt }]
+          })
+        })
+        .then(function(res) {
+          if (!res.ok) return res.text().then(function(e) { throw new Error('Claude (' + res.status + '): ' + e); });
+          return res.json();
+        })
+        .then(function(data) { return data.content[0].text; });
+      }
       if (GROQ_API_KEY) {
         return fetch('https://api.groq.com/openai/v1/chat/completions', {
           method: 'POST',
@@ -1994,7 +2103,7 @@ STRUCTURAL REQUIREMENTS (apply across the full set of 8):
         })
         .then(function(data) { return data.choices[0].message.content; });
       }
-      return Promise.reject(new Error('No API key set — add Groq key in settings'));
+      return Promise.reject(new Error('No API key — add Claude key in settings'));
     }
 
     // ============================================
@@ -2003,7 +2112,7 @@ STRUCTURAL REQUIREMENTS (apply across the full set of 8):
     function runWorldforge() {
       var rawBrief = document.getElementById('brief').value.trim();
       if (!rawBrief) return;
-      if (!GROQ_API_KEY || !UNSPLASH_ACCESS_KEY) { openSettings(); return; }
+      if ((!GROQ_API_KEY && !CLAUDE_API_KEY) || !UNSPLASH_ACCESS_KEY) { openSettings(); return; }
 
       var btn = document.getElementById('generateBtn');
       var errorMsg = document.getElementById('errorMsg');
@@ -2102,10 +2211,10 @@ STRUCTURAL REQUIREMENTS (apply across the full set of 8):
 
       // ── Single Groq call — same prompt every attempt ──────────────────────
       function callGroq() {
-        return callLLM(systemPrompt, userPrompt, 2800)
+        return callLLM(systemPrompt, userPrompt, 4000)
         .then(function(text) {
           // Strip markdown fences
-          var raw = text.replace(/```json|```/g, '').trim();
+          var raw = text.replace(/```json\s*/gi, '').replace(/```/g, '').replace(/^\s*json\s*/i, '').trim();
           // Extract JSON object — find outermost { }
           var start = raw.indexOf('{');
           var end = raw.lastIndexOf('}');
@@ -2394,7 +2503,6 @@ STRUCTURAL REQUIREMENTS (apply across the full set of 8):
         '<div class="card-body">' +
           '<div class="card-num">' + (index+1 < 10 ? '0'+(index+1) : index+1) + '</div>' +
           '<div class="card-name">' + el.element_name + '</div>' +
-          '<div class="card-insight">' + el.insight_line + '</div>' +
           '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
             layerBadge +
             '<span class="card-label">' + (el.direction_label||'') + '</span>' +
@@ -2552,24 +2660,21 @@ STRUCTURAL REQUIREMENTS (apply across the full set of 8):
       return query;
     }
 
-    // Abstract words Unsplash cannot index — strip these from queries
-    var ABSTRACT_QUERY_WORDS = [
-      'hesitating','hesitation','hesitates','deciding','decision','deciding',
-      'thinking','thought','feeling','emotion','emotional','moment','experience',
-      'slowly','carefully','gently','nervously','quietly','briefly','suddenly',
-      'realizing','noticing','wondering','considering','reflecting','pausing',
-      'invisible','subtle','gradual','symbolic','meaningful','significant',
-      'before','after','then','while','during','about','around','toward'
-    ];
-
-    function sanitizeQuery(q) {
-      // Strip abstract words that Unsplash cannot match to photos
-      ABSTRACT_QUERY_WORDS.forEach(function(word) {
-        var re = new RegExp('\\b' + word + '\\b', 'gi');
-        q = q.replace(re, '');
-      });
-      // Collapse multiple spaces
-      return q.replace(/\s+/g, ' ').trim();
+    function enforceObjectFirst(q) {
+      var broadEnv = ['airport','cafe','coffee shop','restaurant','mall','hospital','office','street','market','shop','store','terminal','cockpit','runway','aircraft'];
+      var lower = q.toLowerCase().trim();
+      for (var i = 0; i < broadEnv.length; i++) {
+        var env = broadEnv[i];
+        if (lower.startsWith(env + ' ')) {
+          var rest = q.slice(env.length).trim();
+          if (rest.length > 3) {
+            var reordered = rest + ' ' + env;
+            console.log('Object-first reorder: "' + q + '" to "' + reordered + '"');
+            return reordered;
+          }
+        }
+      }
+      return q;
     }
 
     function translateQuery(query) {
@@ -2582,8 +2687,8 @@ STRUCTURAL REQUIREMENTS (apply across the full set of 8):
         var re = new RegExp('\b' + word + '\b', 'gi');
         q = q.replace(re, QUERY_TRANSLATIONS[word]);
       });
-      // Step 3: sanitize abstract words Unsplash can't index
-      q = sanitizeQuery(q);
+      // Step 3: object-first reorder
+      q = enforceObjectFirst(q);
       return q;
     }
 
@@ -2645,7 +2750,8 @@ STRUCTURAL REQUIREMENTS (apply across the full set of 8):
       'zip':            'zipper fabric close up hand',
       'zipper':         'zipper fabric close up hand',
       'handle':         'hand gripping handle close up',
-      'strap':          'bag strap shoulder close up',
+      'shoulder strap':  'bag strap shoulder close up',
+      'bag strap':       'bag strap shoulder close up',
       'phone':          'phone hand screen close up',
       'cup':            'coffee cup hand table close up',
       'pen':            'pen hand paper close up',
@@ -2656,7 +2762,8 @@ STRUCTURAL REQUIREMENTS (apply across the full set of 8):
       'key':            'key hand close up',
       'headset':        'headset hand ear close up',
       'dial':           'dial hand fingers close up',
-      'button':         'finger pressing button close up',
+      'autopilot':      'cockpit instrument panel switch close up dark',
+      'engage switch':  'cockpit switch panel hand close up',
       'switch':         'hand finger switch close up',
       'screen':         'hand near screen close up',
       'laptop':         'laptop keyboard hands close up',
@@ -2720,44 +2827,28 @@ STRUCTURAL REQUIREMENTS (apply across the full set of 8):
       'whisper':         'person face close up speaking quietly',
       'sticky':          'hand fingers food close up texture',
       'crumb':           'hand fingers food crumbs close up',
-      'sundae':          'ice cream dessert bowl close up spoon'
+      'sundae':          'ice cream dessert bowl close up spoon',
+      'chip':            'hand snack bowl chips close up',
+      'chips':           'bowl chips snack hand close up',
+      'snack':           'hand snack bowl food close up',
+      'baked':           'snack bowl hand food close up',
+      'floor':           'airport terminal floor person walking close up',
+      'reflection':      'person reflection glass window close up',
+      'wallet':          'hand wallet leather close up payment',
+      'runway':          'airport terminal departure gate people walking',
+      'associate':       'retail store person counter shopping close up',
+      'sales':           'retail shop counter person standing close up'
     };
 
     // Extract domain-safe fallback query from brief text
     // Used when OBJECT_MAP has no keyword match — prevents raw behavioral text hitting Unsplash
     function extractDomainFallback(brief) {
-      var b = (brief || '').toLowerCase();
-      // Physical environments (strong signal)
-      if (/pilot|cockpit|flight|aircraft|runway|airline|aviation/.test(b)) return 'pilot cockpit control panel close up';
-      if (/tapri|chai|tea stall|street food|vendor/.test(b)) return 'street food stall counter close up';
-      if (/kitchen|fridge|cook|sundae|dessert|biscotti|mango/.test(b)) return 'kitchen counter dessert preparation close up';
-      if (/office|corporate|meeting|desk|laptop|email/.test(b)) return 'office desk document close up';
-      if (/hospital|doctor|nurse|patient|clinic/.test(b)) return 'hospital corridor equipment close up';
-      if (/cricket|dressing room|pitch|bat|innings/.test(b)) return 'cricket equipment dressing room close up';
-      if (/wedding|ceremony|bride|groom/.test(b)) return 'wedding ceremony detail close up';
-      if (/racing|f1|formula|grand prix|monaco/.test(b)) return 'racing cockpit steering wheel close up';
-      if (/school|classroom|student|teacher/.test(b)) return 'classroom desk notebook close up';
-      if (/airport|terminal|boarding|flight|passport/.test(b) && /shop|store|retail|buy|purchase|luxury|item|product/.test(b)) return 'airport duty free shop retail product hand close up';
-      if (/airport|terminal|boarding|flight|passport/.test(b)) return 'airport terminal gate close up';
-      if (/market|bazaar|shop|store|retail/.test(b)) return 'shop counter product close up';
-      if (/restaurant|cafe|dining|meal/.test(b)) return 'restaurant table food close up';
-      // Brand/product domains (inferred from category, not environment)
-      if (/skincare|skin care|moisturiser|moisturizer|serum|cleanser|sunscreen|spf|glow|complexion|skin/.test(b)) return 'person bathroom mirror skincare routine close up';
-      if (/haircare|hair care|shampoo|conditioner|hair/.test(b)) return 'person bathroom hair care close up';
-      if (/fitness|gym|workout|exercise|training|running|yoga/.test(b)) return 'person gym workout equipment close up';
-      if (/finance|money|savings|investment|bank|salary|wealth/.test(b)) return 'person desk financial document close up';
-      if (/travel|journey|trip|adventure|backpack|explore/.test(b)) return 'person travel bag suitcase close up';
-      if (/fashion|clothing|outfit|style|dress|wear/.test(b)) return 'clothing fabric texture detail close up';
-      if (/technology|tech|app|digital|software|device/.test(b)) return 'person smartphone screen close up';
-      // Abstract concept briefs — map to human presence in neutral environment
-      if (/invisible|slow|gradual|unnoticed|subtle|quiet change|small change/.test(b)) return 'person mirror reflection close up face';
-      if (/confidence|identity|self|growth|transform|become/.test(b)) return 'person alone room close up face';
-      if (/time|years|patience|waiting|long|eventually/.test(b)) return 'person hands close up natural light';
-      if (/trust|belief|loyalty|commitment|promise/.test(b)) return 'two people close up hands interaction';
-      return 'person candid indoor natural light close up'; // universal safe fallback
+      // Domain fallback replaced by Call 3 — universal query generation.
+      // This only fires if Call 3 fails entirely.
+      return 'person candid natural light close up';
     }
 
-    function enforceObjectMatch(query, elementName) {
+        function enforceObjectMatch(query, elementName) {
       var lower = (elementName || '').toLowerCase();
       for (var key in OBJECT_MAP) {
         if (lower.includes(key)) {
@@ -2817,55 +2908,58 @@ STRUCTURAL REQUIREMENTS (apply across the full set of 8):
       // STEP 1: Translate abstract/emotion words → physical descriptions
       var translatedQuery = translateQuery(rawQuery);
 
-      // STEP 1b: Query validity filter — 3-tier safety check
-      // Tier 1: OBJECT_MAP hit (best — precise object match)
-      var hasObjectMapHit = (function() {
-        var lower = (el.element_name || '').toLowerCase();
-        var keys = Object.keys(OBJECT_MAP);
-        for (var i = 0; i < keys.length; i++) { if (lower.includes(keys[i])) return true; }
-        return false;
-      })();
-      // Tier 2: Concrete object in query (safe — query already grounded in searchable thing)
-      // Physical words alone (hand/finger) are NOT enough — must be a concrete noun Unsplash can find
-      var CONCRETE_OBJECTS = [
-        'controls','control','dashboard','cockpit','wheel','steering','throttle',
-        'phone','smartphone','screen','laptop','keyboard',
-        'receipt','document','paper','contract',
-        'cup','mug','bowl','glass','bottle','spoon','fork',
-        'box','bag','luggage','suitcase','strap',
-        'door','handle','window','counter','table','chair','desk',
-        'instrument','panel','lever','switch','dial','button',
-        'dessert','food','coffee','drink','sundae','biscotti','menu','plate',
-        'jacket','shirt','watch','ring','key','wallet','mirror','cream','skincare'
-      ];
-      // Note: 'tag', 'item', 'product', 'price' intentionally excluded — too generic for Unsplash
-      var hasConcreteObject = CONCRETE_OBJECTS.some(function(obj) {
-        return translatedQuery.toLowerCase().includes(obj);
-      });
-      // Tier 3: Domain fallback — when query is abstract/behavioral with no concrete anchor
-      if (!hasObjectMapHit && !hasConcreteObject) {
-        translatedQuery = extractDomainFallback(brief);
-        console.log('↩️ Domain fallback applied for: ' + el.element_name + ' → ' + translatedQuery);
+      // STEP 1b: If Call 3 generated this query, trust it — skip all override logic
+      if (el._call3query) {
+        console.log('✅ Call 3 query trusted: ' + translatedQuery);
+      } else {
+        // Legacy override logic for elements without Call 3 queries
+        var hasObjectMapHit = (function() {
+          var lower = (el.element_name || '').toLowerCase();
+          var keys = Object.keys(OBJECT_MAP);
+          for (var i = 0; i < keys.length; i++) { if (lower.includes(keys[i])) return true; }
+          return false;
+        })();
+        var CONCRETE_OBJECTS = [
+          'controls','control','dashboard','cockpit','wheel','steering','throttle',
+          'phone','smartphone','screen','laptop','keyboard',
+          'receipt','document','paper','contract',
+          'cup','mug','bowl','glass','bottle','spoon','fork',
+          'box','bag','luggage','suitcase','strap',
+          'door','handle','window','counter','table','chair','desk',
+          'instrument','panel','lever','switch','dial','button',
+          'dessert','food','coffee','drink','sundae','biscotti','menu','plate',
+          'jacket','shirt','watch','ring','key','wallet','mirror','cream','skincare'
+        ];
+        var hasConcreteObject = CONCRETE_OBJECTS.some(function(obj) {
+          return translatedQuery.toLowerCase().includes(obj);
+        });
+        if (!hasObjectMapHit && !hasConcreteObject) {
+          translatedQuery = extractDomainFallback(brief);
+          console.log('↩️ Domain fallback applied for: ' + el.element_name + ' → ' + translatedQuery);
+        }
       }
 
       // STEP 2: Layer-conditional human presence + framing
-      if (layer === 'SYMBOLIC') {
-        // SYMBOLIC: object IS the moment — do NOT force human presence
-      } else if (layer === 'LIFE') {
-        // LIFE: if query contains environment/space words → environment-only shot, no person needed
-        var isEnvironmentShot = /fan|chair|light|counter|wall|floor|ceiling|window|door|corner|table|surface|room|space|corridor/.test(translatedQuery.toLowerCase());
-        if (!isEnvironmentShot && !hasHumanPresence(translatedQuery)) {
-          translatedQuery = translatedQuery + ' person';
+      // Call 3 queries are trusted as-is — only apply overrides to legacy queries
+      if (!el._call3query) {
+        if (layer === 'SYMBOLIC') {
+          // SYMBOLIC: object IS the moment — do NOT force human presence
+        } else if (layer === 'LIFE') {
+          // LIFE: if query contains environment/space words → environment-only shot, no person needed
+          var isEnvironmentShot = /fan|chair|light|counter|wall|floor|ceiling|window|door|corner|table|surface|room|space|corridor/.test(translatedQuery.toLowerCase());
+          if (!isEnvironmentShot && !hasHumanPresence(translatedQuery)) {
+            translatedQuery = translatedQuery + ' person';
+          }
+          // Apply object match for LIFE too — catches domain-specific terms like cockpit, yoke, checklist
+          translatedQuery = enforceObjectMatch(translatedQuery, el.element_name);
+        } else {
+          // SOCIAL and MICRO: keep original human-presence enforcement
+          if (!hasHumanPresence(translatedQuery)) {
+            translatedQuery = translatedQuery + ' person';
+          }
+          // STEP 3: Object match override (only for SOCIAL and MICRO)
+          translatedQuery = enforceObjectMatch(translatedQuery, el.element_name);
         }
-        // Apply object match for LIFE too — catches domain-specific terms like cockpit, yoke, checklist
-        translatedQuery = enforceObjectMatch(translatedQuery, el.element_name);
-      } else {
-        // SOCIAL and MICRO: keep original human-presence enforcement
-        if (!hasHumanPresence(translatedQuery)) {
-          translatedQuery = translatedQuery + ' person';
-        }
-        // STEP 3: Object match override (only for SOCIAL and MICRO)
-        translatedQuery = enforceObjectMatch(translatedQuery, el.element_name);
       }
 
       // STEP 4: Cap length
